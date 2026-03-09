@@ -514,6 +514,26 @@
                     <!-- Generoidaan JS:llä -->
                 </div>
             </div>
+
+            <div class="filter-section">
+                <h3>Demon asetukset</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="primary-color-picker" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri (HEX)</label>
+                            <input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.9rem; outline: none; padding: 2px 0;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="bg-color-picker" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri (HEX)</label>
+                            <input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.9rem; outline: none; padding: 2px 0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </aside>
 
         <main>
@@ -592,6 +612,7 @@
         let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
         let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended", "favorites", "all"]');
         let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
+        let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || '{"primary": "#007bff", "bg": "#f4f7f9"}');
         let showOnlyFavorites = false;
         let highlightStreaming = false;
 
@@ -608,7 +629,14 @@
             renderGenreFilters();
             renderSidebarSections();
             renderContent();
+            applyTheme();
             setupEventListeners();
+            
+            // Asetetaan teema-asetusten alkutila kenttiin
+            document.getElementById('primary-color-hex').value = themeSettings.primary;
+            document.getElementById('primary-color-picker').value = themeSettings.primary;
+            document.getElementById('bg-color-hex').value = themeSettings.bg;
+            document.getElementById('bg-color-picker').value = themeSettings.bg;
             
             // Tarkistetaan aiempi sivupalkin tila
             const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
@@ -623,6 +651,15 @@
             localStorage.setItem('customSections', JSON.stringify(customSections));
             localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
             localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
+            localStorage.setItem('themeSettings', JSON.stringify(themeSettings));
+        }
+
+        function applyTheme() {
+            document.documentElement.style.setProperty('--primary-color', themeSettings.primary);
+            document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
+            // Päivitetään myös sivupalkin tausta jos se on sidottu bg-coloriin
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
         }
 
         // --- RENDERING ---
@@ -821,6 +858,39 @@
                     renderContent();
                 }
             });
+
+            // Teeman hallinta
+            const primaryHex = document.getElementById('primary-color-hex');
+            const primaryPicker = document.getElementById('primary-color-picker');
+            const bgHex = document.getElementById('bg-color-hex');
+            const bgPicker = document.getElementById('bg-color-picker');
+
+            const updatePrimary = (val) => {
+                if (/^#[0-9A-F]{6}$/i.test(val)) {
+                    themeSettings.primary = val;
+                    primaryHex.value = val;
+                    primaryPicker.value = val;
+                    applyTheme();
+                    saveState();
+                    renderGenreFilters(); // Päivitetään chipit
+                    renderContent(); // Päivitetään korttien korostukset
+                }
+            };
+
+            const updateBg = (val) => {
+                if (/^#[0-9A-F]{6}$/i.test(val)) {
+                    themeSettings.bg = val;
+                    bgHex.value = val;
+                    bgPicker.value = val;
+                    applyTheme();
+                    saveState();
+                }
+            };
+
+            primaryHex.addEventListener('input', (e) => updatePrimary(e.target.value));
+            primaryPicker.addEventListener('input', (e) => updatePrimary(e.target.value));
+            bgHex.addEventListener('input', (e) => updateBg(e.target.value));
+            bgPicker.addEventListener('input', (e) => updateBg(e.target.value));
         }
 
         // --- DRAG AND DROP (Sivupalkki) ---
