@@ -9,6 +9,8 @@
             --primary-color: #007bff;
             --accent-color: #ff4757;
             --bg-color: #f4f7f9;
+            --header-bg: #1a1a1a;
+            --header-text: #ffffff;
             --card-bg: #ffffff;
             --text-color: #333;
             --sidebar-width: 320px;
@@ -34,8 +36,8 @@
 
         /* Header */
         header {
-            background-color: #1a1a1a;
-            color: white;
+            background-color: var(--header-bg);
+            color: var(--header-text);
             padding: 0.75rem 1.5rem;
             display: flex;
             justify-content: space-between;
@@ -517,21 +519,36 @@
 
             <div class="filter-section">
                 <h3>Demon asetukset</h3>
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="primary-color-picker" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <input type="color" id="primary-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
                         <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri (HEX)</label>
-                            <input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.9rem; outline: none; padding: 2px 0;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri</label>
+                            <input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="bg-color-picker" style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <input type="color" id="bg-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
                         <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri (HEX)</label>
-                            <input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.9rem; outline: none; padding: 2px 0;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri</label>
+                            <input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
                         </div>
                     </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="header-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Tausta</label>
+                            <input type="text" id="header-bg-hex" placeholder="#1a1a1a" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="header-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Teksti</label>
+                            <input type="text" id="header-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
+                        </div>
+                    </div>
+                    <button id="reset-theme-btn" style="margin-top: 0.5rem; padding: 0.5rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s;">Palauta oletusvärit</button>
                 </div>
             </div>
         </aside>
@@ -606,13 +623,20 @@
         ];
 
         // --- STATE ---
+        const DEFAULT_THEME = {
+            primary: "#007bff",
+            bg: "#f4f7f9",
+            headerBg: "#1a1a1a",
+            headerText: "#ffffff"
+        };
+
         let activeGenres = new Set();
         let activeServices = new Set();
         let favorites = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
         let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
         let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended", "favorites", "all"]');
         let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
-        let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || '{"primary": "#007bff", "bg": "#f4f7f9"}');
+        let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.stringify(DEFAULT_THEME));
         let showOnlyFavorites = false;
         let highlightStreaming = false;
 
@@ -632,11 +656,7 @@
             applyTheme();
             setupEventListeners();
             
-            // Asetetaan teema-asetusten alkutila kenttiin
-            document.getElementById('primary-color-hex').value = themeSettings.primary;
-            document.getElementById('primary-color-picker').value = themeSettings.primary;
-            document.getElementById('bg-color-hex').value = themeSettings.bg;
-            document.getElementById('bg-color-picker').value = themeSettings.bg;
+            updateThemeInputs();
             
             // Tarkistetaan aiempi sivupalkin tila
             const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
@@ -657,9 +677,23 @@
         function applyTheme() {
             document.documentElement.style.setProperty('--primary-color', themeSettings.primary);
             document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
+            document.documentElement.style.setProperty('--header-bg', themeSettings.headerBg);
+            document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
+            
             // Päivitetään myös sivupalkin tausta jos se on sidottu bg-coloriin
             const sidebar = document.getElementById('sidebar');
             if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
+        }
+
+        function updateThemeInputs() {
+            document.getElementById('primary-color-hex').value = themeSettings.primary;
+            document.getElementById('primary-color-picker').value = themeSettings.primary;
+            document.getElementById('bg-color-hex').value = themeSettings.bg;
+            document.getElementById('bg-color-picker').value = themeSettings.bg;
+            document.getElementById('header-bg-hex').value = themeSettings.headerBg;
+            document.getElementById('header-bg-picker').value = themeSettings.headerBg;
+            document.getElementById('header-text-hex').value = themeSettings.headerText;
+            document.getElementById('header-text-picker').value = themeSettings.headerText;
         }
 
         // --- RENDERING ---
@@ -864,33 +898,43 @@
             const primaryPicker = document.getElementById('primary-color-picker');
             const bgHex = document.getElementById('bg-color-hex');
             const bgPicker = document.getElementById('bg-color-picker');
+            const headerBgHex = document.getElementById('header-bg-hex');
+            const headerBgPicker = document.getElementById('header-bg-picker');
+            const headerTextHex = document.getElementById('header-text-hex');
+            const headerTextPicker = document.getElementById('header-text-picker');
+            const resetBtn = document.getElementById('reset-theme-btn');
 
-            const updatePrimary = (val) => {
+            const updateThemePart = (key, val, hexInput, pickerInput) => {
                 if (/^#[0-9A-F]{6}$/i.test(val)) {
-                    themeSettings.primary = val;
-                    primaryHex.value = val;
-                    primaryPicker.value = val;
+                    themeSettings[key] = val;
+                    hexInput.value = val;
+                    pickerInput.value = val;
                     applyTheme();
                     saveState();
-                    renderGenreFilters(); // Päivitetään chipit
-                    renderContent(); // Päivitetään korttien korostukset
+                    if (key === 'primary') {
+                        renderGenreFilters();
+                        renderContent();
+                    }
                 }
             };
 
-            const updateBg = (val) => {
-                if (/^#[0-9A-F]{6}$/i.test(val)) {
-                    themeSettings.bg = val;
-                    bgHex.value = val;
-                    bgPicker.value = val;
-                    applyTheme();
-                    saveState();
-                }
-            };
+            primaryHex.addEventListener('input', (e) => updateThemePart('primary', e.target.value, primaryHex, primaryPicker));
+            primaryPicker.addEventListener('input', (e) => updateThemePart('primary', e.target.value, primaryHex, primaryPicker));
+            bgHex.addEventListener('input', (e) => updateThemePart('bg', e.target.value, bgHex, bgPicker));
+            bgPicker.addEventListener('input', (e) => updateThemePart('bg', e.target.value, bgHex, bgPicker));
+            headerBgHex.addEventListener('input', (e) => updateThemePart('headerBg', e.target.value, headerBgHex, headerBgPicker));
+            headerBgPicker.addEventListener('input', (e) => updateThemePart('headerBg', e.target.value, headerBgHex, headerBgPicker));
+            headerTextHex.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
+            headerTextPicker.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
 
-            primaryHex.addEventListener('input', (e) => updatePrimary(e.target.value));
-            primaryPicker.addEventListener('input', (e) => updatePrimary(e.target.value));
-            bgHex.addEventListener('input', (e) => updateBg(e.target.value));
-            bgPicker.addEventListener('input', (e) => updateBg(e.target.value));
+            resetBtn.addEventListener('click', () => {
+                themeSettings = { ...DEFAULT_THEME };
+                applyTheme();
+                updateThemeInputs();
+                saveState();
+                renderGenreFilters();
+                renderContent();
+            });
         }
 
         // --- DRAG AND DROP (Sivupalkki) ---
