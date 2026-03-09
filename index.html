@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oma viihde - Prototyyppi</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --primary-color: #007bff;
@@ -394,6 +395,46 @@
             background: #ddd;
             background-size: cover;
             background-position: center;
+        }
+
+        .card-drag-handle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            z-index: 11;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .card:hover .card-drag-handle,
+        .card.is-reorderable .card-drag-handle {
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .card-drag-handle {
+                opacity: 1;
+            }
+        }
+
+        .card-drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .sortable-ghost {
+            opacity: 0.2;
+            transform: scale(0.95);
         }
 
         .fav-btn {
@@ -1001,7 +1042,7 @@
 
         let activeGenres = new Set();
         let activeServices = new Set();
-        let favorites = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+        let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
         let recordings = new Set(JSON.parse(localStorage.getItem('recs') || '[]'));
         let reminders = new Set(JSON.parse(localStorage.getItem('rems') || '[]'));
         let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
@@ -1037,7 +1078,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('favs', JSON.stringify([...favorites]));
+            localStorage.setItem('favs', JSON.stringify(favorites));
             localStorage.setItem('recs', JSON.stringify([...recordings]));
             localStorage.setItem('rems', JSON.stringify([...reminders]));
             localStorage.setItem('customSections', JSON.stringify(customSections));
@@ -1138,7 +1179,10 @@
                 let isCustom = sectionId.startsWith('genre-');
 
                 if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
-                else if (sectionId === 'favorites') items = contentItems.filter(i => favorites.has(i.id));
+                else if (sectionId === 'favorites') {
+                    // Järjestetään suosikit favorites-taulukon järjestyksen mukaan
+                    items = favorites.map(id => contentItems.find(i => i.id === id)).filter(Boolean);
+                }
                 else if (sectionId === 'all') items = contentItems;
                 else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
 
@@ -1156,14 +1200,31 @@
                 sectionEl.id = 'anchor-' + sectionId;
                 
                 sectionEl.innerHTML = `
-                    <div class=\"section-header\">
+                    <div class="section-header">
                         <h3>${title}</h3>
                     </div>
-                    <div class=\"grid\">
-                        ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item)).join('') : '<div class=\"empty-state\">Ei sisältöä valituilla suodattimilla.</div>'}
+                    <div class="grid ${sectionId === 'favorites' ? 'reorderable-grid' : ''}" id="grid-${sectionId}">
+                        ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('') : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
                     </div>
                 `;
                 dynamicSectionsContainer.appendChild(sectionEl);
+
+                // Alustetaan Sortable suosikeille
+                if (sectionId === 'favorites' && filteredItems.length > 1) {
+                    const grid = sectionEl.querySelector('.grid');
+                    new Sortable(grid, {
+                        animation: 150,
+                        handle: '.card-drag-handle',
+                        ghostClass: 'sortable-ghost',
+                        onEnd: function() {
+                            const newOrder = [...grid.querySelectorAll('.card')].map(card => parseInt(card.getAttribute('data-id')));
+                            favorites = newOrder;
+                            saveState();
+                            // Emme kutsu renderContentia tässä, jotta vältymme välkynnältä, 
+                            // koska DOM on jo oikeassa järjestyksessä.
+                        }
+                    });
+                }
             });
 
             // Päivitetään myös AI-tulokset jos ne ovat näkyvissä
@@ -1189,13 +1250,14 @@
             });
         }
 
-        function createCardHtml(item) {
-            const isFav = favorites.has(item.id);
+        function createCardHtml(item, isReorderable = false) {
+            const isFav = favorites.includes(item.id);
             const isRec = recordings.has(item.id);
             const isRem = reminders.has(item.id);
             const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
             return `
-                <div class="card" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
+                <div class="card ${isReorderable ? 'is-reorderable' : ''}" data-id="${item.id}" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
+                    ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
                     <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     </button>
@@ -1355,8 +1417,9 @@
 
                 if (favBtn) {
                     const id = parseInt(favBtn.getAttribute('data-id'));
-                    if (favorites.has(id)) favorites.delete(id);
-                    else favorites.add(id);
+                    const index = favorites.indexOf(id);
+                    if (index > -1) favorites.splice(index, 1);
+                    else favorites.push(id);
                     saveState();
                     renderContent();
                     return;
