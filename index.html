@@ -7,10 +7,11 @@
     <style>
         :root {
             --primary-color: #007bff;
+            --accent-color: #ff4757;
             --bg-color: #f4f7f9;
             --card-bg: #ffffff;
             --text-color: #333;
-            --sidebar-width: 280px;
+            --sidebar-width: 300px;
             --border-radius: 12px;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -67,7 +68,7 @@
             gap: 2rem;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
             }
@@ -79,7 +80,7 @@
             flex-shrink: 0;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             aside {
                 width: 100%;
             }
@@ -102,12 +103,20 @@
 
         .chip-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
 
+        .genre-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
         .chip {
+            flex-grow: 1;
             padding: 0.5rem 1rem;
             background: #eee;
             border-radius: 20px;
@@ -116,6 +125,7 @@
             border: 2px solid transparent;
             transition: all 0.2s;
             user-select: none;
+            text-align: center;
         }
 
         .chip.active {
@@ -124,8 +134,24 @@
             border-color: var(--primary-color);
         }
 
-        .chip:hover:not(.active) {
-            background: #e0e0e0;
+        .add-section-btn {
+            background: #e9ecef;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .add-section-btn:hover {
+            background: #dee2e6;
         }
 
         .toggle-group label {
@@ -155,18 +181,11 @@
             border-radius: var(--border-radius);
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
         }
 
         .hero h2 {
             font-size: 2rem;
             margin-bottom: 1rem;
-        }
-
-        .hero p {
-            max-width: 600px;
-            opacity: 0.9;
         }
 
         /* Sections */
@@ -192,25 +211,31 @@
             align-items: center;
             margin-bottom: 1.5rem;
             cursor: grab;
-            padding: 0.5rem;
+            padding: 0.75rem 1rem;
             background: #e9ecef;
             border-radius: 8px;
         }
 
-        .section-header:active {
-            cursor: grabbing;
-        }
-
         .section-header h3 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
         }
 
         .section-header h3::before {
             content: '⠿';
-            margin-right: 10px;
+            margin-right: 12px;
             color: #999;
+        }
+
+        .remove-section-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
         }
 
         /* Grid */
@@ -229,6 +254,7 @@
             transition: transform 0.3s;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .card:hover {
@@ -238,13 +264,31 @@
         .card-img {
             height: 140px;
             background: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .fav-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: #888;
-            background-size: cover;
-            background-position: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            color: #ccc;
+        }
+
+        .fav-btn.active {
+            color: var(--accent-color);
+            background: white;
         }
 
         .card-content {
@@ -285,13 +329,14 @@
 
         .empty-state {
             text-align: center;
-            padding: 4rem;
-            background: white;
+            padding: 2rem;
+            background: rgba(255,255,255,0.5);
             border-radius: var(--border-radius);
             grid-column: 1 / -1;
+            font-style: italic;
+            color: #888;
         }
 
-        /* Utility */
         .hidden {
             display: none !important;
         }
@@ -309,194 +354,261 @@
     </header>
 
     <div class="container">
-        <!-- Vasen sarake: Suodattimet ja asetukset -->
         <aside>
             <div class="filter-section">
                 <h3>Lajityypit</h3>
+                <p style="font-size: 0.75rem; color: #888; margin-bottom: 0.5rem;">Klikkaa nimeä suodattaaksesi, + lisätäksesi osion.</p>
                 <div class="chip-group" id="genre-filters">
-                    <div class="chip" data-value="Elokuvat">Elokuvat</div>
-                    <div class="chip" data-value="Sarjat">Sarjat</div>
-                    <div class="chip" data-value="Urheilu">Urheilu</div>
-                    <div class="chip" data-value="Lapset">Lapset</div>
-                    <div class="chip" data-value="Dokumentit">Dokumentit</div>
-                    <div class="chip" data-value="Viihde">Viihde</div>
-                    <div class="chip" data-value="Uutiset">Uutiset</div>
+                    <!-- Generoidaan JS:llä -->
                 </div>
 
                 <h3>Palvelut</h3>
-                <div class="chip-group" id="service-filters">
-                    <div class="chip" data-value="Linear TV">Lineaarinen TV</div>
-                    <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
-                    <div class="chip" data-value="Vuokraelokuva">Vuokraelokuvat</div>
+                <div class="chip-group" id="service-filters" style="flex-direction: row; flex-wrap: wrap;">
+                    <div class="chip" data-value="Linear TV">TV</div>
+                    <div class="chip" data-value="Suoratoisto">Stream</div>
+                    <div class="chip" data-value="Vuokraelokuva">Vuokra</div>
                 </div>
 
                 <h3>Asetukset</h3>
                 <div class="toggle-group">
-                    <label>
-                        <input type="checkbox" id="toggle-favorites"> Näytä vain suosikkilajityypit
-                    </label>
-                    <label>
-                        <input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa
-                    </label>
+                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikkilajityypit</label>
+                    <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
                 </div>
             </div>
 
             <div class="filter-section">
                 <h3>Näkymän hallinta</h3>
-                <p style="font-size: 0.8rem; color: #666; margin-bottom: 1rem;">Voit vaihtaa osioiden paikkaa raahaamalla niitä oikealla.</p>
-                <div class="toggle-group">
-                    <label>
-                        <input type="checkbox" checked id="show-recommended"> Näytä "Suositellut sinulle"
-                    </label>
-                    <label>
-                        <input type="checkbox" checked id="show-all"> Näytä "Kaikki sisällöt"
-                    </label>
+                <div class="toggle-group" id="visibility-controls">
+                    <label><input type="checkbox" checked data-section="recommended"> Suositellut sinulle</label>
+                    <label><input type="checkbox" checked data-section="favorites"> Omat suosikit</label>
+                    <label><input type="checkbox" checked data-section="all"> Kaikki sisällöt</label>
                 </div>
             </div>
         </aside>
 
-        <!-- Oikea sarake: Sisältöalue -->
         <main id="sections-container">
             <div class="hero">
                 <h2>Tervetuloa takaisin!</h2>
-                <p>Löysimme 5 uutta ohjelmaa, jotka saattaisivat kiinnostaa sinua tänään. Säädä suodattimia vasemmalta tarkentaaksesi näkymää.</p>
+                <p>Luo oma täydellinen viihdenäkymäsi lisäämällä genre-osioita ja merkitsemällä suosikkeja.</p>
             </div>
 
-            <!-- Osio A: Suositellut -->
-            <section id="section-recommended" class="content-section" draggable="true" aria-label="Suositellut sinulle -osio">
-                <div class="section-header">
-                    <h3>Suositellut sinulle</h3>
-                </div>
-                <div class="grid" id="grid-recommended">
-                    <!-- Sisältö generoidaan JS:llä -->
-                </div>
-            </section>
-
-            <!-- Osio B: Kaikki sisällöt -->
-            <section id="section-all" class="content-section" draggable="true" aria-label="Kaikki sisällöt -osio">
-                <div class="section-header">
-                    <h3>Kaikki sisällöt</h3>
-                </div>
-                <div class="grid" id="grid-all">
-                    <!-- Sisältö generoidaan JS:llä -->
-                </div>
-            </section>
+            <!-- Osioiden paikka -->
+            <div id="dynamic-sections">
+                <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
+            </div>
         </main>
     </div>
 
     <script>
         // --- MOCK DATA ---
+        const genres = ["Elokuvat", "Sarjat", "Urheilu", "Lapset", "Dokumentit", "Viihde", "Uutiset"];
+        
         const contentItems = [
+            // Elokuvat
             { id: 1, title: "Napapiirin sankarit", type: "Suoratoisto", genre: "Elokuvat", desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
-            { id: 2, title: "Uutiset 20:30", type: "Linear TV", genre: "Uutiset", desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
-            { id: 3, title: "Jääkiekon MM-finaali", type: "Linear TV", genre: "Urheilu", desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
             { id: 4, title: "Dune: Osa kaksi", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
-            { id: 5, title: "Muumilaakson tarinoita", type: "Suoratoisto", genre: "Lapset", desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
-            { id: 6, title: "Luonnon ihmeet", type: "Suoratoisto", genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
-            { id: 7, title: "Putous", type: "Linear TV", genre: "Viihde", desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
-            { id: 8, title: "Sorjonen", type: "Suoratoisto", genre: "Sarjat", desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
             { id: 9, title: "Barbie", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
-            { id: 10, title: "Formula 1: Monaco", type: "Linear TV", genre: "Urheilu", desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
-            { id: 11, title: "Avara luonto", type: "Linear TV", genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
+            { id: 17, title: "Sisu", type: "Suoratoisto", genre: "Elokuvat", desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
+            { id: 18, title: "Kuolleet lehdet", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
+            
+            // Sarjat
+            { id: 8, title: "Sorjonen", type: "Suoratoisto", genre: "Sarjat", desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
             { id: 12, title: "The Last of Us", type: "Suoratoisto", genre: "Sarjat", desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
+            { id: 19, title: "Munkkivuori", type: "Suoratoisto", genre: "Sarjat", desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
+            { id: 20, title: "Pohjolan laki", type: "Linear TV", genre: "Sarjat", desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
+            { id: 21, title: "Succession", type: "Suoratoisto", genre: "Sarjat", desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
+
+            // Urheilu
+            { id: 3, title: "Jääkiekon MM-finaali", type: "Linear TV", genre: "Urheilu", desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
+            { id: 10, title: "Formula 1: Monaco", type: "Linear TV", genre: "Urheilu", desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
+            { id: 22, title: "Huuhkajat: EM-karsinta", type: "Linear TV", genre: "Urheilu", desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
+            { id: 23, title: "Wimbledon: Finaali", type: "Linear TV", genre: "Urheilu", desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
+            { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu", desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
+
+            // Lapset
+            { id: 5, title: "Muumilaakson tarinoita", type: "Suoratoisto", genre: "Lapset", desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
             { id: 13, title: "Ryhmä Hau", type: "Suoratoisto", genre: "Lapset", desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
-            { id: 14, title: "Oppenheimer", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Christopher Nolanin mestariteos atomipommin isästä.", recommended: true },
+            { id: 25, title: "Pipsa Possu", type: "Linear TV", genre: "Lapset", desc: "Pienen possun arkisia seikkailuja.", recommended: false },
+            { id: 26, title: "Frozen II", type: "Vuokraelokuva", genre: "Lapset", desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
+            { id: 27, title: "Katti Matikainen", type: "Linear TV", genre: "Lapset", desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
+
+            // Dokumentit
+            { id: 6, title: "Luonnon ihmeet", type: "Suoratoisto", genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
+            { id: 11, title: "Avara luonto", type: "Linear TV", genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
+            { id: 28, title: "Suomi on metsäläinen", type: "Linear TV", genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
+            { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto", genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
+            { id: 30, title: "Kosmos", type: "Suoratoisto", genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
+
+            // Viihde
+            { id: 7, title: "Putous", type: "Linear TV", genre: "Viihde", desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
             { id: 15, title: "MasterChef Suomi", type: "Linear TV", genre: "Viihde", desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
-            { id: 16, title: "A-studio", type: "Linear TV", genre: "Uutiset", desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false }
+            { id: 31, title: "Vain elämää", type: "Linear TV", genre: "Viihde", desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
+            { id: 32, title: "Haluatko miljonääriksi?", type: "Linear TV", genre: "Viihde", desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
+            { id: 33, title: "Tanssii tähtien kanssa", type: "Linear TV", genre: "Viihde", desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
+
+            // Uutiset
+            { id: 2, title: "Uutiset 20:30", type: "Linear TV", genre: "Uutiset", desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
+            { id: 16, title: "A-studio", type: "Linear TV", genre: "Uutiset", desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
+            { id: 34, title: "Yle Uutiset: Sää", type: "Linear TV", genre: "Uutiset", desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
+            { id: 35, title: "CNN International", type: "Suoratoisto", genre: "Uutiset", desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
+            { id: 36, title: "Urheiluruutu", type: "Linear TV", genre: "Uutiset", desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
         ];
 
         // --- STATE ---
         let activeGenres = new Set();
         let activeServices = new Set();
+        let favorites = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
+        let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
+        let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended", "favorites", "all"]');
+        let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
         let showOnlyFavorites = false;
         let highlightStreaming = false;
 
         // --- DOM ELEMENTS ---
-        const gridRecommended = document.getElementById('grid-recommended');
-        const gridAll = document.getElementById('grid-all');
-        const genreChips = document.querySelectorAll('#genre-filters .chip');
+        const dynamicSectionsContainer = document.getElementById('dynamic-sections');
+        const genreFiltersContainer = document.getElementById('genre-filters');
         const serviceChips = document.querySelectorAll('#service-filters .chip');
         const toggleFavorites = document.getElementById('toggle-favorites');
         const toggleHighlight = document.getElementById('toggle-highlight');
-        const showRecommendedCheck = document.getElementById('show-recommended');
-        const showAllCheck = document.getElementById('show-all');
-        const sectionRecommended = document.getElementById('section-recommended');
-        const sectionAll = document.getElementById('section-all');
-        const sectionsContainer = document.getElementById('sections-container');
+        const visibilityControls = document.getElementById('visibility-controls');
 
         // --- INITIALIZATION ---
         function init() {
+            renderGenreFilters();
+            renderVisibilityControls();
             renderContent();
             setupEventListeners();
-            setupDragAndDrop();
+        }
+
+        function saveState() {
+            localStorage.setItem('favs', JSON.stringify([...favorites]));
+            localStorage.setItem('customSections', JSON.stringify(customSections));
+            localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+            localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
         }
 
         // --- RENDERING ---
-        function renderContent() {
-            const filteredItems = contentItems.filter(item => {
-                const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
-                const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-                
-                // Simuloitu "suosikkilajityyppi" logiikka (tässä vain Elokuvat ja Urheilu esimerkkeinä)
-                const isFavorite = ["Elokuvat", "Urheilu"].includes(item.genre);
-                const favoriteMatch = !showOnlyFavorites || isFavorite;
-
-                return genreMatch && serviceMatch && favoriteMatch;
-            });
-
-            const recommendedItems = filteredItems.filter(item => item.recommended);
-
-            updateGrid(gridRecommended, recommendedItems);
-            updateGrid(gridAll, filteredItems);
+        function renderGenreFilters() {
+            genreFiltersContainer.innerHTML = genres.map(g => `
+                <div class="genre-item">
+                    <div class="chip ${activeGenres.has(g) ? 'active' : ''}" data-value="${g}">${g}</div>
+                    <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi">+</button>
+                </div>
+            `).join('');
         }
 
-        function updateGrid(container, items) {
-            container.innerHTML = '';
-            
-            if (items.length === 0) {
-                container.innerHTML = '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>';
-                return;
-            }
+        function renderVisibilityControls() {
+            // Perusosiot
+            let html = `
+                <label><input type="checkbox" ${!hiddenSections.has('recommended') ? 'checked' : ''} data-section="recommended"> Suositellut sinulle</label>
+                <label><input type="checkbox" ${!hiddenSections.has('favorites') ? 'checked' : ''} data-section="favorites"> Omat suosikit</label>
+                <label><input type="checkbox" ${!hiddenSections.has('all') ? 'checked' : ''} data-section="all"> Kaikki sisällöt</label>
+            `;
+            // Dynaamiset genre-osiot
+            customSections.forEach(genre => {
+                html += `<label><input type="checkbox" ${!hiddenSections.has('genre-' + genre) ? 'checked' : ''} data-section="genre-${genre}"> Genre: ${genre}</label>`;
+            });
+            visibilityControls.innerHTML = html;
+        }
 
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                // Korostus jos asetus päällä
-                if (highlightStreaming && item.type === "Suoratoisto") {
-                    card.style.border = "2px solid var(--primary-color)";
-                    card.style.background = "#f0f7ff";
+        function renderContent() {
+            dynamicSectionsContainer.innerHTML = '';
+            
+            // Rakennetaan lista kaikista mahdollisista osioista (perus + dynaamiset)
+            // Varmistetaan että sectionOrder sisältää uudet dynaamiset osiot
+            customSections.forEach(g => {
+                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
+            });
+
+            sectionOrder.forEach(sectionId => {
+                if (hiddenSections.has(sectionId)) return;
+
+                let title = "";
+                let items = [];
+                let isCustom = sectionId.startsWith('genre-');
+
+                if (sectionId === 'recommended') {
+                    title = "Suositellut sinulle";
+                    items = contentItems.filter(i => i.recommended);
+                } else if (sectionId === 'favorites') {
+                    title = "Omat suosikit";
+                    items = contentItems.filter(i => favorites.has(i.id));
+                } else if (sectionId === 'all') {
+                    title = "Kaikki sisällöt";
+                    items = contentItems;
+                } else if (isCustom) {
+                    const genreName = sectionId.replace('genre-', '');
+                    title = "Lajityyppi: " + genreName;
+                    items = contentItems.filter(i => i.genre === genreName);
                 }
 
-                card.innerHTML = `
-                    <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')">
+                // Suodatus globaaleilla suodattimilla
+                const filteredItems = items.filter(item => {
+                    const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
+                    const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
+                    const isFavGenre = ["Elokuvat", "Urheilu"].includes(item.genre);
+                    const favoriteMatch = !showOnlyFavorites || isFavGenre;
+                    return genreMatch && serviceMatch && favoriteMatch;
+                });
+
+                const sectionEl = document.createElement('section');
+                sectionEl.className = 'content-section';
+                sectionEl.id = sectionId;
+                sectionEl.draggable = true;
+                
+                sectionEl.innerHTML = `
+                    <div class="section-header">
+                        <h3>${title}</h3>
+                        ${isCustom ? `<button class="remove-section-btn" data-genre="${sectionId.replace('genre-', '')}">Poista osio</button>` : ''}
                     </div>
+                    <div class="grid">
+                        ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item)).join('') : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+                    </div>
+                `;
+                dynamicSectionsContainer.appendChild(sectionEl);
+            });
+
+            setupDragAndDrop();
+        }
+
+        function createCardHtml(item) {
+            const isFav = favorites.has(item.id);
+            const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
+            return `
+                <div class="card" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
+                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="Lisää suosikkeihin">❤</button>
+                    <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
                     <div class="card-content">
                         <div class="card-type">${item.type}</div>
                         <div class="card-title">${item.title}</div>
                         <div class="card-genre">${item.genre}</div>
                         <div class="card-desc">${item.desc}</div>
                     </div>
-                `;
-                container.appendChild(card);
-            });
+                </div>
+            `;
         }
 
         // --- EVENT LISTENERS ---
         function setupEventListeners() {
-            // Genre suodattimet
-            genreChips.forEach(chip => {
-                chip.addEventListener('click', () => {
-                    const val = chip.getAttribute('data-value');
-                    if (activeGenres.has(val)) {
-                        activeGenres.delete(val);
-                        chip.classList.remove('active');
-                    } else {
-                        activeGenres.add(val);
-                        chip.classList.add('active');
-                    }
+            // Genre klikkaus (suodatus)
+            genreFiltersContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('chip')) {
+                    const val = e.target.getAttribute('data-value');
+                    if (activeGenres.has(val)) activeGenres.delete(val);
+                    else activeGenres.add(val);
+                    renderGenreFilters();
                     renderContent();
-                });
+                }
+                // Lisää osio (+)
+                if (e.target.classList.contains('add-section-btn')) {
+                    const genre = e.target.getAttribute('data-genre');
+                    if (!customSections.includes(genre)) {
+                        customSections.push(genre);
+                        saveState();
+                        renderVisibilityControls();
+                        renderContent();
+                    }
+                }
             });
 
             // Palvelu suodattimet
@@ -514,72 +626,68 @@
                 });
             });
 
+            // Suosikki-nappi korteissa
+            dynamicSectionsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('fav-btn')) {
+                    const id = parseInt(e.target.getAttribute('data-id'));
+                    if (favorites.has(id)) favorites.delete(id);
+                    else favorites.add(id);
+                    saveState();
+                    renderContent();
+                }
+                // Osion poisto
+                if (e.target.classList.contains('remove-section-btn')) {
+                    const genre = e.target.getAttribute('data-genre');
+                    customSections = customSections.filter(g => g !== genre);
+                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
+                    saveState();
+                    renderVisibilityControls();
+                    renderContent();
+                }
+            });
+
             // Asetukset
-            toggleFavorites.addEventListener('change', (e) => {
-                showOnlyFavorites = e.target.checked;
+            toggleFavorites.addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
+            toggleHighlight.addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
+
+            // Näkyvyys-valinnat
+            visibilityControls.addEventListener('change', (e) => {
+                const sectionId = e.target.getAttribute('data-section');
+                if (e.target.checked) hiddenSections.delete(sectionId);
+                else hiddenSections.add(sectionId);
+                saveState();
                 renderContent();
-            });
-
-            toggleHighlight.addEventListener('change', (e) => {
-                highlightStreaming = e.target.checked;
-                renderContent();
-            });
-
-            // Näkyvyys
-            showRecommendedCheck.addEventListener('change', (e) => {
-                sectionRecommended.classList.toggle('hidden', !e.target.checked);
-            });
-
-            showAllCheck.addEventListener('change', (e) => {
-                sectionAll.classList.toggle('hidden', !e.target.checked);
             });
         }
 
         // --- DRAG AND DROP ---
         function setupDragAndDrop() {
             const draggables = document.querySelectorAll('.content-section');
-            
             draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => {
-                    draggable.classList.add('dragging');
-                });
-
+                draggable.addEventListener('dragstart', () => draggable.classList.add('dragging'));
                 draggable.addEventListener('dragend', () => {
                     draggable.classList.remove('dragging');
-                    // Poista korostukset kaikilta
                     draggables.forEach(d => d.classList.remove('drag-over'));
+                    // Tallenna uusi järjestys
+                    const currentOrder = [...dynamicSectionsContainer.querySelectorAll('.content-section')].map(s => s.id);
+                    sectionOrder = currentOrder;
+                    saveState();
                 });
-
-                draggable.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    draggable.classList.add('drag-over');
-                });
-
-                draggable.addEventListener('dragleave', () => {
-                    draggable.classList.remove('drag-over');
-                });
-
+                draggable.addEventListener('dragover', (e) => { e.preventDefault(); draggable.classList.add('drag-over'); });
+                draggable.addEventListener('dragleave', () => draggable.classList.remove('drag-over'));
                 draggable.addEventListener('drop', (e) => {
                     e.preventDefault();
                     const draggingItem = document.querySelector('.dragging');
-                    if (draggingItem !== draggable) {
-                        // Vaihdetaan paikkoja DOMissa
-                        const allSections = [...sectionsContainer.querySelectorAll('.content-section')];
-                        const draggingIndex = allSections.indexOf(draggingItem);
-                        const targetIndex = allSections.indexOf(draggable);
-
-                        if (draggingIndex < targetIndex) {
-                            draggable.after(draggingItem);
-                        } else {
-                            draggable.before(draggingItem);
-                        }
+                    if (draggingItem && draggingItem !== draggable) {
+                        const all = [...dynamicSectionsContainer.querySelectorAll('.content-section')];
+                        if (all.indexOf(draggingItem) < all.indexOf(draggable)) draggable.after(draggingItem);
+                        else draggable.before(draggingItem);
                     }
                     draggable.classList.remove('drag-over');
                 });
             });
         }
 
-        // Käynnistä sovellus
         init();
     </script>
 </body>
