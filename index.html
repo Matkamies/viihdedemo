@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oma viihde - Prototyyppi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #007bff;
@@ -529,6 +530,187 @@
             width: 18px;
             height: 18px;
         }
+
+        /* AI Search Section (Custom Toggle method) */
+        .ai-search-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+            border: 2px dashed var(--primary-color);
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .ai-search-section.collapsed {
+            background: #f8f9fa;
+            border-style: solid;
+            margin-bottom: 1.5rem;
+            padding: 1rem 2rem;
+        }
+
+        .ai-search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-collapsible-wrapper {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.3s ease-out;
+        }
+
+        .ai-search-section.collapsed .ai-collapsible-wrapper {
+            grid-template-rows: 0fr;
+        }
+
+        .ai-collapsible-content {
+            overflow: hidden;
+            padding-top: 1.5rem;
+        }
+
+        .ai-toggle-btn {
+            background: #eee;
+            border: none;
+            color: #444;
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .ai-toggle-btn:hover {
+            background: #ddd;
+            color: var(--primary-color);
+        }
+
+        .ai-toggle-btn i {
+            transition: transform 0.3s;
+            font-size: 0.7rem;
+        }
+
+        .ai-search-section.collapsed .ai-toggle-btn i {
+            transform: rotate(-180deg);
+        }
+
+        .ai-search-section::before {
+            content: "✨";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4rem;
+            opacity: 0.05;
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+
+        .ai-search-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-textarea {
+            flex-grow: 1;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            resize: none;
+            height: 60px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .ai-textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .ai-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-btn:hover {
+            opacity: 0.9;
+        }
+
+        .ai-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .ai-loader {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            font-style: italic;
+            color: #666;
+        }
+
+        .ai-loader .dots::after {
+            content: ".";
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+        }
+
+        .ai-results {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .ai-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .clear-ai-btn {
+            background: transparent;
+            border: 1px solid #ddd;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .clear-ai-btn:hover {
+            background: #f8f9fa;
+        }
     </style>
 </head>
 <body class="sidebar-open">
@@ -636,6 +818,41 @@
                     <p>Hallitse näkymääsi vasemman sivupalkin ohjauspaneelista. Voit piilottaa valikon yläreunan painikkeesta.</p>
                 </div>
 
+                <!-- AI Search Section (Custom Toggle) -->
+                <div class="ai-search-section" id="ai-search-container">
+                    <div class="ai-search-header">
+                        <h3><span>✨</span> Tekoälyavusteinen sisältöhaku</h3>
+                        <button class="ai-toggle-btn" id="ai-toggle-btn">
+                            <span id="ai-toggle-text">Piilota</span>
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="ai-collapsible-wrapper">
+                        <div class="ai-collapsible-content" id="ai-collapsible-content">
+                            <div class="ai-input-group">
+                                <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle' tai 'Suosittele jotain hyvää lastenohjelmaa'"></textarea>
+                                <button class="ai-btn" id="ai-search-btn">
+                                    <span>Kysy tekoälyltä</span>
+                                </button>
+                            </div>
+                            
+                            <div class="ai-loader" id="ai-loader">
+                                Tekoäly analysoi pyyntöäsi ja selaa kirjastoa<span class="dots"></span>
+                            </div>
+
+                            <div class="ai-results" id="ai-results">
+                                <div class="ai-results-header">
+                                    <p style="font-size: 0.9rem; font-weight: bold; color: #555;">Tekoälyn suositukset:</p>
+                                    <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä haku</button>
+                                </div>
+                                <div class="grid" id="ai-results-grid">
+                                    <!-- Tulokset generoidaan JS:llä -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="dynamic-sections">
                     <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
                 </div>
@@ -719,6 +936,7 @@
         let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.stringify(DEFAULT_THEME));
         let showOnlyFavorites = false;
         let highlightStreaming = false;
+        let aiResults = [];
 
         // --- DOM ELEMENTS ---
         const dynamicSectionsContainer = document.getElementById('dynamic-sections');
@@ -978,8 +1196,55 @@
             document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
             document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
 
-            // Suosikki-nappi korteissa
-            dynamicSectionsContainer.addEventListener('click', (e) => {
+            // AI Search Toggle
+            const aiToggleBtn = document.getElementById('ai-toggle-btn');
+            const aiToggleText = document.getElementById('ai-toggle-text');
+            const aiSearchContainer = document.getElementById('ai-search-container');
+
+            if (aiToggleBtn && aiSearchContainer) {
+                aiToggleBtn.addEventListener('click', () => {
+                    const isCollapsed = aiSearchContainer.classList.toggle('collapsed');
+                    if (aiToggleText) {
+                        aiToggleText.textContent = isCollapsed ? 'Näytä' : 'Piilota';
+                    }
+                });
+            }
+
+            const aiSearchBtn = document.getElementById('ai-search-btn');
+            const aiPrompt = document.getElementById('ai-prompt');
+            const aiLoader = document.getElementById('ai-loader');
+            const aiResultsContainer = document.getElementById('ai-results');
+            const aiResultsGrid = document.getElementById('ai-results-grid');
+            const clearAiBtn = document.getElementById('clear-ai-btn');
+
+            aiSearchBtn.addEventListener('click', () => {
+                if (!aiPrompt.value.trim()) return;
+
+                aiSearchBtn.disabled = true;
+                aiResultsContainer.style.display = 'none';
+                aiLoader.style.display = 'block';
+
+                // Simuloidaan AI-prosessointia
+                setTimeout(() => {
+                    const count = Math.floor(Math.random() * 4) + 1; // 1-4 kpl
+                    const shuffled = [...contentItems].sort(() => 0.5 - Math.random());
+                    aiResults = shuffled.slice(0, count);
+
+                    aiLoader.style.display = 'none';
+                    aiResultsContainer.style.display = 'block';
+                    aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
+                    aiSearchBtn.disabled = false;
+                }, 1500);
+            });
+
+            clearAiBtn.addEventListener('click', () => {
+                aiResults = [];
+                aiResultsContainer.style.display = 'none';
+                aiPrompt.value = '';
+            });
+
+            // Suosikki-nappi korteissa (ja AI-tuloksissa)
+            const handleCardClick = (e) => {
                 const favBtn = e.target.closest('.fav-btn');
                 const recordBtn = e.target.closest('.record-btn');
                 const remindBtn = e.target.closest('.remind-btn');
@@ -990,6 +1255,8 @@
                     else favorites.add(id);
                     saveState();
                     renderContent();
+                    // Päivitetään myös AI-tulokset jos ne ovat näkyvissä
+                    if (aiResults.length > 0) document.getElementById('ai-results-grid').innerHTML = aiResults.map(item => createCardHtml(item)).join('');
                     return;
                 }
                 
@@ -999,6 +1266,7 @@
                     else recordings.add(id);
                     saveState();
                     renderContent();
+                    if (aiResults.length > 0) document.getElementById('ai-results-grid').innerHTML = aiResults.map(item => createCardHtml(item)).join('');
                     return;
                 }
 
@@ -1008,9 +1276,13 @@
                     else reminders.add(id);
                     saveState();
                     renderContent();
+                    if (aiResults.length > 0) document.getElementById('ai-results-grid').innerHTML = aiResults.map(item => createCardHtml(item)).join('');
                     return;
                 }
-            });
+            };
+
+            dynamicSectionsContainer.addEventListener('click', handleCardClick);
+            document.getElementById('ai-results-grid').addEventListener('click', handleCardClick);
 
             // Teeman hallinta
             const primaryHex = document.getElementById('primary-color-hex');
