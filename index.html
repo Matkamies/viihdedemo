@@ -219,7 +219,12 @@
             color: var(--primary-color);
             flex-shrink: 0;
             font-size: 1.2rem;
+            line-height: 0;
+            padding: 0;
             transition: background 0.2s;
+        }
+        .add-section-btn span {
+            transform: translateY(-1px);
         }
 
         .add-section-btn:hover {
@@ -725,7 +730,7 @@
             genreFiltersContainer.innerHTML = genres.map(g => `
                 <div class="genre-item">
                     <div class="chip ${activeGenres.has(g) ? 'active' : ''}" data-value="${g}">${g}</div>
-                    <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi">+</button>
+                    <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi"><span>+</span></button>
                 </div>
             `).join('');
         }
