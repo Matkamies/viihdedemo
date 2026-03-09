@@ -639,7 +639,7 @@
             if (id === 'recommended') return "Suositellut sinulle";
             if (id === 'favorites') return "Omat suosikit";
             if (id === 'all') return "Kaikki sisällöt";
-            if (id.startsWith('genre-')) return "Genre: " + id.replace('genre-', '');
+            if (id.startsWith('genre-')) return id.replace('genre-', '');
             return id;
         }
 
