@@ -11,9 +11,10 @@
             --bg-color: #f4f7f9;
             --card-bg: #ffffff;
             --text-color: #333;
-            --sidebar-width: 300px;
+            --sidebar-width: 320px;
             --border-radius: 12px;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition-speed: 0.3s;
         }
 
         * {
@@ -21,37 +22,69 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* Header */
         header {
             background-color: #1a1a1a;
             color: white;
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-toggle {
+            background: transparent;
+            border: 1px solid #444;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .sidebar-toggle:hover {
+            background: #333;
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
+            white-space: nowrap;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
         }
 
         nav a {
             color: #ccc;
             text-decoration: none;
-            margin-left: 1.5rem;
-            font-size: 0.9rem;
+            margin-left: 1.2rem;
+            font-size: 0.85rem;
             transition: color 0.3s;
         }
 
@@ -59,36 +92,71 @@
             color: white;
         }
 
-        /* Layout */
-        .container {
-            display: flex;
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            gap: 2rem;
+        @media (max-width: 768px) {
+            nav { display: none; }
         }
 
-        @media (max-width: 1024px) {
-            .container {
-                flex-direction: column;
-            }
+        /* Layout Wrapper */
+        .app-wrapper {
+            display: flex;
+            min-height: calc(100vh - 60px);
+            position: relative;
         }
 
         /* Sidebar */
         aside {
             width: var(--sidebar-width);
+            background: var(--bg-color);
+            border-right: 1px solid #ddd;
+            height: calc(100vh - 60px);
+            position: sticky;
+            top: 60px;
+            overflow-y: auto;
+            transition: transform var(--transition-speed) ease, margin-left var(--transition-speed) ease;
+            z-index: 1500;
+            padding: 1.5rem;
             flex-shrink: 0;
         }
 
+        /* Collapsed State (Desktop) */
+        body.sidebar-collapsed aside {
+            margin-left: calc(var(--sidebar-width) * -1);
+            transform: translateX(-100%);
+        }
+
+        /* Mobile Sidebar Behavior */
         @media (max-width: 1024px) {
             aside {
-                width: 100%;
+                position: fixed;
+                left: 0;
+                box-shadow: 10px 0 20px rgba(0,0,0,0.1);
+                margin-left: 0;
+                transform: translateX(-100%);
+            }
+            body.sidebar-open aside {
+                transform: translateX(0);
+            }
+            body.sidebar-collapsed aside {
+                margin-left: 0; /* Reset desktop logic */
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1400;
+            }
+            body.sidebar-open .sidebar-overlay {
+                display: block;
             }
         }
 
         .filter-section {
             background: var(--card-bg);
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
@@ -96,7 +164,7 @@
 
         .filter-section h3 {
             margin-bottom: 1rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
             border-bottom: 1px solid #eee;
             padding-bottom: 0.5rem;
         }
@@ -105,7 +173,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .genre-item {
@@ -117,92 +185,153 @@
 
         .chip {
             flex-grow: 1;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             background: #eee;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             border: 2px solid transparent;
             transition: all 0.2s;
-            user-select: none;
             text-align: center;
+            user-select: none;
         }
 
         .chip.active {
             background: var(--primary-color);
             color: white;
-            border-color: var(--primary-color);
         }
 
         .add-section-btn {
             background: #e9ecef;
             border: none;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             color: var(--primary-color);
-            transition: background 0.2s;
             flex-shrink: 0;
+            font-size: 1.2rem;
+            transition: background 0.2s;
         }
 
         .add-section-btn:hover {
             background: #dee2e6;
         }
 
-        .toggle-group label {
+        /* Sidebar Section Management */
+        .sidebar-section-list {
             display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            font-size: 0.9rem;
+            flex-direction: column;
+            gap: 0.4rem;
         }
 
-        .toggle-group input {
-            margin-right: 0.75rem;
-            width: 18px;
-            height: 18px;
+        .sidebar-section-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .sidebar-section-item.dragging {
+            opacity: 0.4;
+            background: #e9ecef;
+        }
+
+        .sidebar-section-item.drag-over {
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            margin-right: 8px;
+            color: #999;
+            user-select: none;
+            font-size: 1rem;
+        }
+
+        .section-checkbox {
+            margin-right: 8px;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .section-name {
+            flex-grow: 1;
+            cursor: pointer;
+            font-size: 0.85rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .section-name:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .sidebar-remove-btn {
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            padding: 2px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .sidebar-remove-btn:hover {
+            color: var(--accent-color);
         }
 
         /* Main Content Area */
         main {
             flex-grow: 1;
+            padding: 2rem;
+            max-width: 100%;
+            transition: padding var(--transition-speed) ease;
+        }
+
+        .content-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 600px) {
+            main { padding: 1rem; }
         }
 
         /* Hero Area */
         .hero {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 3rem;
+            padding: 2.5rem;
             border-radius: var(--border-radius);
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
         }
 
         .hero h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            opacity: 0.9;
         }
 
         /* Sections */
         .content-section {
-            margin-bottom: 3rem;
-            background: transparent;
-            border-radius: var(--border-radius);
-            transition: transform 0.2s, opacity 0.2s;
-        }
-
-        .content-section.dragging {
-            opacity: 0.5;
-            transform: scale(0.98);
-        }
-
-        .content-section.drag-over {
-            border: 2px dashed var(--primary-color);
+            margin-bottom: 4rem;
+            scroll-margin-top: 100px;
         }
 
         .section-header {
@@ -210,39 +339,23 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            cursor: grab;
-            padding: 0.75rem 1rem;
-            background: #e9ecef;
-            border-radius: 8px;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
         }
 
         .section-header h3 {
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-header h3::before {
-            content: '⠿';
-            margin-right: 12px;
-            color: #999;
-        }
-
-        .remove-section-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            cursor: pointer;
+            font-size: 1.4rem;
         }
 
         /* Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.5rem;
+        }
+
+        @media (min-width: 1600px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
         }
 
         /* Card */
@@ -252,8 +365,7 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: transform 0.3s;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             position: relative;
         }
 
@@ -262,7 +374,7 @@
         }
 
         .card-img {
-            height: 140px;
+            height: 160px;
             background: #ddd;
             background-size: cover;
             background-position: center;
@@ -282,8 +394,9 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            transition: all 0.2s;
             color: #ccc;
+            z-index: 10;
+            transition: all 0.2s;
         }
 
         .fav-btn.active {
@@ -330,22 +443,39 @@
         .empty-state {
             text-align: center;
             padding: 2rem;
-            background: rgba(255,255,255,0.5);
-            border-radius: var(--border-radius);
-            grid-column: 1 / -1;
-            font-style: italic;
             color: #888;
+            font-style: italic;
+            grid-column: 1 / -1;
         }
 
         .hidden {
             display: none !important;
         }
+
+        .toggle-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .toggle-group input[type="checkbox"] {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+        }
     </style>
 </head>
-<body>
+<body class="sidebar-open">
 
     <header>
-        <h1>Oma viihde</h1>
+        <div class="header-left">
+            <button class="sidebar-toggle" id="toggle-btn" title="Piilota/Näytä valikko">
+                <span style="font-size: 1.2rem;">☰</span>
+            </button>
+            <h1>Oma viihde</h1>
+        </div>
         <nav>
             <a href="#">Etusivu</a>
             <a href="#">Kirjasto</a>
@@ -353,11 +483,12 @@
         </nav>
     </header>
 
-    <div class="container">
-        <aside>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="app-wrapper">
+        <aside id="sidebar">
             <div class="filter-section">
                 <h3>Lajityypit</h3>
-                <p style="font-size: 0.75rem; color: #888; margin-bottom: 0.5rem;">Klikkaa nimeä suodattaaksesi, + lisätäksesi osion.</p>
                 <div class="chip-group" id="genre-filters">
                     <!-- Generoidaan JS:llä -->
                 </div>
@@ -371,30 +502,30 @@
 
                 <h3>Asetukset</h3>
                 <div class="toggle-group">
-                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikkilajityypit</label>
+                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikit</label>
                     <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
                 </div>
             </div>
 
             <div class="filter-section">
                 <h3>Näkymän hallinta</h3>
-                <div class="toggle-group" id="visibility-controls">
-                    <label><input type="checkbox" checked data-section="recommended"> Suositellut sinulle</label>
-                    <label><input type="checkbox" checked data-section="favorites"> Omat suosikit</label>
-                    <label><input type="checkbox" checked data-section="all"> Kaikki sisällöt</label>
+                <p style="font-size: 0.7rem; color: #888; margin-bottom: 0.8rem;">Järjestele raahaamalla ⠿, klikkaa nimeä navigoidaksesi.</p>
+                <div class="sidebar-section-list" id="sidebar-sections">
+                    <!-- Generoidaan JS:llä -->
                 </div>
             </div>
         </aside>
 
-        <main id="sections-container">
-            <div class="hero">
-                <h2>Tervetuloa takaisin!</h2>
-                <p>Luo oma täydellinen viihdenäkymäsi lisäämällä genre-osioita ja merkitsemällä suosikkeja.</p>
-            </div>
+        <main>
+            <div class="content-container">
+                <div class="hero">
+                    <h2>Tervetuloa takaisin!</h2>
+                    <p>Hallitse näkymääsi vasemman sivupalkin ohjauspaneelista. Voit piilottaa valikon yläreunan painikkeesta.</p>
+                </div>
 
-            <!-- Osioiden paikka -->
-            <div id="dynamic-sections">
-                <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
+                <div id="dynamic-sections">
+                    <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
+                </div>
             </div>
         </main>
     </div>
@@ -468,16 +599,23 @@
         const dynamicSectionsContainer = document.getElementById('dynamic-sections');
         const genreFiltersContainer = document.getElementById('genre-filters');
         const serviceChips = document.querySelectorAll('#service-filters .chip');
-        const toggleFavorites = document.getElementById('toggle-favorites');
-        const toggleHighlight = document.getElementById('toggle-highlight');
-        const visibilityControls = document.getElementById('visibility-controls');
+        const sidebarSectionsContainer = document.getElementById('sidebar-sections');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const overlay = document.getElementById('overlay');
 
         // --- INITIALIZATION ---
         function init() {
             renderGenreFilters();
-            renderVisibilityControls();
+            renderSidebarSections();
             renderContent();
             setupEventListeners();
+            
+            // Tarkistetaan aiempi sivupalkin tila
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                document.body.classList.add('sidebar-collapsed');
+                document.body.classList.remove('sidebar-open');
+            }
         }
 
         function saveState() {
@@ -497,69 +635,72 @@
             `).join('');
         }
 
-        function renderVisibilityControls() {
-            // Perusosiot
-            let html = `
-                <label><input type="checkbox" ${!hiddenSections.has('recommended') ? 'checked' : ''} data-section="recommended"> Suositellut sinulle</label>
-                <label><input type="checkbox" ${!hiddenSections.has('favorites') ? 'checked' : ''} data-section="favorites"> Omat suosikit</label>
-                <label><input type="checkbox" ${!hiddenSections.has('all') ? 'checked' : ''} data-section="all"> Kaikki sisällöt</label>
-            `;
-            // Dynaamiset genre-osiot
-            customSections.forEach(genre => {
-                html += `<label><input type="checkbox" ${!hiddenSections.has('genre-' + genre) ? 'checked' : ''} data-section="genre-${genre}"> Genre: ${genre}</label>`;
+        function getSectionTitle(id) {
+            if (id === 'recommended') return "Suositellut sinulle";
+            if (id === 'favorites') return "Omat suosikit";
+            if (id === 'all') return "Kaikki sisällöt";
+            if (id.startsWith('genre-')) return "Genre: " + id.replace('genre-', '');
+            return id;
+        }
+
+        function renderSidebarSections() {
+            // Varmistetaan että sectionOrder sisältää uudet dynaamiset osiot
+            customSections.forEach(g => {
+                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
             });
-            visibilityControls.innerHTML = html;
+            // Poistetaan sectionOrderista osiot joita ei enää ole customSectionsissa
+            sectionOrder = sectionOrder.filter(id => {
+                if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
+                return true;
+            });
+
+            sidebarSectionsContainer.innerHTML = sectionOrder.map(id => {
+                const isCustom = id.startsWith('genre-');
+                const isHidden = hiddenSections.has(id);
+                return `
+                    <div class="sidebar-section-item" draggable="true" data-id="${id}">
+                        <span class="drag-handle">⠿</span>
+                        <input type="checkbox" class="section-checkbox" ${!isHidden ? 'checked' : ''} data-id="${id}">
+                        <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
+                        ${isCustom ? `<button class="sidebar-remove-btn" data-genre="${id.replace('genre-', '')}" title="Poista osio">🗑</button>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            setupSidebarDragAndDrop();
         }
 
         function renderContent() {
             dynamicSectionsContainer.innerHTML = '';
             
-            // Rakennetaan lista kaikista mahdollisista osioista (perus + dynaamiset)
-            // Varmistetaan että sectionOrder sisältää uudet dynaamiset osiot
-            customSections.forEach(g => {
-                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
-            });
-
             sectionOrder.forEach(sectionId => {
                 if (hiddenSections.has(sectionId)) return;
 
-                let title = "";
+                let title = getSectionTitle(sectionId);
                 let items = [];
                 let isCustom = sectionId.startsWith('genre-');
 
-                if (sectionId === 'recommended') {
-                    title = "Suositellut sinulle";
-                    items = contentItems.filter(i => i.recommended);
-                } else if (sectionId === 'favorites') {
-                    title = "Omat suosikit";
-                    items = contentItems.filter(i => favorites.has(i.id));
-                } else if (sectionId === 'all') {
-                    title = "Kaikki sisällöt";
-                    items = contentItems;
-                } else if (isCustom) {
-                    const genreName = sectionId.replace('genre-', '');
-                    title = "Lajityyppi: " + genreName;
-                    items = contentItems.filter(i => i.genre === genreName);
-                }
+                if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
+                else if (sectionId === 'favorites') items = contentItems.filter(i => favorites.has(i.id));
+                else if (sectionId === 'all') items = contentItems;
+                else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
 
                 // Suodatus globaaleilla suodattimilla
                 const filteredItems = items.filter(item => {
                     const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
                     const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-                    const isFavGenre = ["Elokuvat", "Urheilu"].includes(item.genre);
-                    const favoriteMatch = !showOnlyFavorites || isFavGenre;
+                    // "Näytä vain suosikit" -logiikka (tässä esimerkissä suodatetaan vain tietyt genret jos päällä)
+                    const favoriteMatch = !showOnlyFavorites || ["Elokuvat", "Urheilu"].includes(item.genre);
                     return genreMatch && serviceMatch && favoriteMatch;
                 });
 
                 const sectionEl = document.createElement('section');
                 sectionEl.className = 'content-section';
-                sectionEl.id = sectionId;
-                sectionEl.draggable = true;
+                sectionEl.id = 'anchor-' + sectionId;
                 
                 sectionEl.innerHTML = `
                     <div class="section-header">
                         <h3>${title}</h3>
-                        ${isCustom ? `<button class="remove-section-btn" data-genre="${sectionId.replace('genre-', '')}">Poista osio</button>` : ''}
                     </div>
                     <div class="grid">
                         ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item)).join('') : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
@@ -567,8 +708,6 @@
                 `;
                 dynamicSectionsContainer.appendChild(sectionEl);
             });
-
-            setupDragAndDrop();
         }
 
         function createCardHtml(item) {
@@ -576,7 +715,7 @@
             const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
             return `
                 <div class="card" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
-                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="Lisää suosikkeihin">❤</button>
+                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}">❤</button>
                     <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
                     <div class="card-content">
                         <div class="card-type">${item.type}</div>
@@ -590,6 +729,21 @@
 
         // --- EVENT LISTENERS ---
         function setupEventListeners() {
+            // Sivupalkin piilotus
+            toggleBtn.addEventListener('click', () => {
+                const isMobile = window.innerWidth <= 1024;
+                if (isMobile) {
+                    document.body.classList.toggle('sidebar-open');
+                } else {
+                    document.body.classList.toggle('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed'));
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                document.body.classList.remove('sidebar-open');
+            });
+
             // Genre klikkaus (suodatus)
             genreFiltersContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('chip')) {
@@ -605,9 +759,40 @@
                     if (!customSections.includes(genre)) {
                         customSections.push(genre);
                         saveState();
-                        renderVisibilityControls();
+                        renderSidebarSections();
                         renderContent();
                     }
+                }
+            });
+
+            // Sivupalkin osioiden hallinta
+            sidebarSectionsContainer.addEventListener('click', (e) => {
+                // Navigointi
+                if (e.target.classList.contains('section-name')) {
+                    const id = e.target.getAttribute('data-id');
+                    const target = document.getElementById('anchor-' + id);
+                    if (target) {
+                        target.scrollIntoView();
+                        // Mobiilissa suljetaan valikko navigoinnin jälkeen
+                        if (window.innerWidth <= 1024) document.body.classList.remove('sidebar-open');
+                    }
+                }
+                // Näkyvyys
+                if (e.target.classList.contains('section-checkbox')) {
+                    const id = e.target.getAttribute('data-id');
+                    if (e.target.checked) hiddenSections.delete(id);
+                    else hiddenSections.add(id);
+                    saveState();
+                    renderContent();
+                }
+                // Osion poisto
+                if (e.target.classList.contains('sidebar-remove-btn')) {
+                    const genre = e.target.getAttribute('data-genre');
+                    customSections = customSections.filter(g => g !== genre);
+                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
+                    saveState();
+                    renderSidebarSections();
+                    renderContent();
                 }
             });
 
@@ -615,16 +800,16 @@
             serviceChips.forEach(chip => {
                 chip.addEventListener('click', () => {
                     const val = chip.getAttribute('data-value');
-                    if (activeServices.has(val)) {
-                        activeServices.delete(val);
-                        chip.classList.remove('active');
-                    } else {
-                        activeServices.add(val);
-                        chip.classList.add('active');
-                    }
+                    if (activeServices.has(val)) activeServices.delete(val);
+                    else activeServices.add(val);
+                    chip.classList.toggle('active');
                     renderContent();
                 });
             });
+
+            // Asetukset
+            document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
+            document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
 
             // Suosikki-nappi korteissa
             dynamicSectionsContainer.addEventListener('click', (e) => {
@@ -635,55 +820,33 @@
                     saveState();
                     renderContent();
                 }
-                // Osion poisto
-                if (e.target.classList.contains('remove-section-btn')) {
-                    const genre = e.target.getAttribute('data-genre');
-                    customSections = customSections.filter(g => g !== genre);
-                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
-                    saveState();
-                    renderVisibilityControls();
-                    renderContent();
-                }
-            });
-
-            // Asetukset
-            toggleFavorites.addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
-            toggleHighlight.addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
-
-            // Näkyvyys-valinnat
-            visibilityControls.addEventListener('change', (e) => {
-                const sectionId = e.target.getAttribute('data-section');
-                if (e.target.checked) hiddenSections.delete(sectionId);
-                else hiddenSections.add(sectionId);
-                saveState();
-                renderContent();
             });
         }
 
-        // --- DRAG AND DROP ---
-        function setupDragAndDrop() {
-            const draggables = document.querySelectorAll('.content-section');
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => draggable.classList.add('dragging'));
-                draggable.addEventListener('dragend', () => {
-                    draggable.classList.remove('dragging');
-                    draggables.forEach(d => d.classList.remove('drag-over'));
+        // --- DRAG AND DROP (Sivupalkki) ---
+        function setupSidebarDragAndDrop() {
+            const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', () => item.classList.add('dragging'));
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    items.forEach(i => i.classList.remove('drag-over'));
                     // Tallenna uusi järjestys
-                    const currentOrder = [...dynamicSectionsContainer.querySelectorAll('.content-section')].map(s => s.id);
-                    sectionOrder = currentOrder;
+                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
+                    sectionOrder = newOrder;
                     saveState();
+                    renderContent();
                 });
-                draggable.addEventListener('dragover', (e) => { e.preventDefault(); draggable.classList.add('drag-over'); });
-                draggable.addEventListener('dragleave', () => draggable.classList.remove('drag-over'));
-                draggable.addEventListener('drop', (e) => {
+                item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+                item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+                item.addEventListener('drop', (e) => {
                     e.preventDefault();
-                    const draggingItem = document.querySelector('.dragging');
-                    if (draggingItem && draggingItem !== draggable) {
-                        const all = [...dynamicSectionsContainer.querySelectorAll('.content-section')];
-                        if (all.indexOf(draggingItem) < all.indexOf(draggable)) draggable.after(draggingItem);
-                        else draggable.before(draggingItem);
+                    const dragging = sidebarSectionsContainer.querySelector('.dragging');
+                    if (dragging && dragging !== item) {
+                        const all = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')];
+                        if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
+                        else item.before(dragging);
                     }
-                    draggable.classList.remove('drag-over');
                 });
             });
         }
