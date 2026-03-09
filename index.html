@@ -61,17 +61,24 @@
             background: transparent;
             border: 1px solid #444;
             color: white;
-            padding: 0.5rem;
+            padding: 0.5rem 0.8rem;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0.6rem;
             transition: background 0.2s;
         }
 
         .sidebar-toggle:hover {
             background: #333;
+        }
+
+        .sidebar-toggle-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         header h1 {
@@ -346,8 +353,8 @@
             }
 
             .card {
-                min-width: 200px;
-                width: 200px;
+                min-width: 240px;
+                width: 240px;
                 scroll-snap-align: start;
                 flex-shrink: 0;
             }
@@ -765,12 +772,13 @@
         }
     </style>
 </head>
-<body class="sidebar-open">
+<body class="sidebar-collapsed">
 
     <header>
         <div class="header-left">
-            <button class="sidebar-toggle" id="toggle-btn" title="Piilota/Näytä valikko">
-                <span style="font-size: 1.2rem;">☰</span>
+            <button class="sidebar-toggle" id="toggle-btn" title="Avaa/Sulje asetukset">
+                <span style="font-size: 1.1rem;">☰</span>
+                <span class="sidebar-toggle-text">VALIKKO</span>
             </button>
             <h1>Oma viihde</h1>
         </div>
@@ -1008,12 +1016,10 @@
             
             updateThemeInputs();
             
-            // Tarkistetaan aiempi sivupalkin tila
-            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (isCollapsed) {
-                document.body.classList.add('sidebar-collapsed');
-                document.body.classList.remove('sidebar-open');
-            }
+            // Oletusarvoisesti suljettu, mutta jos käyttäjä on aiemmin avannut sen, kunnioitetaan sitä (valinnainen)
+            // Tässä toteutuksessa pakotetaan suljetuksi latauksessa käyttäjän pyynnöstä
+            document.body.classList.add('sidebar-collapsed');
+            document.body.classList.remove('sidebar-open');
         }
 
         function saveState() {
