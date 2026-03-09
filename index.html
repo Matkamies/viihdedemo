@@ -11,7 +11,7 @@
             --bg-color: #f4f7f9;
             --card-bg: #ffffff;
             --text-color: #333;
-            --sidebar-width: 300px;
+            --sidebar-width: 320px;
             --border-radius: 12px;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -21,6 +21,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
@@ -29,7 +30,6 @@
             line-height: 1.6;
         }
 
-        /* Header */
         header {
             background-color: #1a1a1a;
             color: white;
@@ -42,24 +42,10 @@
             z-index: 1000;
         }
 
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+        header h1 { font-size: 1.5rem; font-weight: bold; }
+        nav a { color: #ccc; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+        nav a:hover { color: white; }
 
-        nav a {
-            color: #ccc;
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: white;
-        }
-
-        /* Layout */
         .container {
             display: flex;
             max-width: 1400px;
@@ -68,23 +54,10 @@
             gap: 2rem;
         }
 
-        @media (max-width: 1024px) {
-            .container {
-                flex-direction: column;
-            }
-        }
+        @media (max-width: 1024px) { .container { flex-direction: column; } }
 
-        /* Sidebar */
-        aside {
-            width: var(--sidebar-width);
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 1024px) {
-            aside {
-                width: 100%;
-            }
-        }
+        aside { width: var(--sidebar-width); flex-shrink: 0; }
+        @media (max-width: 1024px) { aside { width: 100%; } }
 
         .filter-section {
             background: var(--card-bg);
@@ -101,19 +74,8 @@
             padding-bottom: 0.5rem;
         }
 
-        .chip-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .genre-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
+        .chip-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .genre-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 
         .chip {
             flex-grow: 1;
@@ -124,222 +86,77 @@
             font-size: 0.85rem;
             border: 2px solid transparent;
             transition: all 0.2s;
-            user-select: none;
             text-align: center;
         }
-
-        .chip.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
+        .chip.active { background: var(--primary-color); color: white; }
 
         .add-section-btn {
-            background: #e9ecef;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--primary-color);
+            background: #e9ecef; border: none; border-radius: 50%; width: 32px; height: 32px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--primary-color); flex-shrink: 0;
+        }
+
+        /* Sidebar Section List */
+        .sidebar-section-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-section-item {
+            display: flex; align-items: center; background: #f8f9fa;
+            padding: 0.6rem; border-radius: 8px; border: 1px solid #eee;
             transition: background 0.2s;
-            flex-shrink: 0;
         }
-
-        .add-section-btn:hover {
-            background: #dee2e6;
+        .sidebar-section-item.dragging { opacity: 0.4; background: #e9ecef; }
+        .sidebar-section-item.drag-over { border-top: 2px solid var(--primary-color); }
+        
+        .drag-handle { cursor: grab; margin-right: 10px; color: #999; user-select: none; }
+        .section-checkbox { margin-right: 10px; width: 16px; height: 16px; cursor: pointer; }
+        .section-name { flex-grow: 1; cursor: pointer; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .section-name:hover { color: var(--primary-color); text-decoration: underline; }
+        
+        .sidebar-remove-btn {
+            background: transparent; border: none; color: #ccc; cursor: pointer;
+            padding: 4px; font-size: 1rem; transition: color 0.2s;
         }
+        .sidebar-remove-btn:hover { color: var(--accent-color); }
 
-        .toggle-group label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .toggle-group input {
-            margin-right: 0.75rem;
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Main Content Area */
-        main {
-            flex-grow: 1;
-        }
-
-        /* Hero Area */
+        main { flex-grow: 1; }
         .hero {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 3rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
+            color: white; padding: 3rem; border-radius: var(--border-radius); margin-bottom: 2rem;
         }
 
-        .hero h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Sections */
-        .content-section {
-            margin-bottom: 3rem;
-            background: transparent;
-            border-radius: var(--border-radius);
-            transition: transform 0.2s, opacity 0.2s;
-        }
-
-        .content-section.dragging {
-            opacity: 0.5;
-            transform: scale(0.98);
-        }
-
-        .content-section.drag-over {
-            border: 2px dashed var(--primary-color);
-        }
-
+        .content-section { margin-bottom: 4rem; scroll-margin-top: 100px; }
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            cursor: grab;
-            padding: 0.75rem 1rem;
-            background: #e9ecef;
-            border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #eee;
         }
 
-        .section-header h3 {
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .section-header h3::before {
-            content: '⠿';
-            margin-right: 12px;
-            color: #999;
-        }
-
-        .remove-section-btn {
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        /* Card */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+        
         .card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            background: var(--card-bg); border-radius: var(--border-radius);
+            overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s;
+            display: flex; flex-direction: column; position: relative;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-img {
-            height: 140px;
-            background: #ddd;
-            background-size: cover;
-            background-position: center;
-        }
-
+        .card:hover { transform: translateY(-5px); }
+        .card-img { height: 140px; background: #ddd; background-size: cover; background-position: center; }
+        
         .fav-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-            color: #ccc;
+            position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8);
+            border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #ccc;
         }
+        .fav-btn.active { color: var(--accent-color); background: white; }
 
-        .fav-btn.active {
-            color: var(--accent-color);
-            background: white;
-        }
+        .card-content { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-type { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .card-genre { font-size: 0.8rem; color: #666; margin-bottom: 0.75rem; }
+        .card-desc { font-size: 0.85rem; color: #444; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-        .card-content {
-            padding: 1.25rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        .empty-state { text-align: center; padding: 2rem; color: #888; font-style: italic; grid-column: 1 / -1; }
+        .hidden { display: none !important; }
 
-        .card-type {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-genre {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 0.75rem;
-        }
-
-        .card-desc {
-            font-size: 0.85rem;
-            color: #444;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255,255,255,0.5);
-            border-radius: var(--border-radius);
-            grid-column: 1 / -1;
-            font-style: italic;
-            color: #888;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .toggle-group label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 0.9rem; }
+        .toggle-group input[type="checkbox"] { margin-right: 0.75rem; width: 18px; height: 18px; }
     </style>
 </head>
 <body>
@@ -357,10 +174,7 @@
         <aside>
             <div class="filter-section">
                 <h3>Lajityypit</h3>
-                <p style="font-size: 0.75rem; color: #888; margin-bottom: 0.5rem;">Klikkaa nimeä suodattaaksesi, + lisätäksesi osion.</p>
-                <div class="chip-group" id="genre-filters">
-                    <!-- Generoidaan JS:llä -->
-                </div>
+                <div class="chip-group" id="genre-filters"></div>
 
                 <h3>Palvelut</h3>
                 <div class="chip-group" id="service-filters" style="flex-direction: row; flex-wrap: wrap;">
@@ -371,17 +185,16 @@
 
                 <h3>Asetukset</h3>
                 <div class="toggle-group">
-                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikkilajityypit</label>
+                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikit</label>
                     <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
                 </div>
             </div>
 
             <div class="filter-section">
                 <h3>Näkymän hallinta</h3>
-                <div class="toggle-group" id="visibility-controls">
-                    <label><input type="checkbox" checked data-section="recommended"> Suositellut sinulle</label>
-                    <label><input type="checkbox" checked data-section="favorites"> Omat suosikit</label>
-                    <label><input type="checkbox" checked data-section="all"> Kaikki sisällöt</label>
+                <p style="font-size: 0.75rem; color: #888; margin-bottom: 1rem;">Järjestele raahaamalla ⠿, klikkaa nimeä navigoidaksesi.</p>
+                <div class="sidebar-section-list" id="sidebar-sections">
+                    <!-- Generoidaan JS:llä -->
                 </div>
             </div>
         </aside>
@@ -389,64 +202,47 @@
         <main id="sections-container">
             <div class="hero">
                 <h2>Tervetuloa takaisin!</h2>
-                <p>Luo oma täydellinen viihdenäkymäsi lisäämällä genre-osioita ja merkitsemällä suosikkeja.</p>
+                <p>Hallitse näkymääsi vasemman sivupalkin ohjauspaneelista.</p>
             </div>
 
-            <!-- Osioiden paikka -->
-            <div id="dynamic-sections">
-                <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
-            </div>
+            <div id="dynamic-sections"></div>
         </main>
     </div>
 
     <script>
-        // --- MOCK DATA ---
         const genres = ["Elokuvat", "Sarjat", "Urheilu", "Lapset", "Dokumentit", "Viihde", "Uutiset"];
         
         const contentItems = [
-            // Elokuvat
             { id: 1, title: "Napapiirin sankarit", type: "Suoratoisto", genre: "Elokuvat", desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
             { id: 4, title: "Dune: Osa kaksi", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
             { id: 9, title: "Barbie", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
             { id: 17, title: "Sisu", type: "Suoratoisto", genre: "Elokuvat", desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
             { id: 18, title: "Kuolleet lehdet", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
-            
-            // Sarjat
             { id: 8, title: "Sorjonen", type: "Suoratoisto", genre: "Sarjat", desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
             { id: 12, title: "The Last of Us", type: "Suoratoisto", genre: "Sarjat", desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
             { id: 19, title: "Munkkivuori", type: "Suoratoisto", genre: "Sarjat", desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
             { id: 20, title: "Pohjolan laki", type: "Linear TV", genre: "Sarjat", desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
             { id: 21, title: "Succession", type: "Suoratoisto", genre: "Sarjat", desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
-
-            // Urheilu
             { id: 3, title: "Jääkiekon MM-finaali", type: "Linear TV", genre: "Urheilu", desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
             { id: 10, title: "Formula 1: Monaco", type: "Linear TV", genre: "Urheilu", desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
             { id: 22, title: "Huuhkajat: EM-karsinta", type: "Linear TV", genre: "Urheilu", desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
             { id: 23, title: "Wimbledon: Finaali", type: "Linear TV", genre: "Urheilu", desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
             { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu", desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
-
-            // Lapset
             { id: 5, title: "Muumilaakson tarinoita", type: "Suoratoisto", genre: "Lapset", desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
             { id: 13, title: "Ryhmä Hau", type: "Suoratoisto", genre: "Lapset", desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
             { id: 25, title: "Pipsa Possu", type: "Linear TV", genre: "Lapset", desc: "Pienen possun arkisia seikkailuja.", recommended: false },
             { id: 26, title: "Frozen II", type: "Vuokraelokuva", genre: "Lapset", desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
             { id: 27, title: "Katti Matikainen", type: "Linear TV", genre: "Lapset", desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
-
-            // Dokumentit
             { id: 6, title: "Luonnon ihmeet", type: "Suoratoisto", genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
             { id: 11, title: "Avara luonto", type: "Linear TV", genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
             { id: 28, title: "Suomi on metsäläinen", type: "Linear TV", genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
             { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto", genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
             { id: 30, title: "Kosmos", type: "Suoratoisto", genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
-
-            // Viihde
             { id: 7, title: "Putous", type: "Linear TV", genre: "Viihde", desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
             { id: 15, title: "MasterChef Suomi", type: "Linear TV", genre: "Viihde", desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
             { id: 31, title: "Vain elämää", type: "Linear TV", genre: "Viihde", desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
             { id: 32, title: "Haluatko miljonääriksi?", type: "Linear TV", genre: "Viihde", desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
             { id: 33, title: "Tanssii tähtien kanssa", type: "Linear TV", genre: "Viihde", desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
-
-            // Uutiset
             { id: 2, title: "Uutiset 20:30", type: "Linear TV", genre: "Uutiset", desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
             { id: 16, title: "A-studio", type: "Linear TV", genre: "Uutiset", desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
             { id: 34, title: "Yle Uutiset: Sää", type: "Linear TV", genre: "Uutiset", desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
@@ -454,7 +250,6 @@
             { id: 36, title: "Urheiluruutu", type: "Linear TV", genre: "Uutiset", desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
         ];
 
-        // --- STATE ---
         let activeGenres = new Set();
         let activeServices = new Set();
         let favorites = new Set(JSON.parse(localStorage.getItem('favs') || '[]'));
@@ -464,18 +259,14 @@
         let showOnlyFavorites = false;
         let highlightStreaming = false;
 
-        // --- DOM ELEMENTS ---
         const dynamicSectionsContainer = document.getElementById('dynamic-sections');
         const genreFiltersContainer = document.getElementById('genre-filters');
         const serviceChips = document.querySelectorAll('#service-filters .chip');
-        const toggleFavorites = document.getElementById('toggle-favorites');
-        const toggleHighlight = document.getElementById('toggle-highlight');
-        const visibilityControls = document.getElementById('visibility-controls');
+        const sidebarSectionsContainer = document.getElementById('sidebar-sections');
 
-        // --- INITIALIZATION ---
         function init() {
             renderGenreFilters();
-            renderVisibilityControls();
+            renderSidebarSections();
             renderContent();
             setupEventListeners();
         }
@@ -487,7 +278,6 @@
             localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
         }
 
-        // --- RENDERING ---
         function renderGenreFilters() {
             genreFiltersContainer.innerHTML = genres.map(g => `
                 <div class="genre-item">
@@ -497,69 +287,70 @@
             `).join('');
         }
 
-        function renderVisibilityControls() {
-            // Perusosiot
-            let html = `
-                <label><input type="checkbox" ${!hiddenSections.has('recommended') ? 'checked' : ''} data-section="recommended"> Suositellut sinulle</label>
-                <label><input type="checkbox" ${!hiddenSections.has('favorites') ? 'checked' : ''} data-section="favorites"> Omat suosikit</label>
-                <label><input type="checkbox" ${!hiddenSections.has('all') ? 'checked' : ''} data-section="all"> Kaikki sisällöt</label>
-            `;
-            // Dynaamiset genre-osiot
-            customSections.forEach(genre => {
-                html += `<label><input type="checkbox" ${!hiddenSections.has('genre-' + genre) ? 'checked' : ''} data-section="genre-${genre}"> Genre: ${genre}</label>`;
+        function getSectionTitle(id) {
+            if (id === 'recommended') return "Suositellut sinulle";
+            if (id === 'favorites') return "Omat suosikit";
+            if (id === 'all') return "Kaikki sisällöt";
+            if (id.startsWith('genre-')) return "Genre: " + id.replace('genre-', '');
+            return id;
+        }
+
+        function renderSidebarSections() {
+            // Varmistetaan että kaikki custom-osiot ovat mukana järjestyksessä
+            customSections.forEach(g => {
+                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
             });
-            visibilityControls.innerHTML = html;
+            // Poistetaan ne joita ei enää ole
+            sectionOrder = sectionOrder.filter(id => {
+                if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
+                return true;
+            });
+
+            sidebarSectionsContainer.innerHTML = sectionOrder.map(id => {
+                const isCustom = id.startsWith('genre-');
+                const isHidden = hiddenSections.has(id);
+                return `
+                    <div class="sidebar-section-item" draggable="true" data-id="${id}">
+                        <span class="drag-handle">⠿</span>
+                        <input type="checkbox" class="section-checkbox" ${!isHidden ? 'checked' : ''} data-id="${id}">
+                        <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
+                        ${isCustom ? `<button class="sidebar-remove-btn" data-genre="${id.replace('genre-', '')}" title="Poista osio">🗑</button>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            setupSidebarDragAndDrop();
         }
 
         function renderContent() {
             dynamicSectionsContainer.innerHTML = '';
             
-            // Rakennetaan lista kaikista mahdollisista osioista (perus + dynaamiset)
-            // Varmistetaan että sectionOrder sisältää uudet dynaamiset osiot
-            customSections.forEach(g => {
-                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
-            });
-
             sectionOrder.forEach(sectionId => {
                 if (hiddenSections.has(sectionId)) return;
 
-                let title = "";
+                let title = getSectionTitle(sectionId);
                 let items = [];
                 let isCustom = sectionId.startsWith('genre-');
 
-                if (sectionId === 'recommended') {
-                    title = "Suositellut sinulle";
-                    items = contentItems.filter(i => i.recommended);
-                } else if (sectionId === 'favorites') {
-                    title = "Omat suosikit";
-                    items = contentItems.filter(i => favorites.has(i.id));
-                } else if (sectionId === 'all') {
-                    title = "Kaikki sisällöt";
-                    items = contentItems;
-                } else if (isCustom) {
-                    const genreName = sectionId.replace('genre-', '');
-                    title = "Lajityyppi: " + genreName;
-                    items = contentItems.filter(i => i.genre === genreName);
-                }
+                if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
+                else if (sectionId === 'favorites') items = contentItems.filter(i => favorites.has(i.id));
+                else if (sectionId === 'all') items = contentItems;
+                else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
 
-                // Suodatus globaaleilla suodattimilla
                 const filteredItems = items.filter(item => {
                     const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
                     const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-                    const isFavGenre = ["Elokuvat", "Urheilu"].includes(item.genre);
-                    const favoriteMatch = !showOnlyFavorites || isFavGenre;
+                    const favoriteMatch = !showOnlyFavorites || ["Elokuvat", "Urheilu"].includes(item.genre);
                     return genreMatch && serviceMatch && favoriteMatch;
                 });
 
                 const sectionEl = document.createElement('section');
                 sectionEl.className = 'content-section';
-                sectionEl.id = sectionId;
-                sectionEl.draggable = true;
+                sectionEl.id = 'anchor-' + sectionId;
                 
                 sectionEl.innerHTML = `
                     <div class="section-header">
                         <h3>${title}</h3>
-                        ${isCustom ? `<button class="remove-section-btn" data-genre="${sectionId.replace('genre-', '')}">Poista osio</button>` : ''}
                     </div>
                     <div class="grid">
                         ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item)).join('') : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
@@ -567,8 +358,6 @@
                 `;
                 dynamicSectionsContainer.appendChild(sectionEl);
             });
-
-            setupDragAndDrop();
         }
 
         function createCardHtml(item) {
@@ -576,7 +365,7 @@
             const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
             return `
                 <div class="card" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
-                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="Lisää suosikkeihin">❤</button>
+                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}">❤</button>
                     <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
                     <div class="card-content">
                         <div class="card-type">${item.type}</div>
@@ -588,9 +377,8 @@
             `;
         }
 
-        // --- EVENT LISTENERS ---
         function setupEventListeners() {
-            // Genre klikkaus (suodatus)
+            // Genre suodatus ja lisäys
             genreFiltersContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('chip')) {
                     const val = e.target.getAttribute('data-value');
@@ -599,34 +387,59 @@
                     renderGenreFilters();
                     renderContent();
                 }
-                // Lisää osio (+)
                 if (e.target.classList.contains('add-section-btn')) {
                     const genre = e.target.getAttribute('data-genre');
                     if (!customSections.includes(genre)) {
                         customSections.push(genre);
                         saveState();
-                        renderVisibilityControls();
+                        renderSidebarSections();
                         renderContent();
                     }
                 }
             });
 
-            // Palvelu suodattimet
+            // Sivupalkin osioiden hallinta
+            sidebarSectionsContainer.addEventListener('click', (e) => {
+                // Navigointi
+                if (e.target.classList.contains('section-name')) {
+                    const id = e.target.getAttribute('data-id');
+                    const target = document.getElementById('anchor-' + id);
+                    if (target) target.scrollIntoView();
+                }
+                // Näkyvyys
+                if (e.target.classList.contains('section-checkbox')) {
+                    const id = e.target.getAttribute('data-id');
+                    if (e.target.checked) hiddenSections.delete(id);
+                    else hiddenSections.add(id);
+                    saveState();
+                    renderContent();
+                }
+                // Poisto
+                if (e.target.classList.contains('sidebar-remove-btn')) {
+                    const genre = e.target.getAttribute('data-genre');
+                    customSections = customSections.filter(g => g !== genre);
+                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
+                    saveState();
+                    renderSidebarSections();
+                    renderContent();
+                }
+            });
+
+            // Muut suodattimet
             serviceChips.forEach(chip => {
                 chip.addEventListener('click', () => {
                     const val = chip.getAttribute('data-value');
-                    if (activeServices.has(val)) {
-                        activeServices.delete(val);
-                        chip.classList.remove('active');
-                    } else {
-                        activeServices.add(val);
-                        chip.classList.add('active');
-                    }
+                    if (activeServices.has(val)) activeServices.delete(val);
+                    else activeServices.add(val);
+                    chip.classList.toggle('active');
                     renderContent();
                 });
             });
 
-            // Suosikki-nappi korteissa
+            document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
+            document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
+
+            // Suosikit korteissa
             dynamicSectionsContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('fav-btn')) {
                     const id = parseInt(e.target.getAttribute('data-id'));
@@ -634,56 +447,33 @@
                     else favorites.add(id);
                     saveState();
                     renderContent();
+                    if (sectionOrder.includes('favorites')) renderContent();
                 }
-                // Osion poisto
-                if (e.target.classList.contains('remove-section-btn')) {
-                    const genre = e.target.getAttribute('data-genre');
-                    customSections = customSections.filter(g => g !== genre);
-                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
-                    saveState();
-                    renderVisibilityControls();
-                    renderContent();
-                }
-            });
-
-            // Asetukset
-            toggleFavorites.addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
-            toggleHighlight.addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
-
-            // Näkyvyys-valinnat
-            visibilityControls.addEventListener('change', (e) => {
-                const sectionId = e.target.getAttribute('data-section');
-                if (e.target.checked) hiddenSections.delete(sectionId);
-                else hiddenSections.add(sectionId);
-                saveState();
-                renderContent();
             });
         }
 
-        // --- DRAG AND DROP ---
-        function setupDragAndDrop() {
-            const draggables = document.querySelectorAll('.content-section');
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => draggable.classList.add('dragging'));
-                draggable.addEventListener('dragend', () => {
-                    draggable.classList.remove('dragging');
-                    draggables.forEach(d => d.classList.remove('drag-over'));
-                    // Tallenna uusi järjestys
-                    const currentOrder = [...dynamicSectionsContainer.querySelectorAll('.content-section')].map(s => s.id);
-                    sectionOrder = currentOrder;
+        function setupSidebarDragAndDrop() {
+            const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', () => item.classList.add('dragging'));
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    items.forEach(i => i.classList.remove('drag-over'));
+                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
+                    sectionOrder = newOrder;
                     saveState();
+                    renderContent();
                 });
-                draggable.addEventListener('dragover', (e) => { e.preventDefault(); draggable.classList.add('drag-over'); });
-                draggable.addEventListener('dragleave', () => draggable.classList.remove('drag-over'));
-                draggable.addEventListener('drop', (e) => {
+                item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+                item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+                item.addEventListener('drop', (e) => {
                     e.preventDefault();
-                    const draggingItem = document.querySelector('.dragging');
-                    if (draggingItem && draggingItem !== draggable) {
-                        const all = [...dynamicSectionsContainer.querySelectorAll('.content-section')];
-                        if (all.indexOf(draggingItem) < all.indexOf(draggable)) draggable.after(draggingItem);
-                        else draggable.before(draggingItem);
+                    const dragging = sidebarSectionsContainer.querySelector('.dragging');
+                    if (dragging && dragging !== item) {
+                        const all = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')];
+                        if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
+                        else item.before(dragging);
                     }
-                    draggable.classList.remove('drag-over');
                 });
             });
         }
