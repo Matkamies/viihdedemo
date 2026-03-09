@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oma viihde - Prototyyppi</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --sidebar-width: 280px;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+
+        /* Sidebar */
+        aside {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            aside {
+                width: 100%;
+            }
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chip {
+            padding: 0.5rem 1rem;
+            background: #eee;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .chip.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .chip:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        .toggle-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .toggle-group input {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+        }
+
+        /* Hero Area */
+        .hero {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        /* Sections */
+        .content-section {
+            margin-bottom: 3rem;
+            background: transparent;
+            border-radius: var(--border-radius);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .content-section.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .content-section.drag-over {
+            border: 2px dashed var(--primary-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            cursor: grab;
+            padding: 0.5rem;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .section-header:active {
+            cursor: grabbing;
+        }
+
+        .section-header h3 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header h3::before {
+            content: '⠿';
+            margin-right: 10px;
+            color: #999;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img {
+            height: 140px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #888;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-type {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-genre {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #444;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background: white;
+            border-radius: var(--border-radius);
+            grid-column: 1 / -1;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Oma viihde</h1>
+        <nav>
+            <a href="#">Etusivu</a>
+            <a href="#">Kirjasto</a>
+            <a href="#">Omat asetukset</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Vasen sarake: Suodattimet ja asetukset -->
+        <aside>
+            <div class="filter-section">
+                <h3>Lajityypit</h3>
+                <div class="chip-group" id="genre-filters">
+                    <div class="chip" data-value="Elokuvat">Elokuvat</div>
+                    <div class="chip" data-value="Sarjat">Sarjat</div>
+                    <div class="chip" data-value="Urheilu">Urheilu</div>
+                    <div class="chip" data-value="Lapset">Lapset</div>
+                    <div class="chip" data-value="Dokumentit">Dokumentit</div>
+                    <div class="chip" data-value="Viihde">Viihde</div>
+                    <div class="chip" data-value="Uutiset">Uutiset</div>
+                </div>
+
+                <h3>Palvelut</h3>
+                <div class="chip-group" id="service-filters">
+                    <div class="chip" data-value="Linear TV">Lineaarinen TV</div>
+                    <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
+                    <div class="chip" data-value="Vuokraelokuva">Vuokraelokuvat</div>
+                </div>
+
+                <h3>Asetukset</h3>
+                <div class="toggle-group">
+                    <label>
+                        <input type="checkbox" id="toggle-favorites"> Näytä vain suosikkilajityypit
+                    </label>
+                    <label>
+                        <input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3>Näkymän hallinta</h3>
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 1rem;">Voit vaihtaa osioiden paikkaa raahaamalla niitä oikealla.</p>
+                <div class="toggle-group">
+                    <label>
+                        <input type="checkbox" checked id="show-recommended"> Näytä "Suositellut sinulle"
+                    </label>
+                    <label>
+                        <input type="checkbox" checked id="show-all"> Näytä "Kaikki sisällöt"
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Oikea sarake: Sisältöalue -->
+        <main id="sections-container">
+            <div class="hero">
+                <h2>Tervetuloa takaisin!</h2>
+                <p>Löysimme 5 uutta ohjelmaa, jotka saattaisivat kiinnostaa sinua tänään. Säädä suodattimia vasemmalta tarkentaaksesi näkymää.</p>
+            </div>
+
+            <!-- Osio A: Suositellut -->
+            <section id="section-recommended" class="content-section" draggable="true" aria-label="Suositellut sinulle -osio">
+                <div class="section-header">
+                    <h3>Suositellut sinulle</h3>
+                </div>
+                <div class="grid" id="grid-recommended">
+                    <!-- Sisältö generoidaan JS:llä -->
+                </div>
+            </section>
+
+            <!-- Osio B: Kaikki sisällöt -->
+            <section id="section-all" class="content-section" draggable="true" aria-label="Kaikki sisällöt -osio">
+                <div class="section-header">
+                    <h3>Kaikki sisällöt</h3>
+                </div>
+                <div class="grid" id="grid-all">
+                    <!-- Sisältö generoidaan JS:llä -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- MOCK DATA ---
+        const contentItems = [
+            { id: 1, title: "Napapiirin sankarit", type: "Suoratoisto", genre: "Elokuvat", desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
+            { id: 2, title: "Uutiset 20:30", type: "Linear TV", genre: "Uutiset", desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
+            { id: 3, title: "Jääkiekon MM-finaali", type: "Linear TV", genre: "Urheilu", desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
+            { id: 4, title: "Dune: Osa kaksi", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
+            { id: 5, title: "Muumilaakson tarinoita", type: "Suoratoisto", genre: "Lapset", desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
+            { id: 6, title: "Luonnon ihmeet", type: "Suoratoisto", genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
+            { id: 7, title: "Putous", type: "Linear TV", genre: "Viihde", desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
+            { id: 8, title: "Sorjonen", type: "Suoratoisto", genre: "Sarjat", desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
+            { id: 9, title: "Barbie", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
+            { id: 10, title: "Formula 1: Monaco", type: "Linear TV", genre: "Urheilu", desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
+            { id: 11, title: "Avara luonto", type: "Linear TV", genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
+            { id: 12, title: "The Last of Us", type: "Suoratoisto", genre: "Sarjat", desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
+            { id: 13, title: "Ryhmä Hau", type: "Suoratoisto", genre: "Lapset", desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
+            { id: 14, title: "Oppenheimer", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Christopher Nolanin mestariteos atomipommin isästä.", recommended: true },
+            { id: 15, title: "MasterChef Suomi", type: "Linear TV", genre: "Viihde", desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
+            { id: 16, title: "A-studio", type: "Linear TV", genre: "Uutiset", desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false }
+        ];
+
+        // --- STATE ---
+        let activeGenres = new Set();
+        let activeServices = new Set();
+        let showOnlyFavorites = false;
+        let highlightStreaming = false;
+
+        // --- DOM ELEMENTS ---
+        const gridRecommended = document.getElementById('grid-recommended');
+        const gridAll = document.getElementById('grid-all');
+        const genreChips = document.querySelectorAll('#genre-filters .chip');
+        const serviceChips = document.querySelectorAll('#service-filters .chip');
+        const toggleFavorites = document.getElementById('toggle-favorites');
+        const toggleHighlight = document.getElementById('toggle-highlight');
+        const showRecommendedCheck = document.getElementById('show-recommended');
+        const showAllCheck = document.getElementById('show-all');
+        const sectionRecommended = document.getElementById('section-recommended');
+        const sectionAll = document.getElementById('section-all');
+        const sectionsContainer = document.getElementById('sections-container');
+
+        // --- INITIALIZATION ---
+        function init() {
+            renderContent();
+            setupEventListeners();
+            setupDragAndDrop();
+        }
+
+        // --- RENDERING ---
+        function renderContent() {
+            const filteredItems = contentItems.filter(item => {
+                const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
+                const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
+                
+                // Simuloitu "suosikkilajityyppi" logiikka (tässä vain Elokuvat ja Urheilu esimerkkeinä)
+                const isFavorite = ["Elokuvat", "Urheilu"].includes(item.genre);
+                const favoriteMatch = !showOnlyFavorites || isFavorite;
+
+                return genreMatch && serviceMatch && favoriteMatch;
+            });
+
+            const recommendedItems = filteredItems.filter(item => item.recommended);
+
+            updateGrid(gridRecommended, recommendedItems);
+            updateGrid(gridAll, filteredItems);
+        }
+
+        function updateGrid(container, items) {
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>';
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Korostus jos asetus päällä
+                if (highlightStreaming && item.type === "Suoratoisto") {
+                    card.style.border = "2px solid var(--primary-color)";
+                    card.style.background = "#f0f7ff";
+                }
+
+                card.innerHTML = `
+                    <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-type">${item.type}</div>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-genre">${item.genre}</div>
+                        <div class="card-desc">${item.desc}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            // Genre suodattimet
+            genreChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const val = chip.getAttribute('data-value');
+                    if (activeGenres.has(val)) {
+                        activeGenres.delete(val);
+                        chip.classList.remove('active');
+                    } else {
+                        activeGenres.add(val);
+                        chip.classList.add('active');
+                    }
+                    renderContent();
+                });
+            });
+
+            // Palvelu suodattimet
+            serviceChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const val = chip.getAttribute('data-value');
+                    if (activeServices.has(val)) {
+                        activeServices.delete(val);
+                        chip.classList.remove('active');
+                    } else {
+                        activeServices.add(val);
+                        chip.classList.add('active');
+                    }
+                    renderContent();
+                });
+            });
+
+            // Asetukset
+            toggleFavorites.addEventListener('change', (e) => {
+                showOnlyFavorites = e.target.checked;
+                renderContent();
+            });
+
+            toggleHighlight.addEventListener('change', (e) => {
+                highlightStreaming = e.target.checked;
+                renderContent();
+            });
+
+            // Näkyvyys
+            showRecommendedCheck.addEventListener('change', (e) => {
+                sectionRecommended.classList.toggle('hidden', !e.target.checked);
+            });
+
+            showAllCheck.addEventListener('change', (e) => {
+                sectionAll.classList.toggle('hidden', !e.target.checked);
+            });
+        }
+
+        // --- DRAG AND DROP ---
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.content-section');
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                    // Poista korostukset kaikilta
+                    draggables.forEach(d => d.classList.remove('drag-over'));
+                });
+
+                draggable.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    draggable.classList.add('drag-over');
+                });
+
+                draggable.addEventListener('dragleave', () => {
+                    draggable.classList.remove('drag-over');
+                });
+
+                draggable.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const draggingItem = document.querySelector('.dragging');
+                    if (draggingItem !== draggable) {
+                        // Vaihdetaan paikkoja DOMissa
+                        const allSections = [...sectionsContainer.querySelectorAll('.content-section')];
+                        const draggingIndex = allSections.indexOf(draggingItem);
+                        const targetIndex = allSections.indexOf(draggable);
+
+                        if (draggingIndex < targetIndex) {
+                            draggable.after(draggingItem);
+                        } else {
+                            draggable.before(draggingItem);
+                        }
+                    }
+                    draggable.classList.remove('drag-over');
+                });
+            });
+        }
+
+        // Käynnistä sovellus
+        init();
+    </script>
+</body>
+</html>
