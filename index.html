@@ -379,7 +379,7 @@
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
 
         .card-img {
@@ -963,28 +963,35 @@
 
             // Suosikki-nappi korteissa
             dynamicSectionsContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('fav-btn')) {
-                    const id = parseInt(e.target.getAttribute('data-id'));
+                const favBtn = e.target.closest('.fav-btn');
+                const recordBtn = e.target.closest('.record-btn');
+                const remindBtn = e.target.closest('.remind-btn');
+
+                if (favBtn) {
+                    const id = parseInt(favBtn.getAttribute('data-id'));
                     if (favorites.has(id)) favorites.delete(id);
                     else favorites.add(id);
                     saveState();
                     renderContent();
+                    return;
                 }
                 
-                if (e.target.classList.contains('record-btn')) {
-                    const id = parseInt(e.target.getAttribute('data-id'));
+                if (recordBtn) {
+                    const id = parseInt(recordBtn.getAttribute('data-id'));
                     if (recordings.has(id)) recordings.delete(id);
                     else recordings.add(id);
                     saveState();
                     renderContent();
+                    return;
                 }
 
-                if (e.target.classList.contains('remind-btn')) {
-                    const id = parseInt(e.target.getAttribute('data-id'));
+                if (remindBtn) {
+                    const id = parseInt(remindBtn.getAttribute('data-id'));
                     if (reminders.has(id)) reminders.delete(id);
                     else reminders.add(id);
                     saveState();
                     renderContent();
+                    return;
                 }
             });
 
