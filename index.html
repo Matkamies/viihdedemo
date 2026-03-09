@@ -11,6 +11,8 @@
             --bg-color: #f4f7f9;
             --header-bg: #1a1a1a;
             --header-text: #ffffff;
+            --hero-bg: #1e3c72;
+            --hero-text: #ffffff;
             --card-bg: #ffffff;
             --text-color: #333;
             --sidebar-width: 320px;
@@ -312,8 +314,8 @@
 
         /* Hero Area */
         .hero {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+            background: var(--hero-bg);
+            color: var(--hero-text);
             padding: 2.5rem;
             border-radius: var(--border-radius);
             margin-bottom: 2rem;
@@ -548,6 +550,20 @@
                             <input type="text" id="header-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
                         </div>
                     </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="hero-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Tausta</label>
+                            <input type="text" id="hero-bg-hex" placeholder="#1e3c72" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="hero-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                        <div style="flex-grow: 1;">
+                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Teksti</label>
+                            <input type="text" id="hero-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
+                        </div>
+                    </div>
                     <button id="reset-theme-btn" style="margin-top: 0.5rem; padding: 0.5rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s;">Palauta oletusvärit</button>
                 </div>
             </div>
@@ -627,7 +643,9 @@
             primary: "#007bff",
             bg: "#f4f7f9",
             headerBg: "#1a1a1a",
-            headerText: "#ffffff"
+            headerText: "#ffffff",
+            heroBg: "#1e3c72",
+            heroText: "#ffffff"
         };
 
         let activeGenres = new Set();
@@ -679,6 +697,8 @@
             document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
             document.documentElement.style.setProperty('--header-bg', themeSettings.headerBg);
             document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
+            document.documentElement.style.setProperty('--hero-bg', themeSettings.heroBg);
+            document.documentElement.style.setProperty('--hero-text', themeSettings.heroText);
             
             // Päivitetään myös sivupalkin tausta jos se on sidottu bg-coloriin
             const sidebar = document.getElementById('sidebar');
@@ -694,6 +714,10 @@
             document.getElementById('header-bg-picker').value = themeSettings.headerBg;
             document.getElementById('header-text-hex').value = themeSettings.headerText;
             document.getElementById('header-text-picker').value = themeSettings.headerText;
+            document.getElementById('hero-bg-hex').value = themeSettings.heroBg;
+            document.getElementById('hero-bg-picker').value = themeSettings.heroBg;
+            document.getElementById('hero-text-hex').value = themeSettings.heroText;
+            document.getElementById('hero-text-picker').value = themeSettings.heroText;
         }
 
         // --- RENDERING ---
@@ -902,6 +926,10 @@
             const headerBgPicker = document.getElementById('header-bg-picker');
             const headerTextHex = document.getElementById('header-text-hex');
             const headerTextPicker = document.getElementById('header-text-picker');
+            const heroBgHex = document.getElementById('hero-bg-hex');
+            const heroBgPicker = document.getElementById('hero-bg-picker');
+            const heroTextHex = document.getElementById('hero-text-hex');
+            const heroTextPicker = document.getElementById('hero-text-picker');
             const resetBtn = document.getElementById('reset-theme-btn');
 
             const updateThemePart = (key, val, hexInput, pickerInput) => {
@@ -926,6 +954,10 @@
             headerBgPicker.addEventListener('input', (e) => updateThemePart('headerBg', e.target.value, headerBgHex, headerBgPicker));
             headerTextHex.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
             headerTextPicker.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
+            heroBgHex.addEventListener('input', (e) => updateThemePart('heroBg', e.target.value, heroBgHex, heroBgPicker));
+            heroBgPicker.addEventListener('input', (e) => updateThemePart('heroBg', e.target.value, heroBgHex, heroBgPicker));
+            heroTextHex.addEventListener('input', (e) => updateThemePart('heroText', e.target.value, heroTextHex, heroTextPicker));
+            heroTextPicker.addEventListener('input', (e) => updateThemePart('heroText', e.target.value, heroTextHex, heroTextPicker));
 
             resetBtn.addEventListener('click', () => {
                 themeSettings = { ...DEFAULT_THEME };
