@@ -1507,8 +1507,11 @@
         }
 
         // --- DRAG AND DROP (Sidebar section reordering) ---
+        // Supports both mouse (HTML5 drag) and touch events for mobile
         function setupSidebarDragAndDrop() {
             const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
+
+            // -- Mouse drag (desktop) --
             items.forEach(item => {
                 item.addEventListener('dragstart', () => item.classList.add('dragging'));
                 item.addEventListener('dragend', () => {
@@ -1533,6 +1536,109 @@
                         if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
                         else item.before(dragging);
                     }
+                });
+            });
+
+            // -- Touch drag (mobile) --
+            let touchDragItem = null;
+            let touchPlaceholder = null;
+
+            items.forEach(item => {
+                const handle = item.querySelector('.drag-handle');
+                if (!handle) return;
+
+                handle.addEventListener('touchstart', (e) => {
+                    // Only activate when touching the drag handle
+                    touchDragItem = item;
+                    item.classList.add('dragging');
+
+                    // Create a placeholder that holds the item's space while dragging
+                    touchPlaceholder = document.createElement('div');
+                    touchPlaceholder.className = 'sidebar-section-item';
+                    touchPlaceholder.style.opacity = '0';
+                    touchPlaceholder.style.height = item.offsetHeight + 'px';
+                    touchPlaceholder.style.pointerEvents = 'none';
+                    item.parentNode.insertBefore(touchPlaceholder, item.nextSibling);
+
+                    // Take the item out of flow so it can float over the list
+                    const rect = item.getBoundingClientRect();
+                    item.style.position = 'fixed';
+                    item.style.zIndex = '9999';
+                    item.style.width = rect.width + 'px';
+                    item.style.left = rect.left + 'px';
+                    item.style.top = rect.top + 'px';
+                    item.style.margin = '0';
+                    item.style.pointerEvents = 'none';
+                }, { passive: true });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!touchDragItem) return;
+                    e.preventDefault();
+
+                    const touch = e.touches[0];
+
+                    // Move the dragged item to follow the finger
+                    touchDragItem.style.top = (touch.clientY - touchDragItem.offsetHeight / 2) + 'px';
+
+                    // Find which item the finger is hovering over and move the placeholder
+                    const allItems = [...sidebarSectionsContainer.querySelectorAll(
+                        '.sidebar-section-item:not(.dragging):not([style*="opacity: 0"])'
+                    )];
+                    allItems.forEach(i => i.classList.remove('drag-over'));
+
+                    let target = null;
+                    let insertBefore = false;
+                    for (const other of allItems) {
+                        const rect = other.getBoundingClientRect();
+                        const midY = rect.top + rect.height / 2;
+                        if (touch.clientY < midY) {
+                            target = other;
+                            insertBefore = true;
+                            break;
+                        } else if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            target = other;
+                            insertBefore = false;
+                        }
+                    }
+
+                    if (target) {
+                        target.classList.add('drag-over');
+                        if (insertBefore) sidebarSectionsContainer.insertBefore(touchPlaceholder, target);
+                        else target.after(touchPlaceholder);
+                    }
+                }, { passive: false });
+
+                handle.addEventListener('touchend', () => {
+                    if (!touchDragItem) return;
+
+                    // Reset inline styles and restore item into the list at placeholder position
+                    touchDragItem.style.position = '';
+                    touchDragItem.style.zIndex = '';
+                    touchDragItem.style.width = '';
+                    touchDragItem.style.left = '';
+                    touchDragItem.style.top = '';
+                    touchDragItem.style.margin = '';
+                    touchDragItem.style.pointerEvents = '';
+                    touchDragItem.classList.remove('dragging');
+
+                    if (touchPlaceholder && touchPlaceholder.parentNode) {
+                        touchPlaceholder.parentNode.insertBefore(touchDragItem, touchPlaceholder);
+                        touchPlaceholder.remove();
+                    }
+
+                    // Clear drag-over highlights
+                    sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')
+                        .forEach(i => i.classList.remove('drag-over'));
+
+                    // Save new order
+                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')]
+                        .map(i => i.getAttribute('data-id'));
+                    sectionOrder = newOrder;
+                    saveState();
+                    renderContent();
+
+                    touchDragItem = null;
+                    touchPlaceholder = null;
                 });
             });
         }
