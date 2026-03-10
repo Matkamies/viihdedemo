@@ -24,1626 +24,1251 @@
             --transition-speed: 0.3s;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Header */
         header {
-            background-color: var(--header-bg);
-            color: var(--header-text);
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 2000;
+            background-color: var(--header-bg); color: var(--header-text);
+            padding: 0.75rem 1.5rem; display: flex; justify-content: space-between;
+            align-items: center; position: sticky; top: 0; z-index: 2000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 1rem; }
         .sidebar-toggle {
-            background: transparent;
-            border: 1px solid #444;
-            color: white;
-            padding: 0.5rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            transition: background 0.2s;
+            background: transparent; border: 1px solid #444; color: white;
+            padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.2s;
         }
+        .sidebar-toggle:hover { background: #333; }
+        .sidebar-toggle-text { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
+        header h1 { font-size: 1.3rem; font-weight: bold; white-space: nowrap; }
+        nav { display: flex; align-items: center; }
+        nav a { color: #ccc; text-decoration: none; margin-left: 1.2rem; font-size: 0.85rem; transition: color 0.3s; }
+        nav a:hover { color: white; }
+        @media (max-width: 768px) { nav { display: none; } }
 
-        .sidebar-toggle:hover {
-            background: #333;
-        }
+        .app-wrapper { display: flex; min-height: calc(100vh - 60px); position: relative; }
 
-        .sidebar-toggle-text {
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        header h1 {
-            font-size: 1.3rem;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-        }
-
-        nav a {
-            color: #ccc;
-            text-decoration: none;
-            margin-left: 1.2rem;
-            font-size: 0.85rem;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            nav { display: none; }
-        }
-
-        /* Layout Wrapper */
-        .app-wrapper {
-            display: flex;
-            min-height: calc(100vh - 60px);
-            position: relative;
-        }
-
-        /* Sidebar */
         aside {
-            width: var(--sidebar-width);
-            background: var(--bg-color);
-            border-right: 1px solid #ddd;
-            height: calc(100vh - 60px);
-            position: sticky;
-            top: 60px;
-            overflow-y: auto;
+            width: var(--sidebar-width); background: var(--bg-color); border-right: 1px solid #ddd;
+            height: calc(100vh - 60px); position: sticky; top: 60px; overflow-y: auto;
             transition: transform var(--transition-speed) ease, margin-left var(--transition-speed) ease;
-            z-index: 1500;
-            padding: 1.5rem;
-            flex-shrink: 0;
+            z-index: 1500; padding: 1.5rem; flex-shrink: 0;
         }
+        body.sidebar-collapsed aside { margin-left: calc(var(--sidebar-width) * -1); transform: translateX(-100%); }
 
-        /* Collapsed State (Desktop) */
-        body.sidebar-collapsed aside {
-            margin-left: calc(var(--sidebar-width) * -1);
-            transform: translateX(-100%);
-        }
-
-        /* Mobile Sidebar Behavior */
         @media (max-width: 1024px) {
-            aside {
-                position: fixed;
-                left: 0;
-                box-shadow: 10px 0 20px rgba(0,0,0,0.1);
-                margin-left: 0;
-                transform: translateX(-100%);
-            }
-            body.sidebar-open aside {
-                transform: translateX(0);
-            }
-            body.sidebar-collapsed aside {
-                margin-left: 0;
-            }
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 1400;
-            }
-            body.sidebar-open .sidebar-overlay {
-                display: block;
-            }
+            aside { position: fixed; left: 0; box-shadow: 10px 0 20px rgba(0,0,0,0.1); margin-left: 0; transform: translateX(-100%); }
+            body.sidebar-open aside { transform: translateX(0); }
+            body.sidebar-collapsed aside { margin-left: 0; }
+            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1400; }
+            body.sidebar-open .sidebar-overlay { display: block; }
         }
 
-        .filter-section {
-            background: var(--card-bg);
-            padding: 1.25rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
-        }
+        .filter-section { background: var(--card-bg); padding: 1.25rem; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+        .filter-section h3 { margin-bottom: 1rem; font-size: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        .chip-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+        .genre-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .chip { flex-grow: 1; padding: 0.4rem 0.8rem; background: #eee; border-radius: 20px; cursor: pointer; font-size: 0.8rem; border: 2px solid transparent; transition: all 0.2s; text-align: center; user-select: none; }
+        .chip.active { background: var(--primary-color); color: white; }
+        .add-section-btn { background: #e9ecef; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-color); flex-shrink: 0; font-size: 1.2rem; line-height: 0; padding: 0; transition: background 0.2s; }
+        .add-section-btn span { transform: translateY(-1px); }
+        .add-section-btn:hover { background: #dee2e6; }
 
-        .filter-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 0.5rem;
-        }
+        .sidebar-section-list { display: flex; flex-direction: column; gap: 0.4rem; }
+        .sidebar-section-item { display: flex; align-items: center; background: #f8f9fa; padding: 0.5rem; border-radius: 8px; border: 1px solid #eee; transition: background 0.2s; }
+        .sidebar-section-item.dragging { opacity: 0.4; background: #e9ecef; }
+        .sidebar-section-item.drag-over { border-top: 2px solid var(--primary-color); }
+        .drag-handle { cursor: grab; margin-right: 8px; color: #999; user-select: none; font-size: 1rem; }
+        .section-checkbox { margin-right: 8px; width: 15px; height: 15px; cursor: pointer; }
+        .section-name { flex-grow: 1; cursor: pointer; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .section-name:hover { color: var(--primary-color); text-decoration: underline; }
+        .sidebar-remove-btn { background: transparent; border: none; color: #ccc; cursor: pointer; padding: 2px; font-size: 0.9rem; transition: color 0.2s; }
+        .sidebar-remove-btn:hover { color: var(--accent-color); }
 
-        .chip-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-        }
+        main { flex-grow: 1; padding: 2rem; max-width: 100%; transition: padding var(--transition-speed) ease; }
+        .content-container { max-width: 1600px; margin: 0 auto; }
 
-        .genre-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
+        .hero { background: var(--hero-bg); color: var(--hero-text); padding: 2.5rem; border-radius: var(--border-radius); margin-bottom: 2rem; box-shadow: var(--shadow); }
+        .hero h2 { font-size: 1.8rem; margin-bottom: 0.75rem; }
+        .hero p { font-size: 1rem; opacity: 0.9; }
 
-        .chip {
-            flex-grow: 1;
-            padding: 0.4rem 0.8rem;
-            background: #eee;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-            text-align: center;
-            user-select: none;
-        }
+        .content-section { margin-bottom: 4rem; scroll-margin-top: 100px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #eee; }
+        .section-header h3 { font-size: 1.4rem; }
 
-        .chip.active {
-            background: var(--primary-color);
-            color: white;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        @media (min-width: 1600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } }
 
-        .add-section-btn {
-            background: #e9ecef;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--primary-color);
-            flex-shrink: 0;
-            font-size: 1.2rem;
-            line-height: 0;
-            padding: 0;
-            transition: background 0.2s;
-        }
-        .add-section-btn span {
-            transform: translateY(-1px);
-        }
+        .card { background: var(--card-bg); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s; display: flex; flex-direction: column; position: relative; }
+        .card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+        .card-img { height: 160px; background: #ddd; background-size: cover; background-position: center; }
+        .card-drag-handle { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 4px; width: 32px; height: 32px; cursor: grab; display: flex; align-items: center; justify-content: center; color: #999; z-index: 11; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.2s; }
+        .card:hover .card-drag-handle, .card.is-reorderable .card-drag-handle { opacity: 1; }
+        @media (max-width: 1024px) { .card-drag-handle { opacity: 1; } }
+        .card-drag-handle:active { cursor: grabbing; }
+        .sortable-ghost { opacity: 0.2; transform: scale(0.95); }
 
-        .add-section-btn:hover {
-            background: #dee2e6;
-        }
+        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ccc; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .fav-btn:hover { background: white; color: #999; }
+        .fav-btn.active { color: var(--accent-color); background: white; }
+        .fav-btn.active svg { fill: var(--accent-color); }
 
-        /* Sidebar Section Management */
-        .sidebar-section-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+        .card-actions-bottom { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 8px; z-index: 10; }
+        .action-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #ccc; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .action-btn:hover { background: white; color: #999; }
+        .action-btn.record-btn { width: auto; height: 32px; padding: 0 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; color: #999; letter-spacing: 0.5px; }
+        .action-btn.record-btn.active { color: #ff4757; background: white; }
+        .action-btn.remind-btn { color: #ccc; }
+        .action-btn.remind-btn.active { color: #555; background: white; }
 
-        .sidebar-section-item {
-            display: flex;
-            align-items: center;
-            background: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            transition: background 0.2s;
-        }
+        .card-content { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-type { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem; }
+        .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .card-genre { font-size: 0.8rem; color: #666; margin-bottom: 0.75rem; }
+        .card-desc { font-size: 0.85rem; color: #444; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-        .sidebar-section-item.dragging {
-            opacity: 0.4;
-            background: #e9ecef;
-        }
+        .empty-state { text-align: center; padding: 2rem; color: #888; font-style: italic; grid-column: 1 / -1; }
+        .hidden { display: none !important; }
 
-        .sidebar-section-item.drag-over {
-            border-top: 2px solid var(--primary-color);
-        }
+        .toggle-group label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 0.9rem; }
+        .toggle-group input[type="checkbox"] { margin-right: 0.75rem; width: 18px; height: 18px; }
 
-        .drag-handle {
-            cursor: grab;
-            margin-right: 8px;
-            color: #999;
-            user-select: none;
-            font-size: 1rem;
-        }
+        /* AI Search */
+        .ai-search-section { background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%); border: 2px dashed var(--primary-color); padding: 1.5rem 2rem; border-radius: var(--border-radius); margin-bottom: 3rem; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: all 0.3s ease; }
+        .ai-search-section.collapsed { background: #f8f9fa; border-style: solid; margin-bottom: 1.5rem; padding: 1rem 2rem; }
+        .ai-search-header { display: flex; justify-content: space-between; align-items: center; }
+        .ai-collapsible-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.3s ease-out; }
+        .ai-search-section.collapsed .ai-collapsible-wrapper { grid-template-rows: 0fr; }
+        .ai-collapsible-content { overflow: hidden; padding-top: 1.5rem; }
+        .ai-toggle-btn { background: #eee; border: none; color: #444; cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
+        .ai-toggle-btn:hover { background: #ddd; color: var(--primary-color); }
+        .ai-toggle-btn i { transition: transform 0.3s; font-size: 0.7rem; }
+        .ai-search-section.collapsed .ai-toggle-btn i { transform: rotate(-180deg); }
+        .ai-search-section::before { content: "✨"; position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg); pointer-events: none; }
+        .ai-search-header h3 { font-size: 1.3rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem; }
+        .ai-input-group { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .ai-textarea { flex-grow: 1; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; resize: none; height: 60px; outline: none; transition: border-color 0.2s; }
+        .ai-textarea:focus { border-color: var(--primary-color); }
+        .ai-btn { background: var(--primary-color); color: white; border: none; padding: 0 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .ai-btn:hover { opacity: 0.9; }
+        .ai-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .ai-loader { display: none; text-align: center; padding: 2rem; font-style: italic; color: #666; }
+        .ai-loader .dots::after { content: "."; animation: dots 1.5s infinite; }
+        @keyframes dots { 0% { content: "."; } 33% { content: ".."; } 66% { content: "..."; } }
+        .ai-results { display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+        .ai-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .clear-ai-btn { background: transparent; border: 1px solid #ddd; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
+        .clear-ai-btn:hover { background: #f8f9fa; }
 
-        .section-checkbox {
-            margin-right: 8px;
-            width: 15px;
-            height: 15px;
-            cursor: pointer;
-        }
-
-        .section-name {
-            flex-grow: 1;
-            cursor: pointer;
-            font-size: 0.85rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .section-name:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-
-        .sidebar-remove-btn {
-            background: transparent;
-            border: none;
-            color: #ccc;
-            cursor: pointer;
-            padding: 2px;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-
-        .sidebar-remove-btn:hover {
-            color: var(--accent-color);
-        }
-
-        /* Main Content Area */
-        main {
-            flex-grow: 1;
-            padding: 2rem;
-            max-width: 100%;
-            transition: padding var(--transition-speed) ease;
-        }
-
-        .content-container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Hero Area */
-        .hero {
-            background: var(--hero-bg);
-            color: var(--hero-text);
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-        }
-
-        .hero h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .hero p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        /* Sections */
-        .content-section {
-            margin-bottom: 4rem;
-            scroll-margin-top: 100px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #eee;
-        }
-
-        .section-header h3 {
-            font-size: 1.4rem;
-        }
-
-        /* Grid */
-        .grid {
+        /* ===================== CHANNEL CARDS ===================== */
+        .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.5rem;
         }
 
-        @media (min-width: 1600px) {
-            .grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-        }
-
-        /* Card */
-        .card {
+        .channel-card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: transform 0.3s;
-            display: flex; flex-direction: column;
-            position: relative;
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        }
-
-        .card-img {
-            height: 160px;
-            background: #ddd;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .card-drag-handle {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 4px;
-            width: 32px;
-            height: 32px;
-            cursor: grab;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            z-index: 11;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .card:hover .card-drag-handle,
-        .card.is-reorderable .card-drag-handle {
-            opacity: 1;
-        }
-
-        @media (max-width: 1024px) {
-            .card-drag-handle {
-                opacity: 1;
-            }
-        }
-
-        .card-drag-handle:active {
-            cursor: grabbing;
-        }
-
-        .sortable-ghost {
-            opacity: 0.2;
-            transform: scale(0.95);
-        }
-
-        .fav-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ccc;
-            z-index: 10;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .fav-btn:hover {
-            background: white;
-            color: #999;
-        }
-
-        .fav-btn.active {
-            color: var(--accent-color);
-            background: white;
-        }
-
-        .fav-btn.active svg {
-            fill: var(--accent-color);
-        }
-
-        .card-actions-bottom {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            display: flex;
-            gap: 8px;
-            z-index: 10;
-        }
-
-        .action-btn {
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: #ccc;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .action-btn:hover {
-            background: white;
-            color: #999;
-        }
-
-        .action-btn.record-btn {
-            width: auto;
-            height: 32px;
-            padding: 0 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: #999;
-            letter-spacing: 0.5px;
-        }
-
-        .action-btn.record-btn.active {
-            color: #ff4757;
-            background: white;
-        }
-
-        .action-btn.remind-btn {
-            color: #ccc;
-        }
-
-        .action-btn.remind-btn.active {
-            color: #555;
-            background: white;
-        }
-
-        .card-content {
-            padding: 1.25rem;
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
-        }
-
-        .card-type {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-genre {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 0.75rem;
-        }
-
-        .card-desc {
-            font-size: 0.85rem;
-            color: #444;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #888;
-            font-style: italic;
-            grid-column: 1 / -1;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .toggle-group label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .toggle-group input[type="checkbox"] {
-            margin-right: 0.75rem;
-            width: 18px;
-            height: 18px;
-        }
-
-        /* AI Search Section */
-        .ai-search-section {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
-            border: 2px dashed var(--primary-color);
-            padding: 1.5rem 2rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 3rem;
-            box-shadow: var(--shadow);
             position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .ai-search-section.collapsed {
-            background: #f8f9fa;
-            border-style: solid;
-            margin-bottom: 1.5rem;
-            padding: 1rem 2rem;
-        }
-
-        .ai-search-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .ai-collapsible-wrapper {
-            display: grid;
-            grid-template-rows: 1fr;
-            transition: grid-template-rows 0.3s ease-out;
-        }
-
-        .ai-search-section.collapsed .ai-collapsible-wrapper {
-            grid-template-rows: 0fr;
-        }
-
-        .ai-collapsible-content {
-            overflow: hidden;
-            padding-top: 1.5rem;
-        }
-
-        .ai-toggle-btn {
-            background: #eee;
-            border: none;
-            color: #444;
+            transition: box-shadow 0.3s;
             cursor: pointer;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
+        }
+        .channel-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+        .channel-card-header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .ai-toggle-btn:hover {
-            background: #ddd;
-            color: var(--primary-color);
-        }
-
-        .ai-toggle-btn i {
-            transition: transform 0.3s;
-            font-size: 0.7rem;
-        }
-
-        .ai-search-section.collapsed .ai-toggle-btn i {
-            transform: rotate(-180deg);
-        }
-
-        .ai-search-section::before {
-            content: "✨";
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 4rem;
-            opacity: 0.05;
-            transform: rotate(15deg);
-            pointer-events: none;
-        }
-
-        .ai-search-header h3 {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .ai-input-group {
-            display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .ai-textarea {
-            flex-grow: 1;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            resize: none;
-            height: 60px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .ai-textarea:focus {
-            border-color: var(--primary-color);
-        }
-
-        .ai-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
+        .channel-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .channel-meta { flex-grow: 1; }
+        .channel-name { font-size: 1rem; font-weight: 700; }
+        .channel-category { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .channel-fav-btn {
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            z-index: 10;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .channel-fav-btn:hover { color: #bbb; }
+        .channel-fav-btn.active { color: var(--accent-color); }
+        .channel-fav-btn.active svg { fill: var(--accent-color); }
+
+        .channel-now {
+            padding: 0.9rem 1.25rem 0.5rem;
+        }
+
+        .now-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .now-program-name {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 0.2rem;
+        }
+
+        .now-program-time {
+            font-size: 0.78rem;
+            color: #888;
+            margin-bottom: 0.6rem;
+        }
+
+        .progress-bar-track {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .channel-upcoming {
+            padding: 0.6rem 1.25rem 1rem;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            padding: 0.3rem 0;
+            border-top: 1px solid #f5f5f5;
+            font-size: 0.8rem;
+        }
+
+        .upcoming-time {
+            color: #999;
+            flex-shrink: 0;
+            width: 38px;
+            font-size: 0.75rem;
+        }
+
+        .upcoming-name {
+            color: #555;
+            overflow: hidden;
+            text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .ai-btn:hover {
-            opacity: 0.9;
-        }
-
-        .ai-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .ai-loader {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            font-style: italic;
-            color: #666;
-        }
-
-        .ai-loader .dots::after {
-            content: ".";
-            animation: dots 1.5s infinite;
-        }
-
-        @keyframes dots {
-            0% { content: "."; }
-            33% { content: ".."; }
-            66% { content: "..."; }
-        }
-
-        .ai-results {
-            display: none;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #eee;
-        }
-
-        .ai-results-header {
+        /* Channel favourite section card */
+        .channel-fav-section-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 0.5rem;
         }
 
-        .clear-ai-btn {
-            background: transparent;
-            border: 1px solid #ddd;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .clear-ai-btn:hover {
-            background: #f8f9fa;
-        }
-
-        /* --- MOBILE OVERRIDES --- */
+        /* Mobile overrides */
         @media (max-width: 600px) {
             main { padding: 1rem; }
-
-            .section-header h3 {
-                font-size: 1.2rem;
+            .section-header h3 { font-size: 1.2rem; }
+            .ai-input-group { flex-direction: column; }
+            .ai-btn { width: 100%; justify-content: center; padding: 0.75rem; }
+            .grid, .channel-grid {
+                display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important;
+                overflow-x: auto !important; gap: 1rem; padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+                margin: 0 -0.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
             }
-
-            .ai-input-group {
-                flex-direction: column;
-            }
-
-            .ai-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 0.75rem;
-            }
-
-            /* Mobile grid becomes horizontally scrollable row */
-            .grid {
-                display: flex !important;
-                flex-direction: row !important;
-                flex-wrap: nowrap !important;
-                overflow-x: auto !important;
-                gap: 1rem;
-                padding: 0.5rem 0.5rem 1.5rem 0.5rem;
-                margin: 0 -0.5rem;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .grid::-webkit-scrollbar {
-                height: 4px;
-            }
-            .grid::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .grid::-webkit-scrollbar-thumb {
-                background: rgba(0,0,0,0.1);
-                border-radius: 10px;
-            }
-
-            .card {
-                min-width: 240px;
-                width: 240px;
-                scroll-snap-align: start;
-                flex-shrink: 0;
-            }
-
-            .card-img {
-                height: 110px;
-            }
-
-            .card-content {
-                padding: 1rem;
-            }
-
-            .card-title {
-                font-size: 0.95rem;
-            }
-
-            .card-desc {
-                font-size: 0.8rem;
-                -webkit-line-clamp: 2;
-            }
+            .grid::-webkit-scrollbar, .channel-grid::-webkit-scrollbar { height: 4px; }
+            .grid::-webkit-scrollbar-track, .channel-grid::-webkit-scrollbar-track { background: transparent; }
+            .grid::-webkit-scrollbar-thumb, .channel-grid::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+            .card, .channel-card { min-width: 260px; width: 260px; scroll-snap-align: start; flex-shrink: 0; }
+            .card-img { height: 110px; }
+            .card-content { padding: 1rem; }
+            .card-title { font-size: 0.95rem; }
+            .card-desc { font-size: 0.8rem; -webkit-line-clamp: 2; }
         }
     </style>
 </head>
 <body class="sidebar-collapsed">
 
-    <header>
-        <div class="header-left">
-            <button class="sidebar-toggle" id="toggle-btn" title="Avaa/Sulje asetukset">
-                <span style="font-size: 1.1rem;">☰</span>
-                <span class="sidebar-toggle-text">VALIKKO</span>
-            </button>
-            <h1>Oma viihde</h1>
-        </div>
-    </header>
-
-    <div class="sidebar-overlay" id="overlay"></div>
-
-    <div class="app-wrapper">
-        <aside id="sidebar">
-            <div class="filter-section">
-                <h3>Lajityypit</h3>
-                <div class="chip-group" id="genre-filters">
-                    <!-- Generoidaan JS:llä -->
-                </div>
-
-                <h3>Palvelut</h3>
-                <div class="chip-group" id="service-filters" style="flex-direction: row; flex-wrap: wrap;">
-                    <div class="chip" data-value="TV">TV</div>
-                    <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
-                    <div class="chip" data-value="Vuokraelokuva">Vuokrattavat</div>
-                </div>
-
-                <h3>Asetukset</h3>
-                <div class="toggle-group">
-                    <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikit</label>
-                    <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
-                </div>
-            </div>
-
-            <div class="filter-section">
-                <h3>Näkymän hallinta</h3>
-                <p style="font-size: 0.7rem; color: #888; margin-bottom: 0.8rem;">Järjestele raahaamalla ⠿, klikkaa nimeä navigoidaksesi.</p>
-                <div class="sidebar-section-list" id="sidebar-sections">
-                    <!-- Generoidaan JS:llä -->
-                </div>
-            </div>
-
-            <div class="filter-section">
-                <h3>Demon asetukset</h3>
-                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="primary-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri</label>
-                            <input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="bg-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri</label>
-                            <input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="header-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Tausta</label>
-                            <input type="text" id="header-bg-hex" placeholder="#1a1a1a" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="header-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Teksti</label>
-                            <input type="text" id="header-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="hero-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Tausta</label>
-                            <input type="text" id="hero-bg-hex" placeholder="#1e3c72" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <input type="color" id="hero-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                        <div style="flex-grow: 1;">
-                            <label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Teksti</label>
-                            <input type="text" id="hero-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;">
-                        </div>
-                    </div>
-                    <button id="reset-theme-btn" style="margin-top: 0.5rem; padding: 0.5rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s;">Palauta oletusvärit</button>
-                </div>
-            </div>
-        </aside>
-
-        <main>
-            <div class="content-container">
-                <div class="hero">
-                    <h2>Hei, Jaska Jokunen</h2>
-                    <p>Voit hallita näkymääsi vasemman sivupalkin ohjauspaneelista. Saat ohjauspaneelin näkyviin painamalla valikko-painiketta.</p>
-                </div>
-
-                <!-- AI Search Section -->
-                <div class="ai-search-section" id="ai-search-container">
-                    <div class="ai-search-header">
-                        <h3><span>✨</span> Tekoälyavusteinen sisältöhaku</h3>
-                        <button class="ai-toggle-btn" id="ai-toggle-btn">
-                            <span id="ai-toggle-text">Piilota</span>
-                            <i class="fas fa-chevron-up"></i>
-                        </button>
-                    </div>
-                    <div class="ai-collapsible-wrapper">
-                        <div class="ai-collapsible-content" id="ai-collapsible-content">
-                            <div class="ai-input-group">
-                                <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle' tai 'Suosittele jotain hyvää lastenohjelmaa'"></textarea>
-                                <button class="ai-btn" id="ai-search-btn">
-                                    <span>Kysy tekoälyltä</span>
-                                </button>
-                            </div>
-                            
-                            <div class="ai-loader" id="ai-loader">
-                                Tekoäly analysoi pyyntöäsi ja selaa kirjastoa<span class="dots"></span>
-                            </div>
-
-                            <div class="ai-results" id="ai-results">
-                                <div class="ai-results-header">
-                                    <p style="font-size: 0.9rem; font-weight: bold; color: #555;">Tekoälyn suositukset:</p>
-                                    <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä haku</button>
-                                </div>
-                                <div class="grid" id="ai-results-grid">
-                                    <!-- Tulokset generoidaan JS:llä -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="dynamic-sections">
-                    <!-- Tänne renderöidään kaikki osiot järjestyksessä -->
-                </div>
-            </div>
-        </main>
+<header>
+    <div class="header-left">
+        <button class="sidebar-toggle" id="toggle-btn" title="Avaa/Sulje asetukset">
+            <span style="font-size: 1.1rem;">☰</span>
+            <span class="sidebar-toggle-text">VALIKKO</span>
+        </button>
+        <h1>Oma viihde</h1>
     </div>
+</header>
 
-    <script>
-        // --- MOCK DATA ---
-        const genres = ["Elokuvat", "Sarjat", "Urheilu", "Lapset", "Dokumentit", "Viihde", "Uutiset"];
-        
-        const contentItems = [
-            // Elokuvat
-            { id: 1,  title: "Napapiirin sankarit",       type: "Suoratoisto",  genre: "Elokuvat",   desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
-            { id: 4,  title: "Dune: Osa kaksi",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
-            { id: 9,  title: "Barbie",                    type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
-            { id: 17, title: "Sisu",                      type: "Suoratoisto",  genre: "Elokuvat",   desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
-            { id: 18, title: "Kuolleet lehdet",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
-            // Sarjat
-            { id: 8,  title: "Sorjonen",                  type: "Suoratoisto",  genre: "Sarjat",     desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
-            { id: 12, title: "The Last of Us",            type: "Suoratoisto",  genre: "Sarjat",     desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
-            { id: 19, title: "Munkkivuori",               type: "Suoratoisto",  genre: "Sarjat",     desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
-            { id: 20, title: "Pohjolan laki",             type: "TV",           genre: "Sarjat",     desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
-            { id: 21, title: "Succession",                type: "Suoratoisto",  genre: "Sarjat",     desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
-            // Urheilu
-            { id: 3,  title: "Jääkiekon MM-finaali",      type: "TV",           genre: "Urheilu",    desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
-            { id: 10, title: "Formula 1: Monaco",         type: "TV",           genre: "Urheilu",    desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
-            { id: 22, title: "Huuhkajat: EM-karsinta",   type: "TV",           genre: "Urheilu",    desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
-            { id: 23, title: "Wimbledon: Finaali",        type: "TV",           genre: "Urheilu",    desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
-            { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu",  desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
-            // Lapset
-            { id: 5,  title: "Muumilaakson tarinoita",    type: "Suoratoisto",  genre: "Lapset",     desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
-            { id: 13, title: "Ryhmä Hau",                 type: "Suoratoisto",  genre: "Lapset",     desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
-            { id: 25, title: "Pipsa Possu",               type: "TV",           genre: "Lapset",     desc: "Pienen possun arkisia seikkailuja.", recommended: false },
-            { id: 26, title: "Frozen II",                 type: "Vuokraelokuva",genre: "Lapset",     desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
-            { id: 27, title: "Katti Matikainen",          type: "TV",           genre: "Lapset",     desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
-            // Dokumentit
-            { id: 6,  title: "Luonnon ihmeet",            type: "Suoratoisto",  genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
-            { id: 11, title: "Avara luonto",              type: "TV",           genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
-            { id: 28, title: "Suomi on metsäläinen",      type: "TV",           genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
-            { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto",  genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
-            { id: 30, title: "Kosmos",                    type: "Suoratoisto",  genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
-            // Viihde
-            { id: 7,  title: "Putous",                    type: "TV",           genre: "Viihde",     desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
-            { id: 15, title: "MasterChef Suomi",          type: "TV",           genre: "Viihde",     desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
-            { id: 31, title: "Vain elämää",               type: "TV",           genre: "Viihde",     desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
-            { id: 32, title: "Haluatko miljonääriksi?",   type: "TV",           genre: "Viihde",     desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
-            { id: 33, title: "Tanssii tähtien kanssa",    type: "TV",           genre: "Viihde",     desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
-            // Uutiset
-            { id: 2,  title: "Uutiset 20:30",             type: "TV",           genre: "Uutiset",    desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
-            { id: 16, title: "A-studio",                  type: "TV",           genre: "Uutiset",    desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
-            { id: 34, title: "Yle Uutiset: Sää",          type: "TV",           genre: "Uutiset",    desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
-            { id: 35, title: "CNN International",         type: "Suoratoisto",  genre: "Uutiset",    desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
-            { id: 36, title: "Urheiluruutu",              type: "TV",           genre: "Uutiset",    desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
-        ];
+<div class="sidebar-overlay" id="overlay"></div>
 
-        // --- STATE ---
-        const DEFAULT_THEME = {
-            primary: "#007bff",
-            bg: "#f4f7f9",
-            headerBg: "#1a1a1a",
-            headerText: "#ffffff",
-            heroBg: "#1e3c72",
-            heroText: "#ffffff"
-        };
+<div class="app-wrapper">
+    <aside id="sidebar">
+        <div class="filter-section">
+            <h3>Lajityypit</h3>
+            <div class="chip-group" id="genre-filters"></div>
+            <h3>Palvelut</h3>
+            <div class="chip-group" id="service-filters" style="flex-direction: row; flex-wrap: wrap;">
+                <div class="chip" data-value="TV">TV</div>
+                <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
+                <div class="chip" data-value="Vuokraelokuva">Vuokrattavat</div>
+            </div>
+            <h3>Asetukset</h3>
+            <div class="toggle-group">
+                <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikit</label>
+                <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
+            </div>
+        </div>
 
-        let activeGenres = new Set();
-        let activeServices = new Set();
-        let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
-        let recordings = new Set(JSON.parse(localStorage.getItem('recs') || '[]'));
-        let reminders = new Set(JSON.parse(localStorage.getItem('rems') || '[]'));
-        let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
-        let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended", "favorites", "all"]');
-        let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
-        let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.stringify(DEFAULT_THEME));
-        let showOnlyFavorites = false;
-        let highlightStreaming = false;
-        let aiResults = [];
+        <div class="filter-section">
+            <h3>Näkymän hallinta</h3>
+            <p style="font-size: 0.7rem; color: #888; margin-bottom: 0.8rem;">Järjestele raahaamalla ⠿, klikkaa nimeä navigoidaksesi.</p>
+            <div class="sidebar-section-list" id="sidebar-sections"></div>
+        </div>
 
-        // --- DOM ELEMENTS ---
-        const dynamicSectionsContainer = document.getElementById('dynamic-sections');
-        const genreFiltersContainer = document.getElementById('genre-filters');
-        const serviceChips = document.querySelectorAll('#service-filters .chip');
-        const sidebarSectionsContainer = document.getElementById('sidebar-sections');
-        const toggleBtn = document.getElementById('toggle-btn');
-        const overlay = document.getElementById('overlay');
+        <div class="filter-section">
+            <h3>Demon asetukset</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="primary-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri</label><input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="bg-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri</label><input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="header-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Tausta</label><input type="text" id="header-bg-hex" placeholder="#1a1a1a" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="header-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Teksti</label><input type="text" id="header-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="hero-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Tausta</label><input type="text" id="hero-bg-hex" placeholder="#1e3c72" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="color" id="hero-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
+                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Teksti</label><input type="text" id="hero-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                </div>
+                <button id="reset-theme-btn" style="margin-top: 0.5rem; padding: 0.5rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s;">Palauta oletusvärit</button>
+            </div>
+        </div>
+    </aside>
 
-        // --- INITIALIZATION ---
-        function init() {
+    <main>
+        <div class="content-container">
+            <div class="hero">
+                <h2>Hei, Jaska Jokunen</h2>
+                <p>Voit hallita näkymääsi vasemman sivupalkin ohjauspaneelista. Saat ohjauspaneelin näkyviin painamalla valikko-painiketta.</p>
+            </div>
+
+            <!-- AI Search Section -->
+            <div class="ai-search-section" id="ai-search-container">
+                <div class="ai-search-header">
+                    <h3><span>✨</span> Tekoälyavusteinen sisältöhaku</h3>
+                    <button class="ai-toggle-btn" id="ai-toggle-btn">
+                        <span id="ai-toggle-text">Piilota</span>
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                </div>
+                <div class="ai-collapsible-wrapper">
+                    <div class="ai-collapsible-content" id="ai-collapsible-content">
+                        <div class="ai-input-group">
+                            <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle' tai 'Suosittele jotain hyvää lastenohjelmaa'"></textarea>
+                            <button class="ai-btn" id="ai-search-btn"><span>Kysy tekoälyltä</span></button>
+                        </div>
+                        <div class="ai-loader" id="ai-loader">Tekoäly analysoi pyyntöäsi ja selaa kirjastoa<span class="dots"></span></div>
+                        <div class="ai-results" id="ai-results">
+                            <div class="ai-results-header">
+                                <p style="font-size: 0.9rem; font-weight: bold; color: #555;">Tekoälyn suositukset:</p>
+                                <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä haku</button>
+                            </div>
+                            <div class="grid" id="ai-results-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dynamic-sections"></div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ==================== DATA ====================
+
+const genres = ["Elokuvat", "Sarjat", "Urheilu", "Lapset", "Dokumentit", "Viihde", "Uutiset"];
+
+const contentItems = [
+    { id: 1,  title: "Napapiirin sankarit",       type: "Suoratoisto",  genre: "Elokuvat",   desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
+    { id: 4,  title: "Dune: Osa kaksi",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
+    { id: 9,  title: "Barbie",                    type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
+    { id: 17, title: "Sisu",                      type: "Suoratoisto",  genre: "Elokuvat",   desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
+    { id: 18, title: "Kuolleet lehdet",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
+    { id: 8,  title: "Sorjonen",                  type: "Suoratoisto",  genre: "Sarjat",     desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
+    { id: 12, title: "The Last of Us",            type: "Suoratoisto",  genre: "Sarjat",     desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
+    { id: 19, title: "Munkkivuori",               type: "Suoratoisto",  genre: "Sarjat",     desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
+    { id: 20, title: "Pohjolan laki",             type: "TV",           genre: "Sarjat",     desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
+    { id: 21, title: "Succession",                type: "Suoratoisto",  genre: "Sarjat",     desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
+    { id: 3,  title: "Jääkiekon MM-finaali",      type: "TV",           genre: "Urheilu",    desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
+    { id: 10, title: "Formula 1: Monaco",         type: "TV",           genre: "Urheilu",    desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
+    { id: 22, title: "Huuhkajat: EM-karsinta",   type: "TV",           genre: "Urheilu",    desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
+    { id: 23, title: "Wimbledon: Finaali",        type: "TV",           genre: "Urheilu",    desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
+    { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu", desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
+    { id: 5,  title: "Muumilaakson tarinoita",    type: "Suoratoisto",  genre: "Lapset",     desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
+    { id: 13, title: "Ryhmä Hau",                 type: "Suoratoisto",  genre: "Lapset",     desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
+    { id: 25, title: "Pipsa Possu",               type: "TV",           genre: "Lapset",     desc: "Pienen possun arkisia seikkailuja.", recommended: false },
+    { id: 26, title: "Frozen II",                 type: "Vuokraelokuva",genre: "Lapset",     desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
+    { id: 27, title: "Katti Matikainen",          type: "TV",           genre: "Lapset",     desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
+    { id: 6,  title: "Luonnon ihmeet",            type: "Suoratoisto",  genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
+    { id: 11, title: "Avara luonto",              type: "TV",           genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
+    { id: 28, title: "Suomi on metsäläinen",      type: "TV",           genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
+    { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto",  genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
+    { id: 30, title: "Kosmos",                    type: "Suoratoisto",  genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
+    { id: 7,  title: "Putous",                    type: "TV",           genre: "Viihde",     desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
+    { id: 15, title: "MasterChef Suomi",          type: "TV",           genre: "Viihde",     desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
+    { id: 31, title: "Vain elämää",               type: "TV",           genre: "Viihde",     desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
+    { id: 32, title: "Haluatko miljonääriksi?",   type: "TV",           genre: "Viihde",     desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
+    { id: 33, title: "Tanssii tähtien kanssa",    type: "TV",           genre: "Viihde",     desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
+    { id: 2,  title: "Uutiset 20:30",             type: "TV",           genre: "Uutiset",    desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
+    { id: 16, title: "A-studio",                  type: "TV",           genre: "Uutiset",    desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
+    { id: 34, title: "Yle Uutiset: Sää",          type: "TV",           genre: "Uutiset",    desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
+    { id: 35, title: "CNN International",         type: "Suoratoisto",  genre: "Uutiset",    desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
+    { id: 36, title: "Urheiluruutu",              type: "TV",           genre: "Uutiset",    desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
+];
+
+// ==================== CHANNELS & PROGRAM DATA ====================
+
+const channels = [
+    { id: 'ch1', name: 'YLE TV1',     abbr: 'TV1',  color: '#003580', category: 'Yleinen' },
+    { id: 'ch2', name: 'YLE TV2',     abbr: 'TV2',  color: '#0064b4', category: 'Yleinen' },
+    { id: 'ch3', name: 'MTV3',        abbr: 'MTV',  color: '#e4003a', category: 'Yleinen' },
+    { id: 'ch4', name: 'Nelonen',     abbr: 'NEL',  color: '#e8650a', category: 'Yleinen' },
+    { id: 'ch5', name: 'Sub',         abbr: 'SUB',  color: '#7b2d8b', category: 'Viihde' },
+    { id: 'ch6', name: 'Jim',         abbr: 'JIM',  color: '#1d7a3a', category: 'Urheilu' },
+    { id: 'ch7', name: 'Yle Teema',   abbr: 'TEE',  color: '#5a4a3a', category: 'Kulttuuri' },
+    { id: 'ch8', name: 'Hero',        abbr: 'HRO',  color: '#c0392b', category: 'Urheilu' },
+];
+
+// Minute offset from midnight helper
+function toMin(h, m) { return h * 60 + m; }
+
+// Generate programs for a given day-offset (0=today, 1=tomorrow etc.)
+// We seed different content per day so the EPG feels realistic
+function generateDayPrograms(dayOffset) {
+    const seeds = [
+        [ // YLE TV1
+            { start: toMin(6,0),   dur: 30,  title: 'Ylen aamu-tv', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(6,30),  dur: 60,  title: 'Uutiset & Sää', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(7,30),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(8,0),   dur: 90,  title: 'Dokumenttiprojekti', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(9,30),  dur: 60,  title: 'Avara luonto', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(10,30), dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(11,0),  dur: 60,  title: 'Kotikatsomo: Elokuva', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(12,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(12,30), dur: 90,  title: 'Luonnon ihmeet', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(14,0),  dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(15,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(15,30), dur: 90,  title: 'Sorjonen', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(17,0),  dur: 30,  title: 'A-studio', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(17,30), dur: 30,  title: 'Yle Uutiset: Sää', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(18,0),  dur: 60,  title: 'Dokumenttiprojekti', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(19,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(19,30), dur: 90,  title: 'Elokuva: Kuolleet lehdet', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(21,0),  dur: 60,  title: 'MOT: Tutkiva journalismi', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(22,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+        ],
+        [ // YLE TV2
+            { start: toMin(6,0),   dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(7,0),   dur: 30,  title: 'Muumilaakson tarinoita', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(7,30),  dur: 30,  title: 'Ryhmä Hau', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(8,0),   dur: 30,  title: 'Pipsa Possu', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(8,30),  dur: 30,  title: 'Katti Matikainen', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(9,0),   dur: 90,  title: 'Urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(10,30), dur: 90,  title: 'Huuhkajat: Analyysi', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(12,0),  dur: 60,  title: 'Elokuva: Napapiirin sankarit', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(13,0),  dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(14,0),  dur: 90,  title: 'Jalkapallo: Valioliiga', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(15,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(16,0),  dur: 60,  title: 'Jääkiekko: Liiga', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(17,0),  dur: 30,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
+            { start: toMin(17,30), dur: 90,  title: 'Jääkiekon MM-finaali', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(19,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(19,30), dur: 90,  title: 'Formula 1: Monaco', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(21,0),  dur: 60,  title: 'Tenniksen mestaruusottelu', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(22,0),  dur: 120, title: 'Yöurheilua', genre: 'Urheilu', color: '#e0f0ff' },
+        ],
+        [ // MTV3
+            { start: toMin(6,0),   dur: 60,  title: 'Huomenta Suomi', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(7,0),   dur: 60,  title: 'Huomenta Suomi', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(8,0),   dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(9,0),   dur: 60,  title: 'Kotikatsomo', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(10,0),  dur: 60,  title: 'MasterChef Suomi', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(11,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(11,30), dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(12,30), dur: 60,  title: 'Elokuva: Toimintahitti', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(13,30), dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(14,0),  dur: 60,  title: 'MasterChef Suomi', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(15,0),  dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(16,0),  dur: 60,  title: 'Tanssii tähtien kanssa', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(17,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(17,30), dur: 30,  title: 'Pohjolan laki', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(18,0),  dur: 60,  title: 'Tanssii tähtien kanssa', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(19,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(19,30), dur: 90,  title: 'Elokuva: Jännitystä', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(21,0),  dur: 60,  title: 'Haluatko miljonääriksi?', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(22,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
+            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+        ],
+        [ // Nelonen
+            { start: toMin(6,0),   dur: 60,  title: 'Neljän aamu', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(7,0),   dur: 60,  title: 'Elokuva: Perheseikkailu', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(8,0),   dur: 60,  title: 'Putous: Parhaat palat', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(9,0),   dur: 120, title: 'Elokuva: Barbie', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(11,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(12,0),  dur: 60,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
+            { start: toMin(13,0),  dur: 60,  title: 'Putous', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(14,0),  dur: 120, title: 'Elokuva: Sisu', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(16,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(17,0),  dur: 60,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
+            { start: toMin(18,0),  dur: 60,  title: 'Putous', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(19,0),  dur: 120, title: 'Elokuva: Dune: Osa kaksi', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(21,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
+            { start: toMin(22,0),  dur: 30,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
+            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+        ],
+        [ // Sub
+            { start: toMin(6,0),   dur: 90,  title: 'Sarjabingesessio', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(7,30),  dur: 90,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(9,0),   dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(10,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(11,0),  dur: 90,  title: 'Elokuva: Romantiikka', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(12,30), dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(13,30), dur: 60,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(14,30), dur: 90,  title: 'Elokuva: Jännitys', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(16,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(17,0),  dur: 60,  title: 'Sorjonen', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(18,0),  dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(19,0),  dur: 60,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(20,0),  dur: 120, title: 'Elokuva: Sci-fi spektaakkeli', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(22,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
+            { start: toMin(23,0),  dur: 60,  title: 'Succession: Uusinta', genre: 'Sarjat', color: '#ede8f5' },
+        ],
+        [ // Jim
+            { start: toMin(6,0),   dur: 120, title: 'Aamun urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(8,0),   dur: 60,  title: 'Huuhkajat: Karsintaottelu', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(9,0),   dur: 90,  title: 'Wimbledon: Semifinaali', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(10,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(11,0),  dur: 90,  title: 'F1: Monaco harjoitukset', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(12,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(13,0),  dur: 120, title: 'Valioliiga: Liverpool - ManU', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(15,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(15,30), dur: 90,  title: 'Jääkiekko: Liiga', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(17,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(17,30), dur: 120, title: 'Formula 1: Monaco kisa', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(19,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(20,0),  dur: 120, title: 'Wimbledon: Finaali', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(22,0),  dur: 60,  title: 'Yön urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
+            { start: toMin(23,0),  dur: 60,  title: 'Urheilupodcast TV', genre: 'Urheilu', color: '#e0f0ff' },
+        ],
+        [ // Yle Teema
+            { start: toMin(7,0),   dur: 60,  title: 'Kulttuuriaamiainen', genre: 'Dokumentit', color: '#f0ebe0' },
+            { start: toMin(8,0),   dur: 90,  title: 'David Attenborough: Elämä', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(9,30),  dur: 60,  title: 'Kosmos: Tähtitiede', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(10,30), dur: 90,  title: 'Taiteen historia', genre: 'Dokumentit', color: '#f0ebe0' },
+            { start: toMin(12,0),  dur: 60,  title: 'Suomi on metsäläinen', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(13,0),  dur: 120, title: 'Elokuva: Klassikko', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(15,0),  dur: 60,  title: 'Kulttuuriuutiset', genre: 'Uutiset', color: '#dce8f5' },
+            { start: toMin(16,0),  dur: 90,  title: 'Luonnon ihmeet: Arktis', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(17,30), dur: 60,  title: 'Musiikkidokumentti', genre: 'Dokumentit', color: '#f0ebe0' },
+            { start: toMin(18,30), dur: 90,  title: 'Elokuva: Aki Kaurismäki', genre: 'Elokuvat', color: '#fde8d8' },
+            { start: toMin(20,0),  dur: 60,  title: 'Kosmos', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(21,0),  dur: 90,  title: 'Avara luonto: Erityinen', genre: 'Dokumentit', color: '#e8f4ea' },
+            { start: toMin(22,30), dur: 90,  title: 'Yödokumentti', genre: 'Dokumentit', color: '#e8f4ea' },
+        ],
+        [ // Hero
+            { start: toMin(6,0),   dur: 120, title: 'Extremeurheilua aamuun', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(8,0),   dur: 90,  title: 'MMA: Mestaruusottelu', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(9,30),  dur: 90,  title: 'Jääkiekon MM: Semifinaalit', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(11,0),  dur: 60,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
+            { start: toMin(12,0),  dur: 120, title: 'Huuhkajat: EM-karsinta', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(14,0),  dur: 60,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
+            { start: toMin(15,0),  dur: 90,  title: 'Jääkiekon MM-finaali', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(16,30), dur: 30,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
+            { start: toMin(17,0),  dur: 120, title: 'F1: Monaco GP suora', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(19,0),  dur: 30,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
+            { start: toMin(19,30), dur: 120, title: 'Valioliiga: Liverpool-ManU', genre: 'Urheilu', color: '#ffe8e8' },
+            { start: toMin(21,30), dur: 60,  title: 'Hero Urheiluruutu: Ilta', genre: 'Uutiset', color: '#ffe0dd' },
+            { start: toMin(22,30), dur: 90,  title: 'MMA: Yöottelu', genre: 'Urheilu', color: '#ffe8e8' },
+        ],
+    ];
+
+    // Shift times slightly per dayOffset for variety
+    return seeds.map((channelProgs, ci) => {
+        return channelProgs.map(p => ({
+            ...p,
+            start: p.start + (dayOffset * 10 * (ci % 3 === 0 ? 1 : -1)) // slight variation
+        })).filter(p => p.start >= 0); // keep valid
+    });
+}
+
+// Get programs for a channel/day, return as array
+function getChannelPrograms(channelIndex, dayOffset) {
+    const allDays = generateDayPrograms(dayOffset);
+    return allDays[channelIndex] || [];
+}
+
+// Get the currently-airing program (relative to simulated "now" = 18:45)
+const SIMULATED_NOW_MINUTES = toMin(18, 45);
+
+function getCurrentAndUpcoming(programs) {
+    let current = null;
+    let upcoming = [];
+
+    for (let i = 0; i < programs.length; i++) {
+        const p = programs[i];
+        const end = p.start + p.dur;
+        if (p.start <= SIMULATED_NOW_MINUTES && end > SIMULATED_NOW_MINUTES) {
+            current = { ...p, progress: Math.round(((SIMULATED_NOW_MINUTES - p.start) / p.dur) * 100) };
+        } else if (p.start > SIMULATED_NOW_MINUTES && upcoming.length < 3) {
+            upcoming.push(p);
+        }
+    }
+
+    // If no current (before first program or gap), find next
+    if (!current && programs.length) {
+        const next = programs.find(p => p.start > SIMULATED_NOW_MINUTES);
+        if (next) current = { ...next, progress: 0 };
+    }
+
+    return { current, upcoming };
+}
+
+function minToTimeStr(min) {
+    const h = Math.floor(min / 60) % 24;
+    const m = min % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+// ==================== STATE ====================
+
+const DEFAULT_THEME = {
+    primary: "#007bff", bg: "#f4f7f9", headerBg: "#1a1a1a",
+    headerText: "#ffffff", heroBg: "#1e3c72", heroText: "#ffffff"
+};
+
+let activeGenres = new Set();
+let activeServices = new Set();
+let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
+let recordings = new Set(JSON.parse(localStorage.getItem('recs') || '[]'));
+let reminders = new Set(JSON.parse(localStorage.getItem('rems') || '[]'));
+let channelFavorites = JSON.parse(localStorage.getItem('channelFavs') || '[]');
+let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
+let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended","favorites","all","channels"]');
+let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
+let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.stringify(DEFAULT_THEME));
+let showOnlyFavorites = false;
+let highlightStreaming = false;
+let aiResults = [];
+// Ensure 'channels' is in sectionOrder if not present
+if (!sectionOrder.includes('channels')) sectionOrder.unshift('channels');
+
+// ==================== DOM ====================
+
+const dynamicSectionsContainer = document.getElementById('dynamic-sections');
+const genreFiltersContainer = document.getElementById('genre-filters');
+const serviceChips = document.querySelectorAll('#service-filters .chip');
+const sidebarSectionsContainer = document.getElementById('sidebar-sections');
+const toggleBtn = document.getElementById('toggle-btn');
+const overlay = document.getElementById('overlay');
+// ==================== INIT ====================
+
+function init() {
+    renderGenreFilters();
+    renderSidebarSections();
+    renderContent();
+    applyTheme();
+    setupEventListeners();
+    updateThemeInputs();
+    document.body.classList.add('sidebar-collapsed');
+    document.body.classList.remove('sidebar-open');
+}
+
+function saveState() {
+    localStorage.setItem('favs', JSON.stringify(favorites));
+    localStorage.setItem('recs', JSON.stringify([...recordings]));
+    localStorage.setItem('rems', JSON.stringify([...reminders]));
+    localStorage.setItem('channelFavs', JSON.stringify(channelFavorites));
+    localStorage.setItem('customSections', JSON.stringify(customSections));
+    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+    localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
+    localStorage.setItem('themeSettings', JSON.stringify(themeSettings));
+}
+
+function applyTheme() {
+    document.documentElement.style.setProperty('--primary-color', themeSettings.primary);
+    document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
+    document.documentElement.style.setProperty('--header-bg', themeSettings.headerBg);
+    document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
+    document.documentElement.style.setProperty('--hero-bg', themeSettings.heroBg);
+    document.documentElement.style.setProperty('--hero-text', themeSettings.heroText);
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
+}
+
+function updateThemeInputs() {
+    document.getElementById('primary-color-hex').value = themeSettings.primary;
+    document.getElementById('primary-color-picker').value = themeSettings.primary;
+    document.getElementById('bg-color-hex').value = themeSettings.bg;
+    document.getElementById('bg-color-picker').value = themeSettings.bg;
+    document.getElementById('header-bg-hex').value = themeSettings.headerBg;
+    document.getElementById('header-bg-picker').value = themeSettings.headerBg;
+    document.getElementById('header-text-hex').value = themeSettings.headerText;
+    document.getElementById('header-text-picker').value = themeSettings.headerText;
+    document.getElementById('hero-bg-hex').value = themeSettings.heroBg;
+    document.getElementById('hero-bg-picker').value = themeSettings.heroBg;
+    document.getElementById('hero-text-hex').value = themeSettings.heroText;
+    document.getElementById('hero-text-picker').value = themeSettings.heroText;
+}
+
+// ==================== RENDERING ====================
+
+function renderGenreFilters() {
+    genreFiltersContainer.innerHTML = genres.map(g => `
+        <div class="genre-item">
+            <div class="chip ${activeGenres.has(g) ? 'active' : ''}" data-value="${g}">${g}</div>
+            <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi"><span>+</span></button>
+        </div>
+    `).join('');
+}
+
+function getSectionTitle(id) {
+    if (id === 'recommended') return "Suositellut sinulle";
+    if (id === 'favorites') return "Omat suosikit";
+    if (id === 'all') return "Kaikki sisällöt";
+    if (id === 'channels') return "📺 Kanavat";
+    if (id === 'channel-favorites') return "❤️ Suosikkikanavat";
+    if (id.startsWith('genre-')) return id.replace('genre-', '');
+    return id;
+}
+
+function renderSidebarSections() {
+    // Ensure channel-favorites is listed if any channel is favourited
+    if (channelFavorites.length > 0 && !sectionOrder.includes('channel-favorites')) {
+        const idx = sectionOrder.indexOf('channels');
+        sectionOrder.splice(idx + 1, 0, 'channel-favorites');
+    }
+    if (channelFavorites.length === 0) {
+        sectionOrder = sectionOrder.filter(id => id !== 'channel-favorites');
+    }
+
+    customSections.forEach(g => {
+        if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
+    });
+    sectionOrder = sectionOrder.filter(id => {
+        if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
+        return true;
+    });
+
+    sidebarSectionsContainer.innerHTML = sectionOrder.map(id => {
+        const isCustom = id.startsWith('genre-');
+        const isHidden = hiddenSections.has(id);
+        return `
+            <div class="sidebar-section-item" draggable="true" data-id="${id}">
+                <span class="drag-handle">⠿</span>
+                <input type="checkbox" class="section-checkbox" ${!isHidden ? 'checked' : ''} data-id="${id}">
+                <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
+                ${isCustom ? `<button class="sidebar-remove-btn" data-genre="${id.replace('genre-', '')}" title="Poista osio">🗑</button>` : ''}
+            </div>
+        `;
+    }).join('');
+
+    setupSidebarDragAndDrop();
+}
+
+function renderContent() {
+    dynamicSectionsContainer.innerHTML = '';
+
+    sectionOrder.forEach(sectionId => {
+        if (hiddenSections.has(sectionId)) return;
+
+        if (sectionId === 'channels') {
+            renderChannelsSection(dynamicSectionsContainer);
+            return;
+        }
+        if (sectionId === 'channel-favorites') {
+            renderChannelFavoritesSection(dynamicSectionsContainer);
+            return;
+        }
+
+        let title = getSectionTitle(sectionId);
+        let items = [];
+        const isCustom = sectionId.startsWith('genre-');
+
+        if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
+        else if (sectionId === 'favorites') items = favorites.map(id => contentItems.find(i => i.id === id)).filter(Boolean);
+        else if (sectionId === 'all') items = contentItems;
+        else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
+
+        const filteredItems = items.filter(item => {
+            const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
+            const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
+            const favoriteMatch = !showOnlyFavorites || favorites.includes(item.id);
+            return genreMatch && serviceMatch && favoriteMatch;
+        });
+
+        const sectionEl = document.createElement('section');
+        sectionEl.className = 'content-section';
+        sectionEl.id = 'anchor-' + sectionId;
+        sectionEl.innerHTML = `
+            <div class="section-header"><h3>${title}</h3></div>
+            <div class="grid ${sectionId === 'favorites' ? 'reorderable-grid' : ''}" id="grid-${sectionId}">
+                ${filteredItems.length > 0
+                    ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('')
+                    : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+            </div>
+        `;
+        dynamicSectionsContainer.appendChild(sectionEl);
+
+        if (sectionId === 'favorites' && filteredItems.length > 1) {
+            const grid = sectionEl.querySelector('.grid');
+            new Sortable(grid, {
+                animation: 150, handle: '.card-drag-handle', ghostClass: 'sortable-ghost',
+                onEnd: function() {
+                    const newOrder = [...grid.querySelectorAll('.card')].map(card => parseInt(card.getAttribute('data-id')));
+                    favorites = newOrder;
+                    saveState();
+                }
+            });
+        }
+    });
+
+    const aiResultsGrid = document.getElementById('ai-results-grid');
+    if (aiResultsGrid && aiResults.length > 0) {
+        aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
+    }
+}
+
+function renderChannelsSection(container) {
+    const sectionEl = document.createElement('section');
+    sectionEl.className = 'content-section';
+    sectionEl.id = 'anchor-channels';
+
+    const cards = channels.map((ch, idx) => createChannelCardHtml(ch, idx)).join('');
+
+    sectionEl.innerHTML = `
+        <div class="section-header">
+            <h3>📺 Kanavat</h3>
+            <span style="font-size: 0.78rem; color: #888;">Simuloitu aika: 18:45</span>
+        </div>
+        <div class="channel-grid" id="channel-grid">${cards}</div>
+    `;
+    container.appendChild(sectionEl);
+}
+
+function renderChannelFavoritesSection(container) {
+    if (channelFavorites.length === 0) return;
+    const sectionEl = document.createElement('section');
+    sectionEl.className = 'content-section';
+    sectionEl.id = 'anchor-channel-favorites';
+
+    const favChannels = channelFavorites.map(id => channels.find(c => c.id === id)).filter(Boolean);
+    const cards = favChannels.map((ch, i) => {
+        const idx = channels.indexOf(ch);
+        return createChannelCardHtml(ch, idx);
+    }).join('');
+
+    sectionEl.innerHTML = `
+        <div class="section-header"><h3>❤️ Suosikkikanavat</h3></div>
+        <div class="channel-grid">${cards}</div>
+    `;
+    container.appendChild(sectionEl);
+}
+
+function createChannelCardHtml(ch, channelIndex) {
+    const programs = getChannelPrograms(channelIndex, 0);
+    const { current, upcoming } = getCurrentAndUpcoming(programs);
+    const isFav = channelFavorites.includes(ch.id);
+
+    const progressBar = current
+        ? `<div class="progress-bar-track"><div class="progress-bar-fill" style="width: ${current.progress}%"></div></div>`
+        : '';
+
+    const nowSection = current ? `
+        <div class="channel-now">
+            <div class="now-label">● NYT</div>
+            <div class="now-program-name">${current.title}</div>
+            <div class="now-program-time">${minToTimeStr(current.start)} – ${minToTimeStr(current.start + current.dur)}</div>
+            ${progressBar}
+        </div>
+    ` : `<div class="channel-now"><div class="now-label" style="color:#aaa;">Ei lähetystä</div></div>`;
+
+    const upcomingHtml = upcoming.length > 0 ? `
+        <div class="channel-upcoming">
+            ${upcoming.map(p => `
+                <div class="upcoming-item">
+                    <span class="upcoming-time">${minToTimeStr(p.start)}</span>
+                    <span class="upcoming-name">${p.title}</span>
+                </div>
+            `).join('')}
+        </div>
+    ` : '';
+
+    return `
+        <div class="channel-card" data-channel-id="${ch.id}" data-channel-index="${channelIndex}">
+            <div class="channel-card-header">
+                <div class="channel-logo" style="background: ${ch.color};">${ch.abbr}</div>
+                <div class="channel-meta">
+                    <div class="channel-name">${ch.name}</div>
+                    <div class="channel-category">${ch.category}</div>
+                </div>
+                <button class="channel-fav-btn ${isFav ? 'active' : ''}" data-channel-id="${ch.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                </button>
+            </div>
+            ${nowSection}
+            ${upcomingHtml}
+        </div>
+    `;
+}
+
+function createCardHtml(item, isReorderable = false) {
+    const isFav = favorites.includes(item.id);
+    const isRec = recordings.has(item.id);
+    const isRem = reminders.has(item.id);
+    const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
+    return `
+        <div class="card ${isReorderable ? 'is-reorderable' : ''}" data-id="${item.id}" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
+            ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
+            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+            <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
+            <div class="card-content">
+                <div class="card-type">${item.type}</div>
+                <div class="card-title">${item.title}</div>
+                <div class="card-genre">${item.genre}</div>
+                <div class="card-desc">${item.desc}</div>
+            </div>
+            <div class="card-actions-bottom">
+                <button class="action-btn record-btn ${isRec ? 'active' : ''}" data-id="${item.id}" title="Aseta tallennus">REC</button>
+                <button class="action-btn remind-btn ${isRem ? 'active' : ''}" data-id="${item.id}" title="Aseta muistutus">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== EVENT LISTENERS ====================
+
+function setupEventListeners() {
+    // Sidebar toggle
+    toggleBtn.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 1024;
+        if (isMobile) document.body.classList.toggle('sidebar-open');
+        else {
+            document.body.classList.toggle('sidebar-collapsed');
+            localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed'));
+        }
+    });
+    overlay.addEventListener('click', () => document.body.classList.remove('sidebar-open'));
+
+    // Genre filter chips + add section
+    genreFiltersContainer.addEventListener('click', (e) => {
+        const addBtn = e.target.closest('.add-section-btn');
+        if (addBtn) {
+            const genre = addBtn.getAttribute('data-genre');
+            if (!customSections.includes(genre)) {
+                customSections.push(genre);
+                saveState();
+                renderSidebarSections();
+                renderContent();
+            }
+            return;
+        }
+        const chip = e.target.closest('.chip');
+        if (chip) {
+            const val = chip.getAttribute('data-value');
+            if (activeGenres.has(val)) activeGenres.delete(val);
+            else activeGenres.add(val);
             renderGenreFilters();
+            renderContent();
+        }
+    });
+
+    // Sidebar section management
+    sidebarSectionsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('section-name')) {
+            const id = e.target.getAttribute('data-id');
+            const target = document.getElementById('anchor-' + id);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (window.innerWidth <= 1024) document.body.classList.remove('sidebar-open');
+            }
+        }
+        if (e.target.classList.contains('section-checkbox')) {
+            const id = e.target.getAttribute('data-id');
+            if (e.target.checked) hiddenSections.delete(id);
+            else hiddenSections.add(id);
+            saveState(); renderContent();
+        }
+        if (e.target.classList.contains('sidebar-remove-btn')) {
+            const genre = e.target.getAttribute('data-genre');
+            customSections = customSections.filter(g => g !== genre);
+            sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
+            saveState(); renderSidebarSections(); renderContent();
+        }
+    });
+
+    // Service chips
+    serviceChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const val = chip.getAttribute('data-value');
+            if (activeServices.has(val)) activeServices.delete(val);
+            else activeServices.add(val);
+            chip.classList.toggle('active');
+            renderContent();
+        });
+    });
+
+    // Settings toggles
+    document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
+    document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
+
+    // AI toggle
+    const aiToggleBtn = document.getElementById('ai-toggle-btn');
+    const aiToggleText = document.getElementById('ai-toggle-text');
+    const aiSearchContainer = document.getElementById('ai-search-container');
+    if (aiToggleBtn && aiSearchContainer) {
+        aiToggleBtn.addEventListener('click', () => {
+            const isCollapsed = aiSearchContainer.classList.toggle('collapsed');
+            if (aiToggleText) aiToggleText.textContent = isCollapsed ? 'Näytä' : 'Piilota';
+        });
+    }
+
+    // AI Search
+    const aiSearchBtn = document.getElementById('ai-search-btn');
+    const aiPrompt = document.getElementById('ai-prompt');
+    const aiLoader = document.getElementById('ai-loader');
+    const aiResultsContainer = document.getElementById('ai-results');
+    const aiResultsGrid = document.getElementById('ai-results-grid');
+    const clearAiBtn = document.getElementById('clear-ai-btn');
+
+    aiSearchBtn.addEventListener('click', () => {
+        if (!aiPrompt.value.trim()) return;
+        aiSearchBtn.disabled = true;
+        aiResultsContainer.style.display = 'none';
+        aiLoader.style.display = 'block';
+        setTimeout(() => {
+            const count = Math.floor(Math.random() * 4) + 1;
+            aiResults = [...contentItems].sort(() => 0.5 - Math.random()).slice(0, count);
+            aiLoader.style.display = 'none';
+            aiResultsContainer.style.display = 'block';
+            aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
+            aiSearchBtn.disabled = false;
+        }, 1500);
+    });
+    clearAiBtn.addEventListener('click', () => {
+        aiResults = [];
+        aiResultsContainer.style.display = 'none';
+        aiPrompt.value = '';
+    });
+
+    // Card interactions (content cards)
+    const handleCardClick = (e) => {
+        const favBtn = e.target.closest('.fav-btn');
+        const recordBtn = e.target.closest('.record-btn');
+        const remindBtn = e.target.closest('.remind-btn');
+        if (favBtn) {
+            const id = parseInt(favBtn.getAttribute('data-id'));
+            const index = favorites.indexOf(id);
+            if (index > -1) favorites.splice(index, 1);
+            else favorites.push(id);
+            saveState(); renderContent(); renderSidebarSections(); return;
+        }
+        if (recordBtn) {
+            const id = parseInt(recordBtn.getAttribute('data-id'));
+            if (recordings.has(id)) recordings.delete(id); else recordings.add(id);
+            saveState(); renderContent(); return;
+        }
+        if (remindBtn) {
+            const id = parseInt(remindBtn.getAttribute('data-id'));
+            if (reminders.has(id)) reminders.delete(id); else reminders.add(id);
+            saveState(); renderContent(); return;
+        }
+    };
+    dynamicSectionsContainer.addEventListener('click', handleCardClick);
+    document.getElementById('ai-results-grid').addEventListener('click', handleCardClick);
+
+    // Channel card interactions — favourite button only
+    dynamicSectionsContainer.addEventListener('click', (e) => {
+        const channelFavBtn = e.target.closest('.channel-fav-btn');
+        if (channelFavBtn) {
+            const chId = channelFavBtn.getAttribute('data-channel-id');
+            const idx = channelFavorites.indexOf(chId);
+            if (idx > -1) channelFavorites.splice(idx, 1);
+            else channelFavorites.push(chId);
+            saveState();
             renderSidebarSections();
             renderContent();
-            applyTheme();
-            setupEventListeners();
-            updateThemeInputs();
-
-            document.body.classList.add('sidebar-collapsed');
-            document.body.classList.remove('sidebar-open');
         }
+    });
 
-        function saveState() {
-            localStorage.setItem('favs', JSON.stringify(favorites));
-            localStorage.setItem('recs', JSON.stringify([...recordings]));
-            localStorage.setItem('rems', JSON.stringify([...reminders]));
-            localStorage.setItem('customSections', JSON.stringify(customSections));
-            localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
-            localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
-            localStorage.setItem('themeSettings', JSON.stringify(themeSettings));
-        }
-
-        function applyTheme() {
-            document.documentElement.style.setProperty('--primary-color', themeSettings.primary);
-            document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
-            document.documentElement.style.setProperty('--header-bg', themeSettings.headerBg);
-            document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
-            document.documentElement.style.setProperty('--hero-bg', themeSettings.heroBg);
-            document.documentElement.style.setProperty('--hero-text', themeSettings.heroText);
-
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
-        }
-
-        function updateThemeInputs() {
-            document.getElementById('primary-color-hex').value = themeSettings.primary;
-            document.getElementById('primary-color-picker').value = themeSettings.primary;
-            document.getElementById('bg-color-hex').value = themeSettings.bg;
-            document.getElementById('bg-color-picker').value = themeSettings.bg;
-            document.getElementById('header-bg-hex').value = themeSettings.headerBg;
-            document.getElementById('header-bg-picker').value = themeSettings.headerBg;
-            document.getElementById('header-text-hex').value = themeSettings.headerText;
-            document.getElementById('header-text-picker').value = themeSettings.headerText;
-            document.getElementById('hero-bg-hex').value = themeSettings.heroBg;
-            document.getElementById('hero-bg-picker').value = themeSettings.heroBg;
-            document.getElementById('hero-text-hex').value = themeSettings.heroText;
-            document.getElementById('hero-text-picker').value = themeSettings.heroText;
-        }
-
-        // --- RENDERING ---
-        function renderGenreFilters() {
-            genreFiltersContainer.innerHTML = genres.map(g => `
-                <div class="genre-item">
-                    <div class="chip ${activeGenres.has(g) ? 'active' : ''}" data-value="${g}">${g}</div>
-                    <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi"><span>+</span></button>
-                </div>
-            `).join('');
-        }
-
-        function getSectionTitle(id) {
-            if (id === 'recommended') return "Suositellut sinulle";
-            if (id === 'favorites') return "Omat suosikit";
-            if (id === 'all') return "Kaikki sisällöt";
-            if (id.startsWith('genre-')) return id.replace('genre-', '');
-            return id;
-        }
-
-        function renderSidebarSections() {
-            // Ensure new custom sections are in sectionOrder
-            customSections.forEach(g => {
-                if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
-            });
-            // Remove stale custom sections from sectionOrder
-            sectionOrder = sectionOrder.filter(id => {
-                if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
-                return true;
-            });
-
-            sidebarSectionsContainer.innerHTML = sectionOrder.map(id => {
-                const isCustom = id.startsWith('genre-');
-                const isHidden = hiddenSections.has(id);
-                return `
-                    <div class="sidebar-section-item" draggable="true" data-id="${id}">
-                        <span class="drag-handle">⠿</span>
-                        <input type="checkbox" class="section-checkbox" ${!isHidden ? 'checked' : ''} data-id="${id}">
-                        <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
-                        ${isCustom ? `<button class="sidebar-remove-btn" data-genre="${id.replace('genre-', '')}" title="Poista osio">🗑</button>` : ''}
-                    </div>
-                `;
-            }).join('');
-
-            setupSidebarDragAndDrop();
-        }
-
-        function renderContent() {
-            // Save current scroll positions before re-render
-            const scrollPositions = {};
-            document.querySelectorAll('.grid').forEach(grid => {
-                const key = grid.id || (grid.closest('.content-section') ? grid.closest('.content-section').id : null);
-                if (key) scrollPositions[key] = grid.scrollLeft;
-            });
-
-            dynamicSectionsContainer.innerHTML = '';
-
-            sectionOrder.forEach(sectionId => {
-                if (hiddenSections.has(sectionId)) return;
-
-                let title = getSectionTitle(sectionId);
-                let items = [];
-                const isCustom = sectionId.startsWith('genre-');
-
-                if (sectionId === 'recommended') {
-                    items = contentItems.filter(i => i.recommended);
-                } else if (sectionId === 'favorites') {
-                    // FIX: maintain favorites order as stored
-                    items = favorites.map(id => contentItems.find(i => i.id === id)).filter(Boolean);
-                } else if (sectionId === 'all') {
-                    items = contentItems;
-                } else if (isCustom) {
-                    items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
-                }
-
-                // Apply global filters
-                const filteredItems = items.filter(item => {
-                    const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
-                    const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-                    // FIX: "show only favorites" now correctly filters by actual favorites list
-                    const favoriteMatch = !showOnlyFavorites || favorites.includes(item.id);
-                    return genreMatch && serviceMatch && favoriteMatch;
-                });
-
-                const sectionEl = document.createElement('section');
-                sectionEl.className = 'content-section';
-                sectionEl.id = 'anchor-' + sectionId;
-
-                sectionEl.innerHTML = `
-                    <div class="section-header">
-                        <h3>${title}</h3>
-                    </div>
-                    <div class="grid ${sectionId === 'favorites' ? 'reorderable-grid' : ''}" id="grid-${sectionId}">
-                        ${filteredItems.length > 0
-                            ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('')
-                            : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
-                    </div>
-                `;
-                dynamicSectionsContainer.appendChild(sectionEl);
-
-                // Init Sortable for favorites section
-                if (sectionId === 'favorites' && filteredItems.length > 1) {
-                    const grid = sectionEl.querySelector('.grid');
-                    new Sortable(grid, {
-                        animation: 150,
-                        handle: '.card-drag-handle',
-                        ghostClass: 'sortable-ghost',
-                        onEnd: function() {
-                            const newOrder = [...grid.querySelectorAll('.card')].map(card => parseInt(card.getAttribute('data-id')));
-                            favorites = newOrder;
-                            saveState();
-                        }
-                    });
-                }
-            });
-
-            // Refresh AI results grid if visible
-            const aiResultsGrid = document.getElementById('ai-results-grid');
-            if (aiResultsGrid && aiResults.length > 0) {
-                aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
+    // Theme controls
+    const pairs = [
+        ['primary-color-hex', 'primary-color-picker', 'primary'],
+        ['bg-color-hex', 'bg-color-picker', 'bg'],
+        ['header-bg-hex', 'header-bg-picker', 'headerBg'],
+        ['header-text-hex', 'header-text-picker', 'headerText'],
+        ['hero-bg-hex', 'hero-bg-picker', 'heroBg'],
+        ['hero-text-hex', 'hero-text-picker', 'heroText'],
+    ];
+    pairs.forEach(([hexId, pickerId, key]) => {
+        const hex = document.getElementById(hexId);
+        const picker = document.getElementById(pickerId);
+        const update = (val) => {
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+                themeSettings[key] = val;
+                hex.value = val; picker.value = val;
+                applyTheme(); saveState();
+                if (key === 'primary') { renderGenreFilters(); renderContent(); }
             }
+        };
+        hex.addEventListener('input', (e) => update(e.target.value));
+        picker.addEventListener('input', (e) => update(e.target.value));
+    });
+    document.getElementById('reset-theme-btn').addEventListener('click', () => {
+        themeSettings = { ...DEFAULT_THEME };
+        applyTheme(); updateThemeInputs(); saveState();
+        renderGenreFilters(); renderContent();
+    });
+}
 
-            // Restore scroll positions after layout is calculated
-            requestAnimationFrame(() => {
-                Object.keys(scrollPositions).forEach(key => {
-                    const el = document.getElementById(key);
-                    if (el) {
-                        const grid = el.classList.contains('grid') ? el : el.querySelector('.grid');
-                        if (grid) {
-                            grid.style.scrollBehavior = 'auto';
-                            grid.scrollLeft = scrollPositions[key];
-                            grid.style.scrollBehavior = '';
-                        }
-                    }
-                });
-            });
-        }
+// ==================== SIDEBAR DRAG & DROP ====================
 
-        function createCardHtml(item, isReorderable = false) {
-            const isFav = favorites.includes(item.id);
-            const isRec = recordings.has(item.id);
-            const isRem = reminders.has(item.id);
-            const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
-            return `
-                <div class="card ${isReorderable ? 'is-reorderable' : ''}" data-id="${item.id}" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
-                    ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
-                    <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    </button>
-                    <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
-                    <div class="card-content">
-                        <div class="card-type">${item.type}</div>
-                        <div class="card-title">${item.title}</div>
-                        <div class="card-genre">${item.genre}</div>
-                        <div class="card-desc">${item.desc}</div>
-                    </div>
-                    <div class="card-actions-bottom">
-                        <button class="action-btn record-btn ${isRec ? 'active' : ''}" data-id="${item.id}" title="Aseta tallennus">REC</button>
-                        <button class="action-btn remind-btn ${isRem ? 'active' : ''}" data-id="${item.id}" title="Aseta muistutus">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // --- EVENT LISTENERS ---
-        function setupEventListeners() {
-            // Sidebar toggle
-            toggleBtn.addEventListener('click', () => {
-                const isMobile = window.innerWidth <= 1024;
-                if (isMobile) {
-                    document.body.classList.toggle('sidebar-open');
-                } else {
-                    document.body.classList.toggle('sidebar-collapsed');
-                    localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed'));
-                }
-            });
-
-            overlay.addEventListener('click', () => {
-                document.body.classList.remove('sidebar-open');
-            });
-
-            // Genre filter chips + add section button
-            // FIX: use closest() so clicks on the child <span> inside the button are caught correctly
-            genreFiltersContainer.addEventListener('click', (e) => {
-                const addBtn = e.target.closest('.add-section-btn');
-                if (addBtn) {
-                    const genre = addBtn.getAttribute('data-genre');
-                    if (!customSections.includes(genre)) {
-                        customSections.push(genre);
-                        saveState();
-                        renderSidebarSections();
-                        renderContent();
-                    }
-                    return; // Prevent chip toggle from also firing
-                }
-
-                const chip = e.target.closest('.chip');
-                if (chip) {
-                    const val = chip.getAttribute('data-value');
-                    if (activeGenres.has(val)) activeGenres.delete(val);
-                    else activeGenres.add(val);
-                    renderGenreFilters();
-                    renderContent();
-                }
-            });
-
-            // Sidebar section management
-            sidebarSectionsContainer.addEventListener('click', (e) => {
-                // Navigate to section
-                if (e.target.classList.contains('section-name')) {
-                    const id = e.target.getAttribute('data-id');
-                    const target = document.getElementById('anchor-' + id);
-                    if (target) {
-                        // FIX: use scrollIntoView with smooth behavior
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        if (window.innerWidth <= 1024) document.body.classList.remove('sidebar-open');
-                    }
-                }
-                // Toggle section visibility
-                if (e.target.classList.contains('section-checkbox')) {
-                    const id = e.target.getAttribute('data-id');
-                    if (e.target.checked) hiddenSections.delete(id);
-                    else hiddenSections.add(id);
-                    saveState();
-                    renderContent();
-                }
-                // Remove custom section
-                if (e.target.classList.contains('sidebar-remove-btn')) {
-                    const genre = e.target.getAttribute('data-genre');
-                    customSections = customSections.filter(g => g !== genre);
-                    sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
-                    saveState();
-                    renderSidebarSections();
-                    renderContent();
-                }
-            });
-
-            // Service filter chips
-            serviceChips.forEach(chip => {
-                chip.addEventListener('click', () => {
-                    const val = chip.getAttribute('data-value');
-                    if (activeServices.has(val)) activeServices.delete(val);
-                    else activeServices.add(val);
-                    chip.classList.toggle('active');
-                    renderContent();
-                });
-            });
-
-            // Settings toggles
-            document.getElementById('toggle-favorites').addEventListener('change', (e) => {
-                showOnlyFavorites = e.target.checked;
-                renderContent();
-            });
-            document.getElementById('toggle-highlight').addEventListener('change', (e) => {
-                highlightStreaming = e.target.checked;
-                renderContent();
-            });
-
-            // AI Search toggle
-            const aiToggleBtn = document.getElementById('ai-toggle-btn');
-            const aiToggleText = document.getElementById('ai-toggle-text');
-            const aiSearchContainer = document.getElementById('ai-search-container');
-
-            if (aiToggleBtn && aiSearchContainer) {
-                aiToggleBtn.addEventListener('click', () => {
-                    const isCollapsed = aiSearchContainer.classList.toggle('collapsed');
-                    if (aiToggleText) {
-                        aiToggleText.textContent = isCollapsed ? 'Näytä' : 'Piilota';
-                    }
-                });
+function setupSidebarDragAndDrop() {
+    const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
+    items.forEach(item => {
+        item.addEventListener('dragstart', () => item.classList.add('dragging'));
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            items.forEach(i => i.classList.remove('drag-over'));
+            const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
+            sectionOrder = newOrder;
+            saveState(); renderContent();
+        });
+        item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+        item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+        item.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const dragging = sidebarSectionsContainer.querySelector('.dragging');
+            if (dragging && dragging !== item) {
+                const all = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')];
+                if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
+                else item.before(dragging);
             }
+        });
+    });
 
-            // AI Search
-            const aiSearchBtn = document.getElementById('ai-search-btn');
-            const aiPrompt = document.getElementById('ai-prompt');
-            const aiLoader = document.getElementById('ai-loader');
-            const aiResultsContainer = document.getElementById('ai-results');
-            const aiResultsGrid = document.getElementById('ai-results-grid');
-            const clearAiBtn = document.getElementById('clear-ai-btn');
+    let touchDragItem = null, touchPlaceholder = null;
+    items.forEach(item => {
+        const handle = item.querySelector('.drag-handle');
+        if (!handle) return;
+        handle.addEventListener('touchstart', (e) => {
+            touchDragItem = item;
+            item.classList.add('dragging');
+            touchPlaceholder = document.createElement('div');
+            touchPlaceholder.className = 'sidebar-section-item';
+            touchPlaceholder.style.opacity = '0';
+            touchPlaceholder.style.height = item.offsetHeight + 'px';
+            touchPlaceholder.style.pointerEvents = 'none';
+            item.parentNode.insertBefore(touchPlaceholder, item.nextSibling);
+            const rect = item.getBoundingClientRect();
+            item.style.cssText = `position:fixed;z-index:9999;width:${rect.width}px;left:${rect.left}px;top:${rect.top}px;margin:0;pointer-events:none;`;
+        }, { passive: true });
+        handle.addEventListener('touchmove', (e) => {
+            if (!touchDragItem) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchDragItem.style.top = (touch.clientY - touchDragItem.offsetHeight / 2) + 'px';
+            const allItems = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item:not(.dragging)')].filter(i => i.style.opacity !== '0');
+            allItems.forEach(i => i.classList.remove('drag-over'));
+            let target = null, insertBefore = false;
+            for (const other of allItems) {
+                const rect = other.getBoundingClientRect();
+                if (touch.clientY < rect.top + rect.height / 2) { target = other; insertBefore = true; break; }
+                else if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) { target = other; insertBefore = false; }
+            }
+            if (target) {
+                target.classList.add('drag-over');
+                if (insertBefore) sidebarSectionsContainer.insertBefore(touchPlaceholder, target);
+                else target.after(touchPlaceholder);
+            }
+        }, { passive: false });
+        handle.addEventListener('touchend', () => {
+            if (!touchDragItem) return;
+            touchDragItem.style.cssText = '';
+            touchDragItem.classList.remove('dragging');
+            if (touchPlaceholder && touchPlaceholder.parentNode) {
+                touchPlaceholder.parentNode.insertBefore(touchDragItem, touchPlaceholder);
+                touchPlaceholder.remove();
+            }
+            sidebarSectionsContainer.querySelectorAll('.sidebar-section-item').forEach(i => i.classList.remove('drag-over'));
+            const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
+            sectionOrder = newOrder;
+            saveState(); renderContent();
+            touchDragItem = null; touchPlaceholder = null;
+        });
+    });
+}
 
-            aiSearchBtn.addEventListener('click', () => {
-                if (!aiPrompt.value.trim()) return;
-
-                aiSearchBtn.disabled = true;
-                aiResultsContainer.style.display = 'none';
-                aiLoader.style.display = 'block';
-
-                setTimeout(() => {
-                    const count = Math.floor(Math.random() * 4) + 1;
-                    const shuffled = [...contentItems].sort(() => 0.5 - Math.random());
-                    aiResults = shuffled.slice(0, count);
-
-                    aiLoader.style.display = 'none';
-                    aiResultsContainer.style.display = 'block';
-                    aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
-                    aiSearchBtn.disabled = false;
-                }, 1500);
-            });
-
-            clearAiBtn.addEventListener('click', () => {
-                aiResults = [];
-                aiResultsContainer.style.display = 'none';
-                aiPrompt.value = '';
-            });
-
-            // Card interactions (favorites, record, remind) — using closest() throughout
-            const handleCardClick = (e) => {
-                const favBtn = e.target.closest('.fav-btn');
-                const recordBtn = e.target.closest('.record-btn');
-                const remindBtn = e.target.closest('.remind-btn');
-
-                if (favBtn) {
-                    const id = parseInt(favBtn.getAttribute('data-id'));
-                    const index = favorites.indexOf(id);
-                    if (index > -1) favorites.splice(index, 1);
-                    else favorites.push(id);
-                    saveState();
-                    renderContent();
-                    return;
-                }
-
-                if (recordBtn) {
-                    const id = parseInt(recordBtn.getAttribute('data-id'));
-                    if (recordings.has(id)) recordings.delete(id);
-                    else recordings.add(id);
-                    saveState();
-                    renderContent();
-                    return;
-                }
-
-                if (remindBtn) {
-                    const id = parseInt(remindBtn.getAttribute('data-id'));
-                    if (reminders.has(id)) reminders.delete(id);
-                    else reminders.add(id);
-                    saveState();
-                    renderContent();
-                    return;
-                }
-            };
-
-            dynamicSectionsContainer.addEventListener('click', handleCardClick);
-            document.getElementById('ai-results-grid').addEventListener('click', handleCardClick);
-
-            // Theme controls
-            const primaryHex    = document.getElementById('primary-color-hex');
-            const primaryPicker = document.getElementById('primary-color-picker');
-            const bgHex         = document.getElementById('bg-color-hex');
-            const bgPicker      = document.getElementById('bg-color-picker');
-            const headerBgHex   = document.getElementById('header-bg-hex');
-            const headerBgPicker= document.getElementById('header-bg-picker');
-            const headerTextHex = document.getElementById('header-text-hex');
-            const headerTextPicker = document.getElementById('header-text-picker');
-            const heroBgHex     = document.getElementById('hero-bg-hex');
-            const heroBgPicker  = document.getElementById('hero-bg-picker');
-            const heroTextHex   = document.getElementById('hero-text-hex');
-            const heroTextPicker= document.getElementById('hero-text-picker');
-            const resetBtn      = document.getElementById('reset-theme-btn');
-
-            const updateThemePart = (key, val, hexInput, pickerInput) => {
-                if (/^#[0-9A-F]{6}$/i.test(val)) {
-                    themeSettings[key] = val;
-                    hexInput.value = val;
-                    pickerInput.value = val;
-                    applyTheme();
-                    saveState();
-                    if (key === 'primary') {
-                        renderGenreFilters();
-                        renderContent();
-                    }
-                }
-            };
-
-            primaryHex.addEventListener('input',     (e) => updateThemePart('primary',    e.target.value, primaryHex,    primaryPicker));
-            primaryPicker.addEventListener('input',  (e) => updateThemePart('primary',    e.target.value, primaryHex,    primaryPicker));
-            bgHex.addEventListener('input',          (e) => updateThemePart('bg',         e.target.value, bgHex,         bgPicker));
-            bgPicker.addEventListener('input',       (e) => updateThemePart('bg',         e.target.value, bgHex,         bgPicker));
-            headerBgHex.addEventListener('input',    (e) => updateThemePart('headerBg',   e.target.value, headerBgHex,   headerBgPicker));
-            headerBgPicker.addEventListener('input', (e) => updateThemePart('headerBg',   e.target.value, headerBgHex,   headerBgPicker));
-            headerTextHex.addEventListener('input',  (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
-            headerTextPicker.addEventListener('input',(e)=> updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
-            heroBgHex.addEventListener('input',      (e) => updateThemePart('heroBg',     e.target.value, heroBgHex,     heroBgPicker));
-            heroBgPicker.addEventListener('input',   (e) => updateThemePart('heroBg',     e.target.value, heroBgHex,     heroBgPicker));
-            heroTextHex.addEventListener('input',    (e) => updateThemePart('heroText',   e.target.value, heroTextHex,   heroTextPicker));
-            heroTextPicker.addEventListener('input', (e) => updateThemePart('heroText',   e.target.value, heroTextHex,   heroTextPicker));
-
-            resetBtn.addEventListener('click', () => {
-                themeSettings = { ...DEFAULT_THEME };
-                applyTheme();
-                updateThemeInputs();
-                saveState();
-                renderGenreFilters();
-                renderContent();
-            });
-        }
-
-        // --- DRAG AND DROP (Sidebar section reordering) ---
-        // Supports both mouse (HTML5 drag) and touch events for mobile
-        function setupSidebarDragAndDrop() {
-            const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
-
-            // -- Mouse drag (desktop) --
-            items.forEach(item => {
-                item.addEventListener('dragstart', () => item.classList.add('dragging'));
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                    items.forEach(i => i.classList.remove('drag-over'));
-                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')]
-                        .map(i => i.getAttribute('data-id'));
-                    sectionOrder = newOrder;
-                    saveState();
-                    renderContent();
-                });
-                item.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    item.classList.add('drag-over');
-                });
-                item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-                item.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    const dragging = sidebarSectionsContainer.querySelector('.dragging');
-                    if (dragging && dragging !== item) {
-                        const all = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')];
-                        if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
-                        else item.before(dragging);
-                    }
-                });
-            });
-
-            // -- Touch drag (mobile) --
-            let touchDragItem = null;
-            let touchPlaceholder = null;
-
-            items.forEach(item => {
-                const handle = item.querySelector('.drag-handle');
-                if (!handle) return;
-
-                handle.addEventListener('touchstart', (e) => {
-                    // Only activate when touching the drag handle
-                    touchDragItem = item;
-                    item.classList.add('dragging');
-
-                    // Create a placeholder that holds the item's space while dragging
-                    touchPlaceholder = document.createElement('div');
-                    touchPlaceholder.className = 'sidebar-section-item';
-                    touchPlaceholder.style.opacity = '0';
-                    touchPlaceholder.style.height = item.offsetHeight + 'px';
-                    touchPlaceholder.style.pointerEvents = 'none';
-                    item.parentNode.insertBefore(touchPlaceholder, item.nextSibling);
-
-                    // Take the item out of flow so it can float over the list
-                    const rect = item.getBoundingClientRect();
-                    item.style.position = 'fixed';
-                    item.style.zIndex = '9999';
-                    item.style.width = rect.width + 'px';
-                    item.style.left = rect.left + 'px';
-                    item.style.top = rect.top + 'px';
-                    item.style.margin = '0';
-                    item.style.pointerEvents = 'none';
-                }, { passive: true });
-
-                handle.addEventListener('touchmove', (e) => {
-                    if (!touchDragItem) return;
-                    e.preventDefault();
-
-                    const touch = e.touches[0];
-
-                    // Move the dragged item to follow the finger
-                    touchDragItem.style.top = (touch.clientY - touchDragItem.offsetHeight / 2) + 'px';
-
-                    // Find which item the finger is hovering over and move the placeholder
-                    const allItems = [...sidebarSectionsContainer.querySelectorAll(
-                        '.sidebar-section-item:not(.dragging):not([style*="opacity: 0"])'
-                    )];
-                    allItems.forEach(i => i.classList.remove('drag-over'));
-
-                    let target = null;
-                    let insertBefore = false;
-                    for (const other of allItems) {
-                        const rect = other.getBoundingClientRect();
-                        const midY = rect.top + rect.height / 2;
-                        if (touch.clientY < midY) {
-                            target = other;
-                            insertBefore = true;
-                            break;
-                        } else if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                            target = other;
-                            insertBefore = false;
-                        }
-                    }
-
-                    if (target) {
-                        target.classList.add('drag-over');
-                        if (insertBefore) sidebarSectionsContainer.insertBefore(touchPlaceholder, target);
-                        else target.after(touchPlaceholder);
-                    }
-                }, { passive: false });
-
-                handle.addEventListener('touchend', () => {
-                    if (!touchDragItem) return;
-
-                    // Reset inline styles and restore item into the list at placeholder position
-                    touchDragItem.style.position = '';
-                    touchDragItem.style.zIndex = '';
-                    touchDragItem.style.width = '';
-                    touchDragItem.style.left = '';
-                    touchDragItem.style.top = '';
-                    touchDragItem.style.margin = '';
-                    touchDragItem.style.pointerEvents = '';
-                    touchDragItem.classList.remove('dragging');
-
-                    if (touchPlaceholder && touchPlaceholder.parentNode) {
-                        touchPlaceholder.parentNode.insertBefore(touchDragItem, touchPlaceholder);
-                        touchPlaceholder.remove();
-                    }
-
-                    // Clear drag-over highlights
-                    sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')
-                        .forEach(i => i.classList.remove('drag-over'));
-
-                    // Save new order
-                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')]
-                        .map(i => i.getAttribute('data-id'));
-                    sectionOrder = newOrder;
-                    saveState();
-                    renderContent();
-
-                    touchDragItem = null;
-                    touchPlaceholder = null;
-                });
-            });
-        }
-
-        init();
-    </script>
+init();
+</script>
 </body>
 </html>
