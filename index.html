@@ -397,14 +397,14 @@
             inset: 0;
             background: linear-gradient(
                 to right,
-                rgba(8,12,20,0.92) 0%,
-                rgba(8,12,20,0.6) 50%,
-                rgba(8,12,20,0.2) 100%
+                rgba(8,12,20,0.78) 0%,
+                rgba(8,12,20,0.35) 55%,
+                rgba(8,12,20,0.05) 100%
             ),
             linear-gradient(
                 to top,
-                rgba(8,12,20,0.8) 0%,
-                transparent 60%
+                rgba(8,12,20,0.55) 0%,
+                transparent 50%
             );
         }
 
@@ -1686,11 +1686,45 @@ function setupEventListeners(){
     // Card clicks
     const cardClick=e=>{
         const fav=e.target.closest('.fav-btn');
-        if(fav){ const id=parseInt(fav.dataset.id); const i=favorites.indexOf(id); i>-1?favorites.splice(i,1):favorites.push(id); saveState(); renderContent(); renderSidebarSections(); return; }
+        if(fav){
+            const id=parseInt(fav.dataset.id);
+            const i=favorites.indexOf(id);
+            i>-1?favorites.splice(i,1):favorites.push(id);
+            saveState();
+            // Toggle active class on ALL fav-btns with this id (card may appear in multiple sections)
+            document.querySelectorAll(`.fav-btn[data-id="${id}"]`).forEach(btn=>{
+                const active=favorites.includes(id);
+                btn.classList.toggle('active',active);
+                btn.querySelector('svg').setAttribute('fill', active?'currentColor':'none');
+            });
+            renderSidebarSections();
+            // Favorites section needs full re-render (items added/removed from list)
+            const favSection=document.getElementById('grid-favorites');
+            if(favSection){
+                const favItems=favorites.map(fid=>contentItems.find(i=>i.id===fid)).filter(Boolean);
+                favSection.innerHTML=favItems.length>0
+                    ? favItems.map((item,i)=>cardHtml(item,true,i)).join('')
+                    : '<div class="empty-state">Ei suosikkeja vielä.</div>';
+                if(favItems.length>1) new Sortable(favSection,{animation:150,handle:'.card-drag-handle',ghostClass:'sortable-ghost',onEnd(){ favorites=[...favSection.querySelectorAll('.card')].map(c=>parseInt(c.dataset.id)); saveState(); }});
+            }
+            return;
+        }
         const rec=e.target.closest('.record-btn');
-        if(rec){ const id=parseInt(rec.dataset.id); recordings.has(id)?recordings.delete(id):recordings.add(id); saveState(); renderContent(); return; }
+        if(rec){
+            const id=parseInt(rec.dataset.id);
+            recordings.has(id)?recordings.delete(id):recordings.add(id);
+            saveState();
+            document.querySelectorAll(`.record-btn[data-id="${id}"]`).forEach(btn=>btn.classList.toggle('active',recordings.has(id)));
+            return;
+        }
         const rem=e.target.closest('.remind-btn');
-        if(rem){ const id=parseInt(rem.dataset.id); reminders.has(id)?reminders.delete(id):reminders.add(id); saveState(); renderContent(); return; }
+        if(rem){
+            const id=parseInt(rem.dataset.id);
+            reminders.has(id)?reminders.delete(id):reminders.add(id);
+            saveState();
+            document.querySelectorAll(`.remind-btn[data-id="${id}"]`).forEach(btn=>btn.classList.toggle('active',reminders.has(id)));
+            return;
+        }
     };
     dynSections.addEventListener('click',cardClick);
     document.getElementById('ai-results-grid').addEventListener('click',cardClick);
@@ -1698,7 +1732,28 @@ function setupEventListeners(){
     // Channel fav
     dynSections.addEventListener('click',e=>{
         const btn=e.target.closest('.channel-fav-btn');
-        if(btn){ const id=btn.dataset.channelId; const i=channelFavorites.indexOf(id); i>-1?channelFavorites.splice(i,1):channelFavorites.push(id); saveState(); renderSidebarSections(); renderContent(); }
+        if(!btn) return;
+        const id=btn.dataset.channelId;
+        const i=channelFavorites.indexOf(id);
+        i>-1?channelFavorites.splice(i,1):channelFavorites.push(id);
+        saveState();
+        // Update all buttons with this channel id
+        document.querySelectorAll(`.channel-fav-btn[data-channel-id="${id}"]`).forEach(b=>{
+            const active=channelFavorites.includes(id);
+            b.classList.toggle('active',active);
+            b.querySelector('svg').setAttribute('fill',active?'currentColor':'none');
+        });
+        renderSidebarSections();
+        // Re-render only the suosikkikanavat section
+        const existing=document.getElementById('anchor-channel-favorites');
+        if(existing) existing.remove();
+        if(channelFavorites.length>0){
+            const afterEl=document.getElementById('anchor-channels');
+            const tmp=document.createElement('div');
+            renderChannelFavsSection(tmp);
+            if(afterEl && afterEl.nextSibling) dynSections.insertBefore(tmp.firstChild, afterEl.nextSibling);
+            else dynSections.appendChild(tmp.firstChild);
+        }
     });
 
     // Theme
