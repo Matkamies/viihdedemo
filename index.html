@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -153,7 +154,7 @@
                 transform: translateX(0);
             }
             body.sidebar-collapsed aside {
-                margin-left: 0; /* Reset desktop logic */
+                margin-left: 0;
             }
             .sidebar-overlay {
                 display: none;
@@ -507,21 +508,21 @@
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 800;
-            color: #999; /* Harmaa oletuksena */
+            color: #999;
             letter-spacing: 0.5px;
         }
 
         .action-btn.record-btn.active {
-            color: #ff4757; /* Punainen aktiivisena */
+            color: #ff4757;
             background: white;
         }
 
         .action-btn.remind-btn {
-            color: #ccc; /* Vaaleanharmaa oletuksena */
+            color: #ccc;
         }
 
         .action-btn.remind-btn.active {
-            color: #555; /* Tummanharmaa aktiivisena */
+            color: #555;
             background: white;
         }
 
@@ -587,7 +588,7 @@
             height: 18px;
         }
 
-        /* AI Search Section (Custom Toggle method) */
+        /* AI Search Section */
         .ai-search-section {
             background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
             border: 2px dashed var(--primary-color);
@@ -710,6 +711,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
 
         .ai-btn:hover {
@@ -768,7 +770,7 @@
             background: #f8f9fa;
         }
 
-        /* --- MOBILE OVERRIDES (Moved to end to ensure correct priority) --- */
+        /* --- MOBILE OVERRIDES --- */
         @media (max-width: 600px) {
             main { padding: 1rem; }
 
@@ -776,9 +778,19 @@
                 font-size: 1.2rem;
             }
 
-            /* Mobiilissa grid muuttuu sivusuunnassa skrollattavaksi riviksi */
+            .ai-input-group {
+                flex-direction: column;
+            }
+
+            .ai-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            /* Mobile grid becomes horizontally scrollable row */
             .grid {
-                display: flex !important; /* Force flex over grid */
+                display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: nowrap !important;
                 overflow-x: auto !important;
@@ -786,10 +798,9 @@
                 padding: 0.5rem 0.5rem 1.5rem 0.5rem;
                 margin: 0 -0.5rem;
                 scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch; /* Sulava skrollaus iOS:lle */
+                -webkit-overflow-scrolling: touch;
             }
 
-            /* Tyylitellään skrollauspalkki huomaamattomaksi */
             .grid::-webkit-scrollbar {
                 height: 4px;
             }
@@ -837,7 +848,6 @@
             </button>
             <h1>Oma viihde</h1>
         </div>
-
     </header>
 
     <div class="sidebar-overlay" id="overlay"></div>
@@ -929,7 +939,7 @@
                     <p>Voit hallita näkymääsi vasemman sivupalkin ohjauspaneelista. Saat ohjauspaneelin näkyviin painamalla valikko-painiketta.</p>
                 </div>
 
-                <!-- AI Search Section (Custom Toggle) -->
+                <!-- AI Search Section -->
                 <div class="ai-search-section" id="ai-search-container">
                     <div class="ai-search-header">
                         <h3><span>✨</span> Tekoälyavusteinen sisältöhaku</h3>
@@ -977,53 +987,47 @@
         
         const contentItems = [
             // Elokuvat
-            { id: 1, title: "Napapiirin sankarit", type: "Suoratoisto", genre: "Elokuvat", desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
-            { id: 4, title: "Dune: Osa kaksi", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
-            { id: 9, title: "Barbie", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
-            { id: 17, title: "Sisu", type: "Suoratoisto", genre: "Elokuvat", desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
-            { id: 18, title: "Kuolleet lehdet", type: "Vuokraelokuva", genre: "Elokuvat", desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
-            
+            { id: 1,  title: "Napapiirin sankarit",       type: "Suoratoisto",  genre: "Elokuvat",   desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
+            { id: 4,  title: "Dune: Osa kaksi",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
+            { id: 9,  title: "Barbie",                    type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
+            { id: 17, title: "Sisu",                      type: "Suoratoisto",  genre: "Elokuvat",   desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
+            { id: 18, title: "Kuolleet lehdet",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
             // Sarjat
-            { id: 8, title: "Sorjonen", type: "Suoratoisto", genre: "Sarjat", desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
-            { id: 12, title: "The Last of Us", type: "Suoratoisto", genre: "Sarjat", desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
-            { id: 19, title: "Munkkivuori", type: "Suoratoisto", genre: "Sarjat", desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
-            { id: 20, title: "Pohjolan laki", type: "TV", genre: "Sarjat", desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
-            { id: 21, title: "Succession", type: "Suoratoisto", genre: "Sarjat", desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
-
+            { id: 8,  title: "Sorjonen",                  type: "Suoratoisto",  genre: "Sarjat",     desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
+            { id: 12, title: "The Last of Us",            type: "Suoratoisto",  genre: "Sarjat",     desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
+            { id: 19, title: "Munkkivuori",               type: "Suoratoisto",  genre: "Sarjat",     desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
+            { id: 20, title: "Pohjolan laki",             type: "TV",           genre: "Sarjat",     desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
+            { id: 21, title: "Succession",                type: "Suoratoisto",  genre: "Sarjat",     desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
             // Urheilu
-            { id: 3, title: "Jääkiekon MM-finaali", type: "TV", genre: "Urheilu", desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
-            { id: 10, title: "Formula 1: Monaco", type: "TV", genre: "Urheilu", desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
-            { id: 22, title: "Huuhkajat: EM-karsinta", type: "TV", genre: "Urheilu", desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
-            { id: 23, title: "Wimbledon: Finaali", type: "TV", genre: "Urheilu", desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
-            { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu", desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
-
+            { id: 3,  title: "Jääkiekon MM-finaali",      type: "TV",           genre: "Urheilu",    desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
+            { id: 10, title: "Formula 1: Monaco",         type: "TV",           genre: "Urheilu",    desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
+            { id: 22, title: "Huuhkajat: EM-karsinta",   type: "TV",           genre: "Urheilu",    desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
+            { id: 23, title: "Wimbledon: Finaali",        type: "TV",           genre: "Urheilu",    desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
+            { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu",  desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
             // Lapset
-            { id: 5, title: "Muumilaakson tarinoita", type: "Suoratoisto", genre: "Lapset", desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
-            { id: 13, title: "Ryhmä Hau", type: "Suoratoisto", genre: "Lapset", desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
-            { id: 25, title: "Pipsa Possu", type: "TV", genre: "Lapset", desc: "Pienen possun arkisia seikkailuja.", recommended: false },
-            { id: 26, title: "Frozen II", type: "Vuokraelokuva", genre: "Lapset", desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
-            { id: 27, title: "Katti Matikainen", type: "TV", genre: "Lapset", desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
-
+            { id: 5,  title: "Muumilaakson tarinoita",    type: "Suoratoisto",  genre: "Lapset",     desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
+            { id: 13, title: "Ryhmä Hau",                 type: "Suoratoisto",  genre: "Lapset",     desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
+            { id: 25, title: "Pipsa Possu",               type: "TV",           genre: "Lapset",     desc: "Pienen possun arkisia seikkailuja.", recommended: false },
+            { id: 26, title: "Frozen II",                 type: "Vuokraelokuva",genre: "Lapset",     desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
+            { id: 27, title: "Katti Matikainen",          type: "TV",           genre: "Lapset",     desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
             // Dokumentit
-            { id: 6, title: "Luonnon ihmeet", type: "Suoratoisto", genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
-            { id: 11, title: "Avara luonto", type: "TV", genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
-            { id: 28, title: "Suomi on metsäläinen", type: "TV", genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
-            { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto", genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
-            { id: 30, title: "Kosmos", type: "Suoratoisto", genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
-
+            { id: 6,  title: "Luonnon ihmeet",            type: "Suoratoisto",  genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
+            { id: 11, title: "Avara luonto",              type: "TV",           genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
+            { id: 28, title: "Suomi on metsäläinen",      type: "TV",           genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
+            { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto",  genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
+            { id: 30, title: "Kosmos",                    type: "Suoratoisto",  genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
             // Viihde
-            { id: 7, title: "Putous", type: "TV", genre: "Viihde", desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
-            { id: 15, title: "MasterChef Suomi", type: "TV", genre: "Viihde", desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
-            { id: 31, title: "Vain elämää", type: "TV", genre: "Viihde", desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
-            { id: 32, title: "Haluatko miljonääriksi?", type: "TV", genre: "Viihde", desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
-            { id: 33, title: "Tanssii tähtien kanssa", type: "TV", genre: "Viihde", desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
-
+            { id: 7,  title: "Putous",                    type: "TV",           genre: "Viihde",     desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
+            { id: 15, title: "MasterChef Suomi",          type: "TV",           genre: "Viihde",     desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
+            { id: 31, title: "Vain elämää",               type: "TV",           genre: "Viihde",     desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
+            { id: 32, title: "Haluatko miljonääriksi?",   type: "TV",           genre: "Viihde",     desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
+            { id: 33, title: "Tanssii tähtien kanssa",    type: "TV",           genre: "Viihde",     desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
             // Uutiset
-            { id: 2, title: "Uutiset 20:30", type: "TV", genre: "Uutiset", desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
-            { id: 16, title: "A-studio", type: "TV", genre: "Uutiset", desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
-            { id: 34, title: "Yle Uutiset: Sää", type: "TV", genre: "Uutiset", desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
-            { id: 35, title: "CNN International", type: "Suoratoisto", genre: "Uutiset", desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
-            { id: 36, title: "Urheiluruutu", type: "TV", genre: "Uutiset", desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
+            { id: 2,  title: "Uutiset 20:30",             type: "TV",           genre: "Uutiset",    desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
+            { id: 16, title: "A-studio",                  type: "TV",           genre: "Uutiset",    desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
+            { id: 34, title: "Yle Uutiset: Sää",          type: "TV",           genre: "Uutiset",    desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
+            { id: 35, title: "CNN International",         type: "Suoratoisto",  genre: "Uutiset",    desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
+            { id: 36, title: "Urheiluruutu",              type: "TV",           genre: "Uutiset",    desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
         ];
 
         // --- STATE ---
@@ -1064,11 +1068,8 @@
             renderContent();
             applyTheme();
             setupEventListeners();
-            
             updateThemeInputs();
-            
-            // Oletusarvoisesti suljettu, mutta jos käyttäjä on aiemmin avannut sen, kunnioitetaan sitä (valinnainen)
-            // Tässä toteutuksessa pakotetaan suljetuksi latauksessa käyttäjän pyynnöstä
+
             document.body.classList.add('sidebar-collapsed');
             document.body.classList.remove('sidebar-open');
         }
@@ -1090,8 +1091,7 @@
             document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
             document.documentElement.style.setProperty('--hero-bg', themeSettings.heroBg);
             document.documentElement.style.setProperty('--hero-text', themeSettings.heroText);
-            
-            // Päivitetään myös sivupalkin tausta jos se on sidottu bg-coloriin
+
             const sidebar = document.getElementById('sidebar');
             if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
         }
@@ -1130,11 +1130,11 @@
         }
 
         function renderSidebarSections() {
-            // Varmistetaan että sectionOrder sisältää uudet dynaamiset osiot
+            // Ensure new custom sections are in sectionOrder
             customSections.forEach(g => {
                 if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
             });
-            // Poistetaan sectionOrderista osiot joita ei enää ole customSectionsissa
+            // Remove stale custom sections from sectionOrder
             sectionOrder = sectionOrder.filter(id => {
                 if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
                 return true;
@@ -1152,60 +1152,64 @@
                     </div>
                 `;
             }).join('');
-            
+
             setupSidebarDragAndDrop();
         }
 
         function renderContent() {
-            // Tallenna nykyiset skrollausasemat ennen uudelleenpiirtoa
+            // Save current scroll positions before re-render
             const scrollPositions = {};
             document.querySelectorAll('.grid').forEach(grid => {
-                // Käytetään joko gridin omaa ID:tä tai sen osion ID:tä avaimena
                 const key = grid.id || (grid.closest('.content-section') ? grid.closest('.content-section').id : null);
                 if (key) scrollPositions[key] = grid.scrollLeft;
             });
 
             dynamicSectionsContainer.innerHTML = '';
-            
+
             sectionOrder.forEach(sectionId => {
                 if (hiddenSections.has(sectionId)) return;
 
                 let title = getSectionTitle(sectionId);
                 let items = [];
-                let isCustom = sectionId.startsWith('genre-');
+                const isCustom = sectionId.startsWith('genre-');
 
-                if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
-                else if (sectionId === 'favorites') {
-                    // Järjestetään suosikit favorites-taulukon järjestyksen mukaan
+                if (sectionId === 'recommended') {
+                    items = contentItems.filter(i => i.recommended);
+                } else if (sectionId === 'favorites') {
+                    // FIX: maintain favorites order as stored
                     items = favorites.map(id => contentItems.find(i => i.id === id)).filter(Boolean);
+                } else if (sectionId === 'all') {
+                    items = contentItems;
+                } else if (isCustom) {
+                    items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
                 }
-                else if (sectionId === 'all') items = contentItems;
-                else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
 
-                // Suodatus globaaleilla suodattimilla
+                // Apply global filters
                 const filteredItems = items.filter(item => {
                     const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
                     const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-                    // "Näytä vain suosikit" -logiikka (tässä esimerkissä suodatetaan vain tietyt genret jos päällä)
-                    const favoriteMatch = !showOnlyFavorites || ["Elokuvat", "Urheilu"].includes(item.genre);
+                    // FIX: "show only favorites" now correctly filters by actual favorites list
+                    const favoriteMatch = !showOnlyFavorites || favorites.includes(item.id);
                     return genreMatch && serviceMatch && favoriteMatch;
                 });
 
                 const sectionEl = document.createElement('section');
                 sectionEl.className = 'content-section';
                 sectionEl.id = 'anchor-' + sectionId;
-                
+
                 sectionEl.innerHTML = `
                     <div class="section-header">
                         <h3>${title}</h3>
                     </div>
                     <div class="grid ${sectionId === 'favorites' ? 'reorderable-grid' : ''}" id="grid-${sectionId}">
-                        ${filteredItems.length > 0 ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('') : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+                        ${filteredItems.length > 0
+                            ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('')
+                            : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
                     </div>
                 `;
                 dynamicSectionsContainer.appendChild(sectionEl);
 
-                // Alustetaan Sortable suosikeille
+                // Init Sortable for favorites section
                 if (sectionId === 'favorites' && filteredItems.length > 1) {
                     const grid = sectionEl.querySelector('.grid');
                     new Sortable(grid, {
@@ -1216,30 +1220,27 @@
                             const newOrder = [...grid.querySelectorAll('.card')].map(card => parseInt(card.getAttribute('data-id')));
                             favorites = newOrder;
                             saveState();
-                            // Emme kutsu renderContentia tässä, jotta vältymme välkynnältä, 
-                            // koska DOM on jo oikeassa järjestyksessä.
                         }
                     });
                 }
             });
 
-            // Päivitetään myös AI-tulokset jos ne ovat näkyvissä
+            // Refresh AI results grid if visible
             const aiResultsGrid = document.getElementById('ai-results-grid');
             if (aiResultsGrid && aiResults.length > 0) {
                 aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
             }
 
-            // Palauta skrollausasemat uudelleenpiirron jälkeen requestAnimationFrameilla
-            // jotta selain ehtii laskea uuden layoutin
+            // Restore scroll positions after layout is calculated
             requestAnimationFrame(() => {
                 Object.keys(scrollPositions).forEach(key => {
                     const el = document.getElementById(key);
                     if (el) {
                         const grid = el.classList.contains('grid') ? el : el.querySelector('.grid');
                         if (grid) {
-                            grid.style.scrollBehavior = 'auto'; // Ohitetaan smooth scroll palautuksessa
+                            grid.style.scrollBehavior = 'auto';
                             grid.scrollLeft = scrollPositions[key];
-                            grid.style.scrollBehavior = ''; // Palautetaan oletus
+                            grid.style.scrollBehavior = '';
                         }
                     }
                 });
@@ -1276,7 +1277,7 @@
 
         // --- EVENT LISTENERS ---
         function setupEventListeners() {
-            // Sivupalkin piilotus
+            // Sidebar toggle
             toggleBtn.addEventListener('click', () => {
                 const isMobile = window.innerWidth <= 1024;
                 if (isMobile) {
@@ -1291,40 +1292,44 @@
                 document.body.classList.remove('sidebar-open');
             });
 
-            // Genre klikkaus (suodatus)
+            // Genre filter chips + add section button
+            // FIX: use closest() so clicks on the child <span> inside the button are caught correctly
             genreFiltersContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('chip')) {
-                    const val = e.target.getAttribute('data-value');
-                    if (activeGenres.has(val)) activeGenres.delete(val);
-                    else activeGenres.add(val);
-                    renderGenreFilters();
-                    renderContent();
-                }
-                // Lisää osio (+)
-                if (e.target.classList.contains('add-section-btn')) {
-                    const genre = e.target.getAttribute('data-genre');
+                const addBtn = e.target.closest('.add-section-btn');
+                if (addBtn) {
+                    const genre = addBtn.getAttribute('data-genre');
                     if (!customSections.includes(genre)) {
                         customSections.push(genre);
                         saveState();
                         renderSidebarSections();
                         renderContent();
                     }
+                    return; // Prevent chip toggle from also firing
+                }
+
+                const chip = e.target.closest('.chip');
+                if (chip) {
+                    const val = chip.getAttribute('data-value');
+                    if (activeGenres.has(val)) activeGenres.delete(val);
+                    else activeGenres.add(val);
+                    renderGenreFilters();
+                    renderContent();
                 }
             });
 
-            // Sivupalkin osioiden hallinta
+            // Sidebar section management
             sidebarSectionsContainer.addEventListener('click', (e) => {
-                // Navigointi
+                // Navigate to section
                 if (e.target.classList.contains('section-name')) {
                     const id = e.target.getAttribute('data-id');
                     const target = document.getElementById('anchor-' + id);
                     if (target) {
-                        target.scrollIntoView();
-                        // Mobiilissa suljetaan valikko navigoinnin jälkeen
+                        // FIX: use scrollIntoView with smooth behavior
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         if (window.innerWidth <= 1024) document.body.classList.remove('sidebar-open');
                     }
                 }
-                // Näkyvyys
+                // Toggle section visibility
                 if (e.target.classList.contains('section-checkbox')) {
                     const id = e.target.getAttribute('data-id');
                     if (e.target.checked) hiddenSections.delete(id);
@@ -1332,7 +1337,7 @@
                     saveState();
                     renderContent();
                 }
-                // Osion poisto
+                // Remove custom section
                 if (e.target.classList.contains('sidebar-remove-btn')) {
                     const genre = e.target.getAttribute('data-genre');
                     customSections = customSections.filter(g => g !== genre);
@@ -1343,7 +1348,7 @@
                 }
             });
 
-            // Palvelu suodattimet
+            // Service filter chips
             serviceChips.forEach(chip => {
                 chip.addEventListener('click', () => {
                     const val = chip.getAttribute('data-value');
@@ -1354,11 +1359,17 @@
                 });
             });
 
-            // Asetukset
-            document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
-            document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
+            // Settings toggles
+            document.getElementById('toggle-favorites').addEventListener('change', (e) => {
+                showOnlyFavorites = e.target.checked;
+                renderContent();
+            });
+            document.getElementById('toggle-highlight').addEventListener('change', (e) => {
+                highlightStreaming = e.target.checked;
+                renderContent();
+            });
 
-            // AI Search Toggle
+            // AI Search toggle
             const aiToggleBtn = document.getElementById('ai-toggle-btn');
             const aiToggleText = document.getElementById('ai-toggle-text');
             const aiSearchContainer = document.getElementById('ai-search-container');
@@ -1372,6 +1383,7 @@
                 });
             }
 
+            // AI Search
             const aiSearchBtn = document.getElementById('ai-search-btn');
             const aiPrompt = document.getElementById('ai-prompt');
             const aiLoader = document.getElementById('ai-loader');
@@ -1386,9 +1398,8 @@
                 aiResultsContainer.style.display = 'none';
                 aiLoader.style.display = 'block';
 
-                // Simuloidaan AI-prosessointia
                 setTimeout(() => {
-                    const count = Math.floor(Math.random() * 4) + 1; // 1-4 kpl
+                    const count = Math.floor(Math.random() * 4) + 1;
                     const shuffled = [...contentItems].sort(() => 0.5 - Math.random());
                     aiResults = shuffled.slice(0, count);
 
@@ -1405,7 +1416,7 @@
                 aiPrompt.value = '';
             });
 
-            // Suosikki-nappi korteissa (ja AI-tuloksissa)
+            // Card interactions (favorites, record, remind) — using closest() throughout
             const handleCardClick = (e) => {
                 const favBtn = e.target.closest('.fav-btn');
                 const recordBtn = e.target.closest('.record-btn');
@@ -1420,7 +1431,7 @@
                     renderContent();
                     return;
                 }
-                
+
                 if (recordBtn) {
                     const id = parseInt(recordBtn.getAttribute('data-id'));
                     if (recordings.has(id)) recordings.delete(id);
@@ -1443,20 +1454,20 @@
             dynamicSectionsContainer.addEventListener('click', handleCardClick);
             document.getElementById('ai-results-grid').addEventListener('click', handleCardClick);
 
-            // Teeman hallinta
-            const primaryHex = document.getElementById('primary-color-hex');
+            // Theme controls
+            const primaryHex    = document.getElementById('primary-color-hex');
             const primaryPicker = document.getElementById('primary-color-picker');
-            const bgHex = document.getElementById('bg-color-hex');
-            const bgPicker = document.getElementById('bg-color-picker');
-            const headerBgHex = document.getElementById('header-bg-hex');
-            const headerBgPicker = document.getElementById('header-bg-picker');
+            const bgHex         = document.getElementById('bg-color-hex');
+            const bgPicker      = document.getElementById('bg-color-picker');
+            const headerBgHex   = document.getElementById('header-bg-hex');
+            const headerBgPicker= document.getElementById('header-bg-picker');
             const headerTextHex = document.getElementById('header-text-hex');
             const headerTextPicker = document.getElementById('header-text-picker');
-            const heroBgHex = document.getElementById('hero-bg-hex');
-            const heroBgPicker = document.getElementById('hero-bg-picker');
-            const heroTextHex = document.getElementById('hero-text-hex');
-            const heroTextPicker = document.getElementById('hero-text-picker');
-            const resetBtn = document.getElementById('reset-theme-btn');
+            const heroBgHex     = document.getElementById('hero-bg-hex');
+            const heroBgPicker  = document.getElementById('hero-bg-picker');
+            const heroTextHex   = document.getElementById('hero-text-hex');
+            const heroTextPicker= document.getElementById('hero-text-picker');
+            const resetBtn      = document.getElementById('reset-theme-btn');
 
             const updateThemePart = (key, val, hexInput, pickerInput) => {
                 if (/^#[0-9A-F]{6}$/i.test(val)) {
@@ -1472,18 +1483,18 @@
                 }
             };
 
-            primaryHex.addEventListener('input', (e) => updateThemePart('primary', e.target.value, primaryHex, primaryPicker));
-            primaryPicker.addEventListener('input', (e) => updateThemePart('primary', e.target.value, primaryHex, primaryPicker));
-            bgHex.addEventListener('input', (e) => updateThemePart('bg', e.target.value, bgHex, bgPicker));
-            bgPicker.addEventListener('input', (e) => updateThemePart('bg', e.target.value, bgHex, bgPicker));
-            headerBgHex.addEventListener('input', (e) => updateThemePart('headerBg', e.target.value, headerBgHex, headerBgPicker));
-            headerBgPicker.addEventListener('input', (e) => updateThemePart('headerBg', e.target.value, headerBgHex, headerBgPicker));
-            headerTextHex.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
-            headerTextPicker.addEventListener('input', (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
-            heroBgHex.addEventListener('input', (e) => updateThemePart('heroBg', e.target.value, heroBgHex, heroBgPicker));
-            heroBgPicker.addEventListener('input', (e) => updateThemePart('heroBg', e.target.value, heroBgHex, heroBgPicker));
-            heroTextHex.addEventListener('input', (e) => updateThemePart('heroText', e.target.value, heroTextHex, heroTextPicker));
-            heroTextPicker.addEventListener('input', (e) => updateThemePart('heroText', e.target.value, heroTextHex, heroTextPicker));
+            primaryHex.addEventListener('input',     (e) => updateThemePart('primary',    e.target.value, primaryHex,    primaryPicker));
+            primaryPicker.addEventListener('input',  (e) => updateThemePart('primary',    e.target.value, primaryHex,    primaryPicker));
+            bgHex.addEventListener('input',          (e) => updateThemePart('bg',         e.target.value, bgHex,         bgPicker));
+            bgPicker.addEventListener('input',       (e) => updateThemePart('bg',         e.target.value, bgHex,         bgPicker));
+            headerBgHex.addEventListener('input',    (e) => updateThemePart('headerBg',   e.target.value, headerBgHex,   headerBgPicker));
+            headerBgPicker.addEventListener('input', (e) => updateThemePart('headerBg',   e.target.value, headerBgHex,   headerBgPicker));
+            headerTextHex.addEventListener('input',  (e) => updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
+            headerTextPicker.addEventListener('input',(e)=> updateThemePart('headerText', e.target.value, headerTextHex, headerTextPicker));
+            heroBgHex.addEventListener('input',      (e) => updateThemePart('heroBg',     e.target.value, heroBgHex,     heroBgPicker));
+            heroBgPicker.addEventListener('input',   (e) => updateThemePart('heroBg',     e.target.value, heroBgHex,     heroBgPicker));
+            heroTextHex.addEventListener('input',    (e) => updateThemePart('heroText',   e.target.value, heroTextHex,   heroTextPicker));
+            heroTextPicker.addEventListener('input', (e) => updateThemePart('heroText',   e.target.value, heroTextHex,   heroTextPicker));
 
             resetBtn.addEventListener('click', () => {
                 themeSettings = { ...DEFAULT_THEME };
@@ -1495,7 +1506,7 @@
             });
         }
 
-        // --- DRAG AND DROP (Sivupalkki) ---
+        // --- DRAG AND DROP (Sidebar section reordering) ---
         function setupSidebarDragAndDrop() {
             const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
             items.forEach(item => {
@@ -1503,13 +1514,16 @@
                 item.addEventListener('dragend', () => {
                     item.classList.remove('dragging');
                     items.forEach(i => i.classList.remove('drag-over'));
-                    // Tallenna uusi järjestys
-                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
+                    const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')]
+                        .map(i => i.getAttribute('data-id'));
                     sectionOrder = newOrder;
                     saveState();
                     renderContent();
                 });
-                item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    item.classList.add('drag-over');
+                });
                 item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
                 item.addEventListener('drop', (e) => {
                     e.preventDefault();
