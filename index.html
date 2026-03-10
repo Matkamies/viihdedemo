@@ -4,215 +4,738 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oma viihde - Prototyyppi</title>
+    <title>Oma viihde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --primary-color: #007bff;
-            --accent-color: #ff4757;
-            --bg-color: #f4f7f9;
-            --header-bg: #1a1a1a;
-            --header-text: #ffffff;
-            --hero-bg: #1e3c72;
-            --hero-text: #ffffff;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --sidebar-width: 320px;
-            --border-radius: 12px;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --transition-speed: 0.3s;
+            --primary:      #e8a020;
+            --primary-dim:  rgba(232,160,32,0.15);
+            --primary-glow: rgba(232,160,32,0.35);
+            --accent:       #ff4060;
+            --bg:           #080c14;
+            --bg2:          #0e1420;
+            --bg3:          #141c2a;
+            --glass:        rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.08);
+            --text:         #f0f2f8;
+            --text-dim:     #8a93a8;
+            --text-muted:   #4a5268;
+            --sidebar-w:    300px;
+            --radius:       14px;
+            --radius-sm:    8px;
+            --transition:   0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
 
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Subtle noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* ── HEADER ── */
         header {
-            background-color: var(--header-bg); color: var(--header-text);
-            padding: 0.75rem 1.5rem; display: flex; justify-content: space-between;
-            align-items: center; position: sticky; top: 0; z-index: 2000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            background: rgba(8,12,20,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
         }
+
         .header-left { display: flex; align-items: center; gap: 1rem; }
+
         .sidebar-toggle {
-            background: transparent; border: 1px solid #444; color: white;
-            padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.2s;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+            padding: 0.45rem 0.85rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: var(--transition);
         }
-        .sidebar-toggle:hover { background: #333; }
-        .sidebar-toggle-text { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
-        header h1 { font-size: 1.3rem; font-weight: bold; white-space: nowrap; }
-        nav { display: flex; align-items: center; }
-        nav a { color: #ccc; text-decoration: none; margin-left: 1.2rem; font-size: 0.85rem; transition: color 0.3s; }
-        nav a:hover { color: white; }
-        @media (max-width: 768px) { nav { display: none; } }
+        .sidebar-toggle:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+        }
 
-        .app-wrapper { display: flex; min-height: calc(100vh - 60px); position: relative; }
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        .logo span { color: var(--primary); }
 
+        /* ── LAYOUT ── */
+        .app-wrapper {
+            display: flex;
+            min-height: calc(100vh - 62px);
+        }
+
+        /* ── SIDEBAR ── */
         aside {
-            width: var(--sidebar-width); background: var(--bg-color); border-right: 1px solid #ddd;
-            height: calc(100vh - 60px); position: sticky; top: 60px; overflow-y: auto;
-            transition: transform var(--transition-speed) ease, margin-left var(--transition-speed) ease;
-            z-index: 1500; padding: 1.5rem; flex-shrink: 0;
+            width: var(--sidebar-w);
+            background: rgba(8,12,20,0.95);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid var(--glass-border);
+            height: calc(100vh - 62px);
+            position: sticky;
+            top: 62px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: transform var(--transition), margin-left var(--transition);
+            z-index: 1500;
+            padding: 1.25rem;
+            flex-shrink: 0;
         }
-        body.sidebar-collapsed aside { margin-left: calc(var(--sidebar-width) * -1); transform: translateX(-100%); }
+
+        body.sidebar-collapsed aside {
+            margin-left: calc(var(--sidebar-w) * -1);
+            transform: translateX(-100%);
+        }
 
         @media (max-width: 1024px) {
-            aside { position: fixed; left: 0; box-shadow: 10px 0 20px rgba(0,0,0,0.1); margin-left: 0; transform: translateX(-100%); }
+            aside {
+                position: fixed;
+                left: 0;
+                box-shadow: 20px 0 40px rgba(0,0,0,0.6);
+                margin-left: 0;
+                transform: translateX(-100%);
+            }
             body.sidebar-open aside { transform: translateX(0); }
             body.sidebar-collapsed aside { margin-left: 0; }
-            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1400; }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.7);
+                z-index: 1400;
+                backdrop-filter: blur(4px);
+            }
             body.sidebar-open .sidebar-overlay { display: block; }
         }
 
-        .filter-section { background: var(--card-bg); padding: 1.25rem; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 1.5rem; }
-        .filter-section h3 { margin-bottom: 1rem; font-size: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
-        .chip-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
-        .genre-item { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-        .chip { flex-grow: 1; padding: 0.4rem 0.8rem; background: #eee; border-radius: 20px; cursor: pointer; font-size: 0.8rem; border: 2px solid transparent; transition: all 0.2s; text-align: center; user-select: none; }
-        .chip.active { background: var(--primary-color); color: white; }
-        .add-section-btn { background: #e9ecef; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-color); flex-shrink: 0; font-size: 1.2rem; line-height: 0; padding: 0; transition: background 0.2s; }
-        .add-section-btn span { transform: translateY(-1px); }
-        .add-section-btn:hover { background: #dee2e6; }
-
-        .sidebar-section-list { display: flex; flex-direction: column; gap: 0.4rem; }
-        .sidebar-section-item { display: flex; align-items: center; background: #f8f9fa; padding: 0.5rem; border-radius: 8px; border: 1px solid #eee; transition: background 0.2s; }
-        .sidebar-section-item.dragging { opacity: 0.4; background: #e9ecef; }
-        .sidebar-section-item.drag-over { border-top: 2px solid var(--primary-color); }
-        .drag-handle { cursor: grab; margin-right: 8px; color: #999; user-select: none; font-size: 1rem; }
-        .section-checkbox { margin-right: 8px; width: 15px; height: 15px; cursor: pointer; }
-        .section-name { flex-grow: 1; cursor: pointer; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .section-name:hover { color: var(--primary-color); text-decoration: underline; }
-        .sidebar-remove-btn { background: transparent; border: none; color: #ccc; cursor: pointer; padding: 2px; font-size: 0.9rem; transition: color 0.2s; }
-        .sidebar-remove-btn:hover { color: var(--accent-color); }
-
-        main { flex-grow: 1; padding: 2rem; max-width: 100%; transition: padding var(--transition-speed) ease; }
-        .content-container { max-width: 1600px; margin: 0 auto; }
-
-        .hero { background: var(--hero-bg); color: var(--hero-text); padding: 2.5rem; border-radius: var(--border-radius); margin-bottom: 2rem; box-shadow: var(--shadow); }
-        .hero h2 { font-size: 1.8rem; margin-bottom: 0.75rem; }
-        .hero p { font-size: 1rem; opacity: 0.9; }
-
-        .content-section { margin-bottom: 4rem; scroll-margin-top: 100px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #eee; }
-        .section-header h3 { font-size: 1.4rem; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-        @media (min-width: 1600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } }
-
-        .card { background: var(--card-bg); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s; display: flex; flex-direction: column; position: relative; }
-        .card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
-        .card-img { height: 160px; background: #ddd; background-size: cover; background-position: center; }
-        .card-drag-handle { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 4px; width: 32px; height: 32px; cursor: grab; display: flex; align-items: center; justify-content: center; color: #999; z-index: 11; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.2s; }
-        .card:hover .card-drag-handle, .card.is-reorderable .card-drag-handle,
-        .channel-card:hover .card-drag-handle, .channel-card.is-reorderable .card-drag-handle { opacity: 1; }
-        @media (max-width: 1024px) { .card-drag-handle { opacity: 1; } }
-        .card-drag-handle:active { cursor: grabbing; }
-        .sortable-ghost { opacity: 0.2; transform: scale(0.95); }
-
-        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ccc; z-index: 10; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .fav-btn:hover { background: white; color: #999; }
-        .fav-btn.active { color: var(--accent-color); background: white; }
-        .fav-btn.active svg { fill: var(--accent-color); }
-
-        .card-actions-bottom { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 8px; z-index: 10; }
-        .action-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #ccc; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .action-btn:hover { background: white; color: #999; }
-        .action-btn.record-btn { width: auto; height: 32px; padding: 0 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; color: #999; letter-spacing: 0.5px; }
-        .action-btn.record-btn.active { color: #ff4757; background: white; }
-        .action-btn.remind-btn { color: #ccc; }
-        .action-btn.remind-btn.active { color: #555; background: white; }
-
-        .card-content { padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-type { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; color: var(--primary-color); margin-bottom: 0.5rem; }
-        .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem; }
-        .card-genre { font-size: 0.8rem; color: #666; margin-bottom: 0.75rem; }
-        .card-desc { font-size: 0.85rem; color: #444; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-        .empty-state { text-align: center; padding: 2rem; color: #888; font-style: italic; grid-column: 1 / -1; }
-        .hidden { display: none !important; }
-
-        .toggle-group label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 0.9rem; }
-        .toggle-group input[type="checkbox"] { margin-right: 0.75rem; width: 18px; height: 18px; }
-
-        /* AI Search */
-        .ai-search-section { background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%); border: 2px dashed var(--primary-color); padding: 1.5rem 2rem; border-radius: var(--border-radius); margin-bottom: 3rem; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: all 0.3s ease; }
-        .ai-search-section.collapsed { background: #f8f9fa; border-style: solid; margin-bottom: 1.5rem; padding: 1rem 2rem; }
-        .ai-search-header { display: flex; justify-content: space-between; align-items: center; }
-        .ai-collapsible-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.3s ease-out; }
-        .ai-search-section.collapsed .ai-collapsible-wrapper { grid-template-rows: 0fr; }
-        .ai-collapsible-content { overflow: hidden; padding-top: 1.5rem; }
-        .ai-toggle-btn { background: #eee; border: none; color: #444; cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 20px; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; transition: all 0.2s; }
-        .ai-toggle-btn:hover { background: #ddd; color: var(--primary-color); }
-        .ai-toggle-btn i { transition: transform 0.3s; font-size: 0.7rem; }
-        .ai-search-section.collapsed .ai-toggle-btn i { transform: rotate(-180deg); }
-        .ai-search-section::before { content: "✨"; position: absolute; top: -10px; right: -10px; font-size: 4rem; opacity: 0.05; transform: rotate(15deg); pointer-events: none; }
-        .ai-search-header h3 { font-size: 1.3rem; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem; }
-        .ai-input-group { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-        .ai-textarea { flex-grow: 1; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; resize: none; height: 60px; outline: none; transition: border-color 0.2s; }
-        .ai-textarea:focus { border-color: var(--primary-color); }
-        .ai-btn { background: var(--primary-color); color: white; border: none; padding: 0 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
-        .ai-btn:hover { opacity: 0.9; }
-        .ai-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .ai-loader { display: none; text-align: center; padding: 2rem; font-style: italic; color: #666; }
-        .ai-loader .dots::after { content: "."; animation: dots 1.5s infinite; }
-        @keyframes dots { 0% { content: "."; } 33% { content: ".."; } 66% { content: "..."; } }
-        .ai-results { display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
-        .ai-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .clear-ai-btn { background: transparent; border: 1px solid #ddd; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
-        .clear-ai-btn:hover { background: #f8f9fa; }
-
-        /* ===================== CHANNEL CARDS ===================== */
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
+        .sb-block {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 1.1rem;
+            margin-bottom: 1rem;
         }
 
-        .channel-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            transition: box-shadow 0.3s;
+        .sb-block h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            margin-bottom: 0.9rem;
+        }
+
+        /* Chips */
+        .chip-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+        .genre-item { display: flex; align-items: center; gap: 0.4rem; }
+        .chip {
+            flex-grow: 1;
+            padding: 0.35rem 0.75rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dim);
+            transition: var(--transition);
+            text-align: center;
+            user-select: none;
         }
-        .channel-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-
-        .channel-card-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #f0f0f0;
+        .chip:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+        .chip.active {
+            background: var(--primary-dim);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
         }
 
-        .channel-logo {
-            width: 52px;
-            height: 52px;
-            border-radius: 10px;
+        .service-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.25rem; }
+
+        .add-section-btn {
+            background: rgba(232,160,32,0.1);
+            border: 1px solid rgba(232,160,32,0.25);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 0.75rem;
+            color: var(--primary);
             flex-shrink: 0;
-            letter-spacing: 0.5px;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            font-size: 1rem;
+            line-height: 0;
+            transition: var(--transition);
+        }
+        .add-section-btn:hover { background: rgba(232,160,32,0.2); }
+
+        /* Toggle switches */
+        .toggle-group { display: flex; flex-direction: column; gap: 0.6rem; }
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+        }
+        .toggle-label span { flex-grow: 1; }
+        .toggle-switch {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .toggle-switch input:checked + .toggle-track {
+            background: var(--primary);
+        }
+        .toggle-switch input:checked + .toggle-track::after {
+            transform: translateX(16px);
         }
 
-        .channel-meta { flex-grow: 1; }
-        .channel-name { font-size: 1rem; font-weight: 700; }
-        .channel-category { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Section list */
+        .sidebar-section-list { display: flex; flex-direction: column; gap: 0.3rem; }
+        .sidebar-section-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            padding: 0.45rem 0.6rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+        .sidebar-section-item:hover { background: rgba(255,255,255,0.06); border-color: var(--glass-border); }
+        .sidebar-section-item.dragging { opacity: 0.3; }
+        .sidebar-section-item.drag-over { border-top: 2px solid var(--primary); }
 
-        .channel-fav-btn {
+        .drag-handle { cursor: grab; margin-right: 7px; color: var(--text-muted); user-select: none; font-size: 0.85rem; }
+        .section-checkbox {
+            margin-right: 7px;
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        .section-name {
+            flex-grow: 1;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .section-name:hover { color: var(--primary); }
+        .sidebar-remove-btn {
             background: transparent;
             border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+        .sidebar-remove-btn:hover { color: var(--accent); }
+
+        /* Theme inputs */
+        .theme-row {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 0.65rem;
+        }
+        .theme-swatch {
+            width: 26px;
+            height: 26px;
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 0;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .theme-row-inner { flex-grow: 1; }
+        .theme-row-inner label {
+            display: block;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+        .theme-row-inner input[type="text"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            outline: none;
+            padding: 1px 0;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .reset-theme-btn {
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: var(--transition);
+        }
+        .reset-theme-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+        /* ── MAIN ── */
+        main {
+            flex-grow: 1;
+            overflow-x: hidden;
+            overflow-y: visible;
+            min-width: 0;
+        }
+
+        .content-container {
+            padding: 0;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            height: 360px;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) { .hero { height: 260px; } }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.05);
+            transition: transform 8s ease;
+        }
+        .hero:hover .hero-bg { transform: scale(1.0); }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                rgba(8,12,20,0.92) 0%,
+                rgba(8,12,20,0.6) 50%,
+                rgba(8,12,20,0.2) 100%
+            ),
+            linear-gradient(
+                to top,
+                rgba(8,12,20,0.8) 0%,
+                transparent 60%
+            );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem 2.5rem 2.5rem;
+        }
+
+        @media (max-width: 600px) { .hero-content { padding: 1.5rem; } }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--primary);
+            color: #000;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            width: fit-content;
+        }
+
+        .hero h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 0.6rem;
+            max-width: 500px;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            margin-bottom: 1.25rem;
+        }
+        .hero-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+        .hero-desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            max-width: 400px;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-actions { display: flex; gap: 0.75rem; }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 0.65rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.02em;
+        }
+        .btn-primary:hover { background: #f0b030; transform: translateY(-1px); box-shadow: 0 8px 24px var(--primary-glow); }
+
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 0.65rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.15); }
+
+        /* ── AI SEARCH ── */
+        .ai-search-section {
+            margin: 2rem 2rem 0;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .ai-search-section::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(232,160,32,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .ai-search-section.collapsed { padding: 1rem 1.5rem; }
+        .ai-search-section.collapsed .ai-collapsible-wrapper { grid-template-rows: 0fr; }
+
+        .ai-search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-search-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .ai-search-header h3 .ai-icon {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .ai-toggle-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .ai-toggle-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+        .ai-toggle-btn i { transition: transform 0.3s; font-size: 0.65rem; }
+        .ai-search-section.collapsed .ai-toggle-btn i { transform: rotate(-180deg); }
+
+        .ai-collapsible-wrapper { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.3s ease; }
+        .ai-collapsible-content { overflow: hidden; padding-top: 1.25rem; }
+
+        .ai-input-group { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .ai-textarea {
+            flex-grow: 1;
+            padding: 0.85rem 1rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif;
+            resize: none;
+            height: 52px;
+            outline: none;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+        .ai-textarea::placeholder { color: var(--text-muted); }
+        .ai-textarea:focus { border-color: var(--primary); background: rgba(232,160,32,0.04); }
+
+        .ai-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .ai-btn:hover { background: #f0b030; }
+        .ai-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+        .ai-loader { display: none; text-align: center; padding: 1.5rem; font-size: 0.85rem; color: var(--text-dim); font-style: italic; }
+        .ai-loader .dots::after { content: "."; animation: dots 1.5s infinite; }
+        @keyframes dots { 0%{content:"."} 33%{content:".."} 66%{content:"..."} }
+
+        .ai-results { display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--glass-border); }
+        .ai-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .ai-results-header p { font-size: 0.82rem; font-weight: 600; color: var(--text-dim); }
+        .clear-ai-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 0.3rem 0.7rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .clear-ai-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ── SECTIONS ── */
+        .content-section {
+            padding: 2.5rem 2rem 0;
+            scroll-margin-top: 80px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .section-header .section-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ── HORIZONTAL SCROLL RAIL ── */
+        .rail {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 0.5rem 0 1.5rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .rail::-webkit-scrollbar { height: 3px; }
+        .rail::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        /* ── CONTENT CARD ── */
+        .card {
+            position: relative;
+            flex-shrink: 0;
+            width: 220px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg3);
+            scroll-snap-align: start;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s;
+            cursor: default;
+        }
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+            z-index: 5;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 130px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .card-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, #141c2a, transparent);
+        }
+
+        .card-drag-handle {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(8,12,20,0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            z-index: 11;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 0.75rem;
+        }
+        .card:hover .card-drag-handle,
+        .card.is-reorderable .card-drag-handle,
+        .channel-card:hover .card-drag-handle,
+        .channel-card.is-reorderable .card-drag-handle { opacity: 1; }
+
+        @media (max-width: 1024px) {
+            .card-drag-handle { opacity: 1; }
+        }
+
+        .sortable-ghost { opacity: 0.15; transform: scale(0.95); }
+
+        .fav-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(8,12,20,0.75);
+            border: 1px solid var(--glass-border);
             border-radius: 50%;
             width: 32px;
             height: 32px;
@@ -220,113 +743,297 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ccc;
+            color: var(--text-muted);
             z-index: 10;
-            transition: all 0.2s;
-            flex-shrink: 0;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
         }
-        .channel-fav-btn:hover { color: #bbb; }
-        .channel-fav-btn.active { color: var(--accent-color); }
-        .channel-fav-btn.active svg { fill: var(--accent-color); }
+        .fav-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+        .fav-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(255,64,96,0.12); }
+        .fav-btn.active svg { fill: var(--accent); }
 
-        .channel-now {
-            padding: 0.9rem 1.25rem 0.5rem;
+        .card-body {
+            padding: 0.85rem;
         }
-
-        .now-label {
-            font-size: 0.65rem;
-            font-weight: 800;
+        .card-type {
+            font-size: 0.62rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent-color);
+            letter-spacing: 0.1em;
+            color: var(--primary);
             margin-bottom: 0.3rem;
         }
-
-        .now-program-name {
-            font-size: 1rem;
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
             font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 0.2rem;
+            line-height: 1.25;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
-
-        .now-program-time {
+        .card-genre {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .card-desc {
             font-size: 0.78rem;
-            color: #888;
-            margin-bottom: 0.6rem;
-        }
-
-        .progress-bar-track {
-            height: 4px;
-            background: #eee;
-            border-radius: 2px;
+            color: var(--text-dim);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .progress-bar-fill {
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 0.85rem 0.85rem;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 0.75rem;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+        .record-btn {
+            padding: 0 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .record-btn.active { color: var(--accent); border-color: rgba(255,64,96,0.4); background: rgba(255,64,96,0.1); }
+
+        .remind-btn { width: 28px; }
+        .remind-btn.active { color: var(--primary); border-color: rgba(232,160,32,0.4); background: var(--primary-dim); }
+
+        /* Highlighted card (streaming) */
+        .card.highlighted {
+            border: 1px solid rgba(232,160,32,0.3);
+            box-shadow: 0 0 0 1px rgba(232,160,32,0.1), inset 0 0 20px rgba(232,160,32,0.03);
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 300px;
+            height: 140px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+            border: 1px dashed rgba(255,255,255,0.07);
+            border-radius: var(--radius);
+        }
+
+        /* ── CHANNEL CARD ── */
+        .channel-card {
+            position: relative;
+            flex-shrink: 0;
+            width: 220px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--bg3);
+            border: 1px solid var(--glass-border);
+            scroll-snap-align: start;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s, border-color 0.3s;
+        }
+        .channel-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-color: rgba(255,255,255,0.12);
+            z-index: 5;
+        }
+
+        .channel-card-top {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .channel-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 0.65rem;
+            letter-spacing: 0.03em;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .channel-info { flex-grow: 1; min-width: 0; }
+        .channel-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .channel-category {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .channel-fav-btn {
+            background: transparent;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .channel-fav-btn:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+        .channel-fav-btn.active { color: var(--accent); }
+        .channel-fav-btn.active svg { fill: var(--accent); }
+
+        /* Now playing */
+        .channel-now {
+            padding: 0.75rem 0.9rem 0.5rem;
+        }
+
+        .now-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.6rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            margin-bottom: 0.4rem;
+        }
+
+        /* Pulse animation for live dot */
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
+        }
+
+        .now-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.25;
+            margin-bottom: 0.2rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .now-time {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .progress-track {
+            height: 3px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
             height: 100%;
-            background: var(--primary-color);
+            background: linear-gradient(90deg, var(--primary), #ffcc60);
             border-radius: 2px;
             transition: width 0.3s;
         }
 
         .channel-upcoming {
-            padding: 0.6rem 1.25rem 1rem;
+            padding: 0.5rem 0.9rem 0.85rem;
         }
-
-        .upcoming-item {
+        .upcoming-row {
             display: flex;
-            align-items: baseline;
-            gap: 0.6rem;
-            padding: 0.3rem 0;
-            border-top: 1px solid #f5f5f5;
-            font-size: 0.8rem;
-        }
-
-        .upcoming-time {
-            color: #999;
-            flex-shrink: 0;
-            width: 38px;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.28rem 0;
+            border-top: 1px solid rgba(255,255,255,0.04);
             font-size: 0.75rem;
         }
-
+        .upcoming-time {
+            color: var(--text-muted);
+            flex-shrink: 0;
+            width: 36px;
+            font-variant-numeric: tabular-nums;
+        }
         .upcoming-name {
-            color: #555;
+            color: var(--text-dim);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        /* Channel favourite section card */
-        .channel-fav-section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 0.5rem;
+        /* ── STAGGER ANIMATIONS ── */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile overrides */
+        .content-section {
+            animation: fadeSlideUp 0.5s ease both;
+        }
+        .content-section:nth-child(1) { animation-delay: 0.05s; }
+        .content-section:nth-child(2) { animation-delay: 0.1s; }
+        .content-section:nth-child(3) { animation-delay: 0.15s; }
+        .content-section:nth-child(4) { animation-delay: 0.2s; }
+        .content-section:nth-child(5) { animation-delay: 0.25s; }
+
+        .card, .channel-card {
+            animation: fadeSlideUp 0.4s ease both;
+        }
+
+        /* ── DIVIDER SPACER ── */
+        .bottom-spacer { height: 3rem; }
+
+        /* ── MOBILE ── */
         @media (max-width: 600px) {
-            main { padding: 1rem; }
-            .section-header h3 { font-size: 1.2rem; }
+            .content-section { padding: 1.75rem 1rem 0; }
+            .ai-search-section { margin: 1.5rem 1rem 0; }
             .ai-input-group { flex-direction: column; }
             .ai-btn { width: 100%; justify-content: center; padding: 0.75rem; }
-            .grid, .channel-grid {
-                display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important;
-                overflow-x: auto !important; gap: 1rem; padding: 0.5rem 0.5rem 1.5rem 0.5rem;
-                margin: 0 -0.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-            }
-            .grid::-webkit-scrollbar, .channel-grid::-webkit-scrollbar { height: 4px; }
-            .grid::-webkit-scrollbar-track, .channel-grid::-webkit-scrollbar-track { background: transparent; }
-            .grid::-webkit-scrollbar-thumb, .channel-grid::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-            .card, .channel-card { min-width: 260px; width: 260px; scroll-snap-align: start; flex-shrink: 0; }
-            .card-img { height: 110px; }
-            .card-content { padding: 1rem; }
-            .card-title { font-size: 0.95rem; }
-            .card-desc { font-size: 0.8rem; -webkit-line-clamp: 2; }
         }
     </style>
 </head>
@@ -334,107 +1041,147 @@
 
 <header>
     <div class="header-left">
-        <button class="sidebar-toggle" id="toggle-btn" title="Avaa/Sulje asetukset">
-            <span style="font-size: 1.1rem;">☰</span>
-            <span class="sidebar-toggle-text">VALIKKO</span>
+        <button class="sidebar-toggle" id="toggle-btn">
+            <i class="fas fa-bars"></i>
+            <span>Valikko</span>
         </button>
-        <h1>Oma viihde</h1>
+        <div class="logo">Oma<span>viihde</span></div>
     </div>
 </header>
 
 <div class="sidebar-overlay" id="overlay"></div>
 
 <div class="app-wrapper">
+
+    <!-- SIDEBAR -->
     <aside id="sidebar">
-        <div class="filter-section">
+
+        <div class="sb-block">
             <h3>Lajityypit</h3>
             <div class="chip-group" id="genre-filters"></div>
+
             <h3>Palvelut</h3>
-            <div class="chip-group" id="service-filters" style="flex-direction: row; flex-wrap: wrap;">
+            <div class="service-chips" id="service-filters">
                 <div class="chip" data-value="TV">TV</div>
                 <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
                 <div class="chip" data-value="Vuokraelokuva">Vuokrattavat</div>
             </div>
+        </div>
+
+        <div class="sb-block">
             <h3>Asetukset</h3>
             <div class="toggle-group">
-                <label><input type="checkbox" id="toggle-favorites"> Näytä vain suosikit</label>
-                <label><input type="checkbox" id="toggle-highlight"> Korosta suoratoistoa</label>
+                <label class="toggle-label">
+                    <span>Näytä vain suosikit</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-favorites">
+                        <div class="toggle-track"></div>
+                    </div>
+                </label>
+                <label class="toggle-label">
+                    <span>Korosta suoratoistoa</span>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="toggle-highlight">
+                        <div class="toggle-track"></div>
+                    </div>
+                </label>
             </div>
         </div>
 
-        <div class="filter-section">
+        <div class="sb-block">
             <h3>Näkymän hallinta</h3>
-            <p style="font-size: 0.7rem; color: #888; margin-bottom: 0.8rem;">Järjestele raahaamalla ⠿, klikkaa nimeä navigoidaksesi.</p>
+            <p style="font-size:0.68rem;color:var(--text-muted);margin-bottom:0.75rem;">Raahaa ⠿ järjestelläksesi, klikkaa nimeä navigoidaksesi.</p>
             <div class="sidebar-section-list" id="sidebar-sections"></div>
         </div>
 
-        <div class="filter-section">
-            <h3>Demon asetukset</h3>
-            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="primary-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Pääväri</label><input type="text" id="primary-color-hex" placeholder="#007bff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+        <div class="sb-block">
+            <h3>Teema</h3>
+            <div id="theme-controls">
+                <div class="theme-row">
+                    <input type="color" id="primary-color-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Pääväri</label><input type="text" id="primary-color-hex" placeholder="#e8a020"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="bg-color-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Taustaväri</label><input type="text" id="bg-color-hex" placeholder="#f4f7f9" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                <div class="theme-row">
+                    <input type="color" id="bg-color-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Taustaväri</label><input type="text" id="bg-color-hex" placeholder="#080c14"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="header-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Tausta</label><input type="text" id="header-bg-hex" placeholder="#1a1a1a" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                <div class="theme-row">
+                    <input type="color" id="header-bg-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Yläpalkki</label><input type="text" id="header-bg-hex" placeholder="#080c14"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="header-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Yläpalkki Teksti</label><input type="text" id="header-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                <div class="theme-row">
+                    <input type="color" id="header-text-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Yläpalkki teksti</label><input type="text" id="header-text-hex" placeholder="#f0f2f8"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="hero-bg-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Tausta</label><input type="text" id="hero-bg-hex" placeholder="#1e3c72" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                <div class="theme-row">
+                    <input type="color" id="hero-bg-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Hero tausta</label><input type="text" id="hero-bg-hex" placeholder="#080c14"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="color" id="hero-text-picker" style="width: 28px; height: 28px; border: 1px solid #ddd; border-radius: 4px; padding: 0; cursor: pointer;">
-                    <div style="flex-grow: 1;"><label style="display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold;">Hero Teksti</label><input type="text" id="hero-text-hex" placeholder="#ffffff" style="width: 100%; border: none; border-bottom: 1px solid #ddd; font-size: 0.85rem; outline: none; padding: 1px 0;"></div>
+                <div class="theme-row">
+                    <input type="color" id="hero-text-picker" class="theme-swatch">
+                    <div class="theme-row-inner"><label>Hero teksti</label><input type="text" id="hero-text-hex" placeholder="#f0f2f8"></div>
                 </div>
-                <button id="reset-theme-btn" style="margin-top: 0.5rem; padding: 0.5rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s;">Palauta oletusvärit</button>
+                <button class="reset-theme-btn" id="reset-theme-btn">Palauta oletusvärit</button>
             </div>
         </div>
+
     </aside>
 
+    <!-- MAIN -->
     <main>
         <div class="content-container">
-            <div class="hero">
-                <h2>Hei, Jaska Jokunen</h2>
-                <p>Voit hallita näkymääsi vasemman sivupalkin ohjauspaneelista. Saat ohjauspaneelin näkyviin painamalla valikko-painiketta.</p>
+
+            <!-- HERO -->
+            <div class="hero" id="hero-section">
+                <div class="hero-bg" id="hero-bg" style="background-image: url('https://picsum.photos/seed/hero17/1400/500')"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <div class="hero-badge">✦ Suositellaan sinulle</div>
+                    <h2>Sisu</h2>
+                    <div class="hero-meta">
+                        <span><i class="fas fa-play-circle"></i> Suoratoisto</span>
+                        <span>· Toiminta</span>
+                        <span>· 2023</span>
+                    </div>
+                    <p class="hero-desc">Toiminnantäyteinen selviytymistarina Lapin erämaassa — yksi mies, yksi koira, ja armottoman vihollinen.</p>
+                    <div class="hero-actions">
+                        <button class="btn-primary"><i class="fas fa-play"></i> Katso nyt</button>
+                        <button class="btn-ghost"><i class="fas fa-plus"></i> Lisää listaan</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- AI Search Section -->
+            <!-- AI SEARCH -->
             <div class="ai-search-section" id="ai-search-container">
                 <div class="ai-search-header">
-                    <h3><span>✨</span> Tekoälyavusteinen sisältöhaku</h3>
+                    <h3><span class="ai-icon">✦</span> Tekoälyhaku</h3>
                     <button class="ai-toggle-btn" id="ai-toggle-btn">
                         <span id="ai-toggle-text">Piilota</span>
                         <i class="fas fa-chevron-up"></i>
                     </button>
                 </div>
                 <div class="ai-collapsible-wrapper">
-                    <div class="ai-collapsible-content" id="ai-collapsible-content">
+                    <div class="ai-collapsible-content">
                         <div class="ai-input-group">
-                            <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle' tai 'Suosittele jotain hyvää lastenohjelmaa'"></textarea>
-                            <button class="ai-btn" id="ai-search-btn"><span>Kysy tekoälyltä</span></button>
+                            <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle'…"></textarea>
+                            <button class="ai-btn" id="ai-search-btn"><i class="fas fa-sparkles"></i> Kysy</button>
                         </div>
-                        <div class="ai-loader" id="ai-loader">Tekoäly analysoi pyyntöäsi ja selaa kirjastoa<span class="dots"></span></div>
+                        <div class="ai-loader" id="ai-loader">Analysoidaan pyyntöäsi<span class="dots"></span></div>
                         <div class="ai-results" id="ai-results">
                             <div class="ai-results-header">
-                                <p style="font-size: 0.9rem; font-weight: bold; color: #555;">Tekoälyn suositukset:</p>
-                                <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä haku</button>
+                                <p>Tekoälyn suositukset</p>
+                                <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä</button>
                             </div>
-                            <div class="grid" id="ai-results-grid"></div>
+                            <div class="rail" id="ai-results-grid"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- DYNAMIC SECTIONS -->
             <div id="dynamic-sections"></div>
+
+            <div class="bottom-spacer"></div>
         </div>
     </main>
 </div>
@@ -442,294 +1189,184 @@
 <script>
 // ==================== DATA ====================
 
-const genres = ["Elokuvat", "Sarjat", "Urheilu", "Lapset", "Dokumentit", "Viihde", "Uutiset"];
+const genres = ["Elokuvat","Sarjat","Urheilu","Lapset","Dokumentit","Viihde","Uutiset"];
 
 const contentItems = [
-    { id: 1,  title: "Napapiirin sankarit",       type: "Suoratoisto",  genre: "Elokuvat",   desc: "Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended: true },
-    { id: 4,  title: "Dune: Osa kaksi",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended: true },
-    { id: 9,  title: "Barbie",                    type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended: false },
-    { id: 17, title: "Sisu",                      type: "Suoratoisto",  genre: "Elokuvat",   desc: "Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended: true },
-    { id: 18, title: "Kuolleet lehdet",           type: "Vuokraelokuva",genre: "Elokuvat",   desc: "Aki Kaurismäen palkittu rakkaustarina.", recommended: false },
-    { id: 8,  title: "Sorjonen",                  type: "Suoratoisto",  genre: "Sarjat",     desc: "Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended: true },
-    { id: 12, title: "The Last of Us",            type: "Suoratoisto",  genre: "Sarjat",     desc: "Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended: true },
-    { id: 19, title: "Munkkivuori",               type: "Suoratoisto",  genre: "Sarjat",     desc: "Mysteeri 80-luvun lähiössä.", recommended: false },
-    { id: 20, title: "Pohjolan laki",             type: "TV",           genre: "Sarjat",     desc: "Lakidraamaa Helsingin ytimessä.", recommended: false },
-    { id: 21, title: "Succession",                type: "Suoratoisto",  genre: "Sarjat",     desc: "Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended: true },
-    { id: 3,  title: "Jääkiekon MM-finaali",      type: "TV",           genre: "Urheilu",    desc: "Jännitysnäytelmä suoraan areenalta.", recommended: true },
-    { id: 10, title: "Formula 1: Monaco",         type: "TV",           genre: "Urheilu",    desc: "Kauden legendaarisin osakilpailu suorana.", recommended: false },
-    { id: 22, title: "Huuhkajat: EM-karsinta",   type: "TV",           genre: "Urheilu",    desc: "Suomen maajoukkueen matka kohti kisoja.", recommended: true },
-    { id: 23, title: "Wimbledon: Finaali",        type: "TV",           genre: "Urheilu",    desc: "Tenniksen kuninkuuskilpailu nurmikentillä.", recommended: false },
-    { id: 24, title: "Valioliiga: Liverpool - ManU", type: "Suoratoisto", genre: "Urheilu", desc: "Klassikkokohtaaminen Englannin kentiltä.", recommended: false },
-    { id: 5,  title: "Muumilaakson tarinoita",    type: "Suoratoisto",  genre: "Lapset",     desc: "Koko perheen suosikki Muumilaakson asukkaista.", recommended: false },
-    { id: 13, title: "Ryhmä Hau",                 type: "Suoratoisto",  genre: "Lapset",     desc: "Sankarilliset pennut pelastavat päivän.", recommended: false },
-    { id: 25, title: "Pipsa Possu",               type: "TV",           genre: "Lapset",     desc: "Pienen possun arkisia seikkailuja.", recommended: false },
-    { id: 26, title: "Frozen II",                 type: "Vuokraelokuva",genre: "Lapset",     desc: "Elsa ja Anna lähtevät kohti tuntematonta.", recommended: true },
-    { id: 27, title: "Katti Matikainen",          type: "TV",           genre: "Lapset",     desc: "Hauska kissa ja kummalliset keksinnöt.", recommended: false },
-    { id: 6,  title: "Luonnon ihmeet",            type: "Suoratoisto",  genre: "Dokumentit", desc: "Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended: true },
-    { id: 11, title: "Avara luonto",              type: "TV",           genre: "Dokumentit", desc: "Viikoittainen matka luonnon salaisuuksiin.", recommended: false },
-    { id: 28, title: "Suomi on metsäläinen",      type: "TV",           genre: "Dokumentit", desc: "Tarina suomalaisten suhteesta metsään.", recommended: false },
-    { id: 29, title: "David Attenborough: Elämä", type: "Suoratoisto",  genre: "Dokumentit", desc: "Legendaarisen kertojan matka luonnon halki.", recommended: true },
-    { id: 30, title: "Kosmos",                    type: "Suoratoisto",  genre: "Dokumentit", desc: "Matka avaruuden ja ajan ääriin.", recommended: false },
-    { id: 7,  title: "Putous",                    type: "TV",           genre: "Viihde",     desc: "Suomen suosituin sketsihahmokilpailu jatkuu.", recommended: false },
-    { id: 15, title: "MasterChef Suomi",          type: "TV",           genre: "Viihde",     desc: "Kotikokit ottavat mittaa toisistaan keittiössä.", recommended: false },
-    { id: 31, title: "Vain elämää",               type: "TV",           genre: "Viihde",     desc: "Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended: true },
-    { id: 32, title: "Haluatko miljonääriksi?",   type: "TV",           genre: "Viihde",     desc: "Tietokilpailu, jossa panokset ovat huipussaan.", recommended: false },
-    { id: 33, title: "Tanssii tähtien kanssa",    type: "TV",           genre: "Viihde",     desc: "Upeat tanssiesitykset ja tähtiloistoa.", recommended: true },
-    { id: 2,  title: "Uutiset 20:30",             type: "TV",           genre: "Uutiset",    desc: "Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended: false },
-    { id: 16, title: "A-studio",                  type: "TV",           genre: "Uutiset",    desc: "Syvällistä keskustelua päivän polttavista aiheista.", recommended: false },
-    { id: 34, title: "Yle Uutiset: Sää",          type: "TV",           genre: "Uutiset",    desc: "Tarkka sääennuste koko Suomeen.", recommended: false },
-    { id: 35, title: "CNN International",         type: "Suoratoisto",  genre: "Uutiset",    desc: "Maailmanlaajuiset uutiset 24/7.", recommended: false },
-    { id: 36, title: "Urheiluruutu",              type: "TV",           genre: "Uutiset",    desc: "Päivän urheiluaiheet tiivistettynä.", recommended: false }
+    { id:1,  title:"Napapiirin sankarit",      type:"Suoratoisto",  genre:"Elokuvat",   desc:"Klassinen suomalainen komedia seikkailusta halki Lapin.", recommended:true },
+    { id:4,  title:"Dune: Osa kaksi",          type:"Vuokraelokuva",genre:"Elokuvat",   desc:"Eeppinen tieteisseikkailu nyt vuokrattavissa.", recommended:true },
+    { id:9,  title:"Barbie",                   type:"Vuokraelokuva",genre:"Elokuvat",   desc:"Värikäs ja ajatuksia herättävä hitti vuodelta 2023.", recommended:false },
+    { id:17, title:"Sisu",                     type:"Suoratoisto",  genre:"Elokuvat",   desc:"Toiminnantäyteinen selviytymistarina Lapin erämaassa.", recommended:true },
+    { id:18, title:"Kuolleet lehdet",          type:"Vuokraelokuva",genre:"Elokuvat",   desc:"Aki Kaurismäen palkittu rakkaustarina.", recommended:false },
+    { id:8,  title:"Sorjonen",                 type:"Suoratoisto",  genre:"Sarjat",     desc:"Synkkä rikosdraama sijoittuu Lappeenrannan maisemiin.", recommended:true },
+    { id:12, title:"The Last of Us",           type:"Suoratoisto",  genre:"Sarjat",     desc:"Selviytymistarina maailmanlopun jälkeisessä maailmassa.", recommended:true },
+    { id:19, title:"Munkkivuori",              type:"Suoratoisto",  genre:"Sarjat",     desc:"Mysteeri 80-luvun lähiössä.", recommended:false },
+    { id:20, title:"Pohjolan laki",            type:"TV",           genre:"Sarjat",     desc:"Lakidraamaa Helsingin ytimessä.", recommended:false },
+    { id:21, title:"Succession",               type:"Suoratoisto",  genre:"Sarjat",     desc:"Valtapeliä ja perhedraamaa miljardöörien maailmassa.", recommended:true },
+    { id:3,  title:"Jääkiekon MM-finaali",     type:"TV",           genre:"Urheilu",    desc:"Jännitysnäytelmä suoraan areenalta.", recommended:true },
+    { id:10, title:"Formula 1: Monaco",        type:"TV",           genre:"Urheilu",    desc:"Kauden legendaarisin osakilpailu suorana.", recommended:false },
+    { id:22, title:"Huuhkajat: EM-karsinta",  type:"TV",           genre:"Urheilu",    desc:"Suomen maajoukkueen matka kohti kisoja.", recommended:true },
+    { id:23, title:"Wimbledon: Finaali",       type:"TV",           genre:"Urheilu",    desc:"Tenniksen kuninkuuskilpailu nurmikentillä.", recommended:false },
+    { id:24, title:"Valioliiga: Liverpool",    type:"Suoratoisto",  genre:"Urheilu",    desc:"Klassikkokohtaaminen Englannin kentiltä.", recommended:false },
+    { id:5,  title:"Muumilaakson tarinoita",   type:"Suoratoisto",  genre:"Lapset",     desc:"Koko perheen suosikki Muumilaakson asukkaista.", recommended:false },
+    { id:13, title:"Ryhmä Hau",                type:"Suoratoisto",  genre:"Lapset",     desc:"Sankarilliset pennut pelastavat päivän.", recommended:false },
+    { id:25, title:"Pipsa Possu",              type:"TV",           genre:"Lapset",     desc:"Pienen possun arkisia seikkailuja.", recommended:false },
+    { id:26, title:"Frozen II",                type:"Vuokraelokuva",genre:"Lapset",     desc:"Elsa ja Anna lähtevät kohti tuntematonta.", recommended:true },
+    { id:27, title:"Katti Matikainen",         type:"TV",           genre:"Lapset",     desc:"Hauska kissa ja kummalliset keksinnöt.", recommended:false },
+    { id:6,  title:"Luonnon ihmeet",           type:"Suoratoisto",  genre:"Dokumentit", desc:"Upeasti kuvattu dokumenttisarja maapallon monimuotoisuudesta.", recommended:true },
+    { id:11, title:"Avara luonto",             type:"TV",           genre:"Dokumentit", desc:"Viikoittainen matka luonnon salaisuuksiin.", recommended:false },
+    { id:28, title:"Suomi on metsäläinen",     type:"TV",           genre:"Dokumentit", desc:"Tarina suomalaisten suhteesta metsään.", recommended:false },
+    { id:29, title:"David Attenborough: Elämä",type:"Suoratoisto",  genre:"Dokumentit", desc:"Legendaarisen kertojan matka luonnon halki.", recommended:true },
+    { id:30, title:"Kosmos",                   type:"Suoratoisto",  genre:"Dokumentit", desc:"Matka avaruuden ja ajan ääriin.", recommended:false },
+    { id:7,  title:"Putous",                   type:"TV",           genre:"Viihde",     desc:"Suomen suosituin sketsihahmokilpailu jatkuu.", recommended:false },
+    { id:15, title:"MasterChef Suomi",         type:"TV",           genre:"Viihde",     desc:"Kotikokit ottavat mittaa toisistaan keittiössä.", recommended:false },
+    { id:31, title:"Vain elämää",              type:"TV",           genre:"Viihde",     desc:"Artistit tulkitsevat toistensa kappaleita Hirvensalmella.", recommended:true },
+    { id:32, title:"Haluatko miljonääriksi?",  type:"TV",           genre:"Viihde",     desc:"Tietokilpailu, jossa panokset ovat huipussaan.", recommended:false },
+    { id:33, title:"Tanssii tähtien kanssa",   type:"TV",           genre:"Viihde",     desc:"Upeat tanssiesitykset ja tähtiloistoa.", recommended:true },
+    { id:2,  title:"Uutiset 20:30",            type:"TV",           genre:"Uutiset",    desc:"Päivän tärkeimmät uutiset suorana lähetyksenä.", recommended:false },
+    { id:16, title:"A-studio",                 type:"TV",           genre:"Uutiset",    desc:"Syvällistä keskustelua päivän polttavista aiheista.", recommended:false },
+    { id:34, title:"Yle Uutiset: Sää",         type:"TV",           genre:"Uutiset",    desc:"Tarkka sääennuste koko Suomeen.", recommended:false },
+    { id:35, title:"CNN International",        type:"Suoratoisto",  genre:"Uutiset",    desc:"Maailmanlaajuiset uutiset 24/7.", recommended:false },
+    { id:36, title:"Urheiluruutu",             type:"TV",           genre:"Uutiset",    desc:"Päivän urheiluaiheet tiivistettynä.", recommended:false }
 ];
 
-// ==================== CHANNELS & PROGRAM DATA ====================
+// ==================== CHANNELS & PROGRAMS ====================
 
 const channels = [
-    { id: 'ch1', name: 'YLE TV1',     abbr: 'TV1',  color: '#003580', category: 'Yleinen' },
-    { id: 'ch2', name: 'YLE TV2',     abbr: 'TV2',  color: '#0064b4', category: 'Yleinen' },
-    { id: 'ch3', name: 'MTV3',        abbr: 'MTV',  color: '#e4003a', category: 'Yleinen' },
-    { id: 'ch4', name: 'Nelonen',     abbr: 'NEL',  color: '#e8650a', category: 'Yleinen' },
-    { id: 'ch5', name: 'Sub',         abbr: 'SUB',  color: '#7b2d8b', category: 'Viihde' },
-    { id: 'ch6', name: 'Jim',         abbr: 'JIM',  color: '#1d7a3a', category: 'Urheilu' },
-    { id: 'ch7', name: 'Yle Teema',   abbr: 'TEE',  color: '#5a4a3a', category: 'Kulttuuri' },
-    { id: 'ch8', name: 'Hero',        abbr: 'HRO',  color: '#c0392b', category: 'Urheilu' },
+    { id:'ch1', name:'YLE TV1',   abbr:'TV1', color:'#003580', category:'Yleinen' },
+    { id:'ch2', name:'YLE TV2',   abbr:'TV2', color:'#0064b4', category:'Yleinen' },
+    { id:'ch3', name:'MTV3',      abbr:'MTV', color:'#e4003a', category:'Yleinen' },
+    { id:'ch4', name:'Nelonen',   abbr:'NEL', color:'#e8650a', category:'Yleinen' },
+    { id:'ch5', name:'Sub',       abbr:'SUB', color:'#7b2d8b', category:'Viihde' },
+    { id:'ch6', name:'Jim',       abbr:'JIM', color:'#1d7a3a', category:'Urheilu' },
+    { id:'ch7', name:'Yle Teema', abbr:'TEE', color:'#5a4a3a', category:'Kulttuuri' },
+    { id:'ch8', name:'Hero',      abbr:'HRO', color:'#c0392b', category:'Urheilu' },
 ];
 
-// Minute offset from midnight helper
-function toMin(h, m) { return h * 60 + m; }
+function toMin(h,m){ return h*60+m; }
+const SIMULATED_NOW = toMin(18,45);
 
-// Generate programs for a given day-offset (0=today, 1=tomorrow etc.)
-// We seed different content per day so the EPG feels realistic
-function generateDayPrograms(dayOffset) {
-    const seeds = [
-        [ // YLE TV1
-            { start: toMin(6,0),   dur: 30,  title: 'Ylen aamu-tv', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(6,30),  dur: 60,  title: 'Uutiset & Sää', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(7,30),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(8,0),   dur: 90,  title: 'Dokumenttiprojekti', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(9,30),  dur: 60,  title: 'Avara luonto', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(10,30), dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(11,0),  dur: 60,  title: 'Kotikatsomo: Elokuva', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(12,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(12,30), dur: 90,  title: 'Luonnon ihmeet', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(14,0),  dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(15,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(15,30), dur: 90,  title: 'Sorjonen', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(17,0),  dur: 30,  title: 'A-studio', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(17,30), dur: 30,  title: 'Yle Uutiset: Sää', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(18,0),  dur: 60,  title: 'Dokumenttiprojekti', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(19,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(19,30), dur: 90,  title: 'Elokuva: Kuolleet lehdet', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(21,0),  dur: 60,  title: 'MOT: Tutkiva journalismi', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(22,0),  dur: 30,  title: 'Yle Uutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+function generateDayPrograms(dayOffset){
+    const s=[
+        [
+            {start:toMin(6,0),dur:30,title:'Ylen aamu-tv',genre:'Uutiset'},{start:toMin(6,30),dur:60,title:'Uutiset & Sää',genre:'Uutiset'},
+            {start:toMin(8,0),dur:90,title:'Dokumenttiprojekti',genre:'Dokumentit'},{start:toMin(9,30),dur:60,title:'Avara luonto',genre:'Dokumentit'},
+            {start:toMin(11,0),dur:60,title:'Kotikatsomo: Elokuva',genre:'Elokuvat'},{start:toMin(12,0),dur:30,title:'Yle Uutiset',genre:'Uutiset'},
+            {start:toMin(12,30),dur:90,title:'Luonnon ihmeet',genre:'Dokumentit'},{start:toMin(14,0),dur:60,title:'Pikku Kakkonen',genre:'Lapset'},
+            {start:toMin(15,0),dur:30,title:'Yle Uutiset',genre:'Uutiset'},{start:toMin(15,30),dur:90,title:'Sorjonen',genre:'Sarjat'},
+            {start:toMin(17,0),dur:30,title:'A-studio',genre:'Uutiset'},{start:toMin(17,30),dur:30,title:'Yle Uutiset: Sää',genre:'Uutiset'},
+            {start:toMin(18,0),dur:60,title:'Dokumenttiprojekti',genre:'Dokumentit'},{start:toMin(19,0),dur:30,title:'Yle Uutiset',genre:'Uutiset'},
+            {start:toMin(19,30),dur:90,title:'Elokuva: Kuolleet lehdet',genre:'Elokuvat'},{start:toMin(21,0),dur:60,title:'MOT',genre:'Uutiset'},
+            {start:toMin(22,0),dur:30,title:'Yle Uutiset',genre:'Uutiset'},{start:toMin(22,30),dur:90,title:'Myöhäiselokuva',genre:'Elokuvat'},
         ],
-        [ // YLE TV2
-            { start: toMin(6,0),   dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(7,0),   dur: 30,  title: 'Muumilaakson tarinoita', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(7,30),  dur: 30,  title: 'Ryhmä Hau', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(8,0),   dur: 30,  title: 'Pipsa Possu', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(8,30),  dur: 30,  title: 'Katti Matikainen', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(9,0),   dur: 90,  title: 'Urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(10,30), dur: 90,  title: 'Huuhkajat: Analyysi', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(12,0),  dur: 60,  title: 'Elokuva: Napapiirin sankarit', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(13,0),  dur: 60,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(14,0),  dur: 90,  title: 'Jalkapallo: Valioliiga', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(15,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(16,0),  dur: 60,  title: 'Jääkiekko: Liiga', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(17,0),  dur: 30,  title: 'Pikku Kakkonen', genre: 'Lapset', color: '#fef5cc' },
-            { start: toMin(17,30), dur: 90,  title: 'Jääkiekon MM-finaali', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(19,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(19,30), dur: 90,  title: 'Formula 1: Monaco', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(21,0),  dur: 60,  title: 'Tenniksen mestaruusottelu', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(22,0),  dur: 120, title: 'Yöurheilua', genre: 'Urheilu', color: '#e0f0ff' },
+        [
+            {start:toMin(6,0),dur:60,title:'Pikku Kakkonen',genre:'Lapset'},{start:toMin(7,0),dur:30,title:'Muumilaakson tarinoita',genre:'Lapset'},
+            {start:toMin(7,30),dur:30,title:'Ryhmä Hau',genre:'Lapset'},{start:toMin(8,0),dur:30,title:'Pipsa Possu',genre:'Lapset'},
+            {start:toMin(9,0),dur:90,title:'Urheilulähetys',genre:'Urheilu'},{start:toMin(10,30),dur:90,title:'Huuhkajat: Analyysi',genre:'Urheilu'},
+            {start:toMin(12,0),dur:60,title:'Elokuva: Napapiirin sankarit',genre:'Elokuvat'},{start:toMin(14,0),dur:90,title:'Jalkapallo: Valioliiga',genre:'Urheilu'},
+            {start:toMin(15,30),dur:30,title:'Urheiluruutu',genre:'Uutiset'},{start:toMin(16,0),dur:60,title:'Jääkiekko: Liiga',genre:'Urheilu'},
+            {start:toMin(17,30),dur:90,title:'Jääkiekon MM-finaali',genre:'Urheilu'},{start:toMin(19,0),dur:30,title:'Urheiluruutu',genre:'Uutiset'},
+            {start:toMin(19,30),dur:90,title:'Formula 1: Monaco',genre:'Urheilu'},{start:toMin(21,0),dur:60,title:'Tenniksen mestaruusottelu',genre:'Urheilu'},
         ],
-        [ // MTV3
-            { start: toMin(6,0),   dur: 60,  title: 'Huomenta Suomi', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(7,0),   dur: 60,  title: 'Huomenta Suomi', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(8,0),   dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(9,0),   dur: 60,  title: 'Kotikatsomo', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(10,0),  dur: 60,  title: 'MasterChef Suomi', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(11,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(11,30), dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(12,30), dur: 60,  title: 'Elokuva: Toimintahitti', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(13,30), dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(14,0),  dur: 60,  title: 'MasterChef Suomi', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(15,0),  dur: 60,  title: 'Salatut elämät', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(16,0),  dur: 60,  title: 'Tanssii tähtien kanssa', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(17,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(17,30), dur: 30,  title: 'Pohjolan laki', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(18,0),  dur: 60,  title: 'Tanssii tähtien kanssa', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(19,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(19,30), dur: 90,  title: 'Elokuva: Jännitystä', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(21,0),  dur: 60,  title: 'Haluatko miljonääriksi?', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(22,0),  dur: 30,  title: 'MTV Uutiset', genre: 'Uutiset', color: '#fce4e4' },
-            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+        [
+            {start:toMin(6,0),dur:60,title:'Huomenta Suomi',genre:'Uutiset'},{start:toMin(8,0),dur:60,title:'Salatut elämät',genre:'Sarjat'},
+            {start:toMin(10,0),dur:60,title:'MasterChef Suomi',genre:'Viihde'},{start:toMin(11,0),dur:30,title:'MTV Uutiset',genre:'Uutiset'},
+            {start:toMin(11,30),dur:60,title:'Salatut elämät',genre:'Sarjat'},{start:toMin(14,0),dur:60,title:'MasterChef Suomi',genre:'Viihde'},
+            {start:toMin(16,0),dur:60,title:'Tanssii tähtien kanssa',genre:'Viihde'},{start:toMin(17,0),dur:30,title:'MTV Uutiset',genre:'Uutiset'},
+            {start:toMin(17,30),dur:30,title:'Pohjolan laki',genre:'Sarjat'},{start:toMin(18,0),dur:60,title:'Tanssii tähtien kanssa',genre:'Viihde'},
+            {start:toMin(19,0),dur:30,title:'MTV Uutiset',genre:'Uutiset'},{start:toMin(19,30),dur:90,title:'Elokuva: Jännitystä',genre:'Elokuvat'},
+            {start:toMin(21,0),dur:60,title:'Haluatko miljonääriksi?',genre:'Viihde'},{start:toMin(22,30),dur:90,title:'Myöhäiselokuva',genre:'Elokuvat'},
         ],
-        [ // Nelonen
-            { start: toMin(6,0),   dur: 60,  title: 'Neljän aamu', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(7,0),   dur: 60,  title: 'Elokuva: Perheseikkailu', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(8,0),   dur: 60,  title: 'Putous: Parhaat palat', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(9,0),   dur: 120, title: 'Elokuva: Barbie', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(11,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(12,0),  dur: 60,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
-            { start: toMin(13,0),  dur: 60,  title: 'Putous', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(14,0),  dur: 120, title: 'Elokuva: Sisu', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(16,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(17,0),  dur: 60,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
-            { start: toMin(18,0),  dur: 60,  title: 'Putous', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(19,0),  dur: 120, title: 'Elokuva: Dune: Osa kaksi', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(21,0),  dur: 60,  title: 'Vain elämää', genre: 'Viihde', color: '#fff0e0' },
-            { start: toMin(22,0),  dur: 30,  title: 'Nelosen uutiset', genre: 'Uutiset', color: '#ffe8cc' },
-            { start: toMin(22,30), dur: 90,  title: 'Myöhäiselokuva', genre: 'Elokuvat', color: '#fde8d8' },
+        [
+            {start:toMin(6,0),dur:60,title:'Neljän aamu',genre:'Viihde'},{start:toMin(9,0),dur:120,title:'Elokuva: Barbie',genre:'Elokuvat'},
+            {start:toMin(11,0),dur:60,title:'Vain elämää',genre:'Viihde'},{start:toMin(13,0),dur:60,title:'Putous',genre:'Viihde'},
+            {start:toMin(14,0),dur:120,title:'Elokuva: Sisu',genre:'Elokuvat'},{start:toMin(16,0),dur:60,title:'Vain elämää',genre:'Viihde'},
+            {start:toMin(17,0),dur:60,title:'Nelosen uutiset',genre:'Uutiset'},{start:toMin(18,0),dur:60,title:'Putous',genre:'Viihde'},
+            {start:toMin(19,0),dur:120,title:'Elokuva: Dune: Osa kaksi',genre:'Elokuvat'},{start:toMin(21,0),dur:60,title:'Vain elämää',genre:'Viihde'},
         ],
-        [ // Sub
-            { start: toMin(6,0),   dur: 90,  title: 'Sarjabingesessio', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(7,30),  dur: 90,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(9,0),   dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(10,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(11,0),  dur: 90,  title: 'Elokuva: Romantiikka', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(12,30), dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(13,30), dur: 60,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(14,30), dur: 90,  title: 'Elokuva: Jännitys', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(16,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(17,0),  dur: 60,  title: 'Sorjonen', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(18,0),  dur: 60,  title: 'Succession', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(19,0),  dur: 60,  title: 'The Last of Us', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(20,0),  dur: 120, title: 'Elokuva: Sci-fi spektaakkeli', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(22,0),  dur: 60,  title: 'Munkkivuori', genre: 'Sarjat', color: '#ede8f5' },
-            { start: toMin(23,0),  dur: 60,  title: 'Succession: Uusinta', genre: 'Sarjat', color: '#ede8f5' },
+        [
+            {start:toMin(7,30),dur:90,title:'The Last of Us',genre:'Sarjat'},{start:toMin(9,0),dur:60,title:'Succession',genre:'Sarjat'},
+            {start:toMin(10,0),dur:60,title:'Munkkivuori',genre:'Sarjat'},{start:toMin(11,0),dur:90,title:'Elokuva: Romantiikka',genre:'Elokuvat'},
+            {start:toMin(13,30),dur:60,title:'The Last of Us',genre:'Sarjat'},{start:toMin(16,0),dur:60,title:'Munkkivuori',genre:'Sarjat'},
+            {start:toMin(17,0),dur:60,title:'Sorjonen',genre:'Sarjat'},{start:toMin(18,0),dur:60,title:'Succession',genre:'Sarjat'},
+            {start:toMin(19,0),dur:60,title:'The Last of Us',genre:'Sarjat'},{start:toMin(20,0),dur:120,title:'Elokuva: Sci-fi spektaakkeli',genre:'Elokuvat'},
         ],
-        [ // Jim
-            { start: toMin(6,0),   dur: 120, title: 'Aamun urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(8,0),   dur: 60,  title: 'Huuhkajat: Karsintaottelu', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(9,0),   dur: 90,  title: 'Wimbledon: Semifinaali', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(10,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(11,0),  dur: 90,  title: 'F1: Monaco harjoitukset', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(12,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(13,0),  dur: 120, title: 'Valioliiga: Liverpool - ManU', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(15,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(15,30), dur: 90,  title: 'Jääkiekko: Liiga', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(17,0),  dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(17,30), dur: 120, title: 'Formula 1: Monaco kisa', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(19,30), dur: 30,  title: 'Urheiluruutu', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(20,0),  dur: 120, title: 'Wimbledon: Finaali', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(22,0),  dur: 60,  title: 'Yön urheilulähetys', genre: 'Urheilu', color: '#e0f0ff' },
-            { start: toMin(23,0),  dur: 60,  title: 'Urheilupodcast TV', genre: 'Urheilu', color: '#e0f0ff' },
+        [
+            {start:toMin(6,0),dur:120,title:'Aamun urheilulähetys',genre:'Urheilu'},{start:toMin(9,0),dur:90,title:'Wimbledon: Semifinaali',genre:'Urheilu'},
+            {start:toMin(11,0),dur:90,title:'F1: Monaco harjoitukset',genre:'Urheilu'},{start:toMin(13,0),dur:120,title:'Valioliiga: Liverpool - ManU',genre:'Urheilu'},
+            {start:toMin(15,30),dur:90,title:'Jääkiekko: Liiga',genre:'Urheilu'},{start:toMin(17,30),dur:120,title:'Formula 1: Monaco kisa',genre:'Urheilu'},
+            {start:toMin(20,0),dur:120,title:'Wimbledon: Finaali',genre:'Urheilu'},{start:toMin(22,0),dur:60,title:'Yön urheilulähetys',genre:'Urheilu'},
         ],
-        [ // Yle Teema
-            { start: toMin(7,0),   dur: 60,  title: 'Kulttuuriaamiainen', genre: 'Dokumentit', color: '#f0ebe0' },
-            { start: toMin(8,0),   dur: 90,  title: 'David Attenborough: Elämä', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(9,30),  dur: 60,  title: 'Kosmos: Tähtitiede', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(10,30), dur: 90,  title: 'Taiteen historia', genre: 'Dokumentit', color: '#f0ebe0' },
-            { start: toMin(12,0),  dur: 60,  title: 'Suomi on metsäläinen', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(13,0),  dur: 120, title: 'Elokuva: Klassikko', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(15,0),  dur: 60,  title: 'Kulttuuriuutiset', genre: 'Uutiset', color: '#dce8f5' },
-            { start: toMin(16,0),  dur: 90,  title: 'Luonnon ihmeet: Arktis', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(17,30), dur: 60,  title: 'Musiikkidokumentti', genre: 'Dokumentit', color: '#f0ebe0' },
-            { start: toMin(18,30), dur: 90,  title: 'Elokuva: Aki Kaurismäki', genre: 'Elokuvat', color: '#fde8d8' },
-            { start: toMin(20,0),  dur: 60,  title: 'Kosmos', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(21,0),  dur: 90,  title: 'Avara luonto: Erityinen', genre: 'Dokumentit', color: '#e8f4ea' },
-            { start: toMin(22,30), dur: 90,  title: 'Yödokumentti', genre: 'Dokumentit', color: '#e8f4ea' },
+        [
+            {start:toMin(7,0),dur:60,title:'Kulttuuriaamiainen',genre:'Dokumentit'},{start:toMin(8,0),dur:90,title:'David Attenborough: Elämä',genre:'Dokumentit'},
+            {start:toMin(10,30),dur:90,title:'Taiteen historia',genre:'Dokumentit'},{start:toMin(12,0),dur:60,title:'Suomi on metsäläinen',genre:'Dokumentit'},
+            {start:toMin(13,0),dur:120,title:'Elokuva: Klassikko',genre:'Elokuvat'},{start:toMin(16,0),dur:90,title:'Luonnon ihmeet: Arktis',genre:'Dokumentit'},
+            {start:toMin(18,30),dur:90,title:'Elokuva: Aki Kaurismäki',genre:'Elokuvat'},{start:toMin(20,0),dur:60,title:'Kosmos',genre:'Dokumentit'},
+            {start:toMin(21,0),dur:90,title:'Avara luonto: Erityinen',genre:'Dokumentit'},
         ],
-        [ // Hero
-            { start: toMin(6,0),   dur: 120, title: 'Extremeurheilua aamuun', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(8,0),   dur: 90,  title: 'MMA: Mestaruusottelu', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(9,30),  dur: 90,  title: 'Jääkiekon MM: Semifinaalit', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(11,0),  dur: 60,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
-            { start: toMin(12,0),  dur: 120, title: 'Huuhkajat: EM-karsinta', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(14,0),  dur: 60,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
-            { start: toMin(15,0),  dur: 90,  title: 'Jääkiekon MM-finaali', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(16,30), dur: 30,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
-            { start: toMin(17,0),  dur: 120, title: 'F1: Monaco GP suora', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(19,0),  dur: 30,  title: 'Hero Urheiluruutu', genre: 'Uutiset', color: '#ffe0dd' },
-            { start: toMin(19,30), dur: 120, title: 'Valioliiga: Liverpool-ManU', genre: 'Urheilu', color: '#ffe8e8' },
-            { start: toMin(21,30), dur: 60,  title: 'Hero Urheiluruutu: Ilta', genre: 'Uutiset', color: '#ffe0dd' },
-            { start: toMin(22,30), dur: 90,  title: 'MMA: Yöottelu', genre: 'Urheilu', color: '#ffe8e8' },
+        [
+            {start:toMin(6,0),dur:120,title:'Extremeurheilua aamuun',genre:'Urheilu'},{start:toMin(8,0),dur:90,title:'MMA: Mestaruusottelu',genre:'Urheilu'},
+            {start:toMin(11,0),dur:60,title:'Hero Urheiluruutu',genre:'Uutiset'},{start:toMin(12,0),dur:120,title:'Huuhkajat: EM-karsinta',genre:'Urheilu'},
+            {start:toMin(15,0),dur:90,title:'Jääkiekon MM-finaali',genre:'Urheilu'},{start:toMin(17,0),dur:120,title:'F1: Monaco GP suora',genre:'Urheilu'},
+            {start:toMin(19,30),dur:120,title:'Valioliiga: Liverpool-ManU',genre:'Urheilu'},{start:toMin(22,30),dur:90,title:'MMA: Yöottelu',genre:'Urheilu'},
         ],
     ];
-
-    // Shift times slightly per dayOffset for variety
-    return seeds.map((channelProgs, ci) => {
-        return channelProgs.map(p => ({
-            ...p,
-            start: p.start + (dayOffset * 10 * (ci % 3 === 0 ? 1 : -1)) // slight variation
-        })).filter(p => p.start >= 0); // keep valid
-    });
+    return s.map((progs,ci) => progs.map(p => ({...p, start: p.start + dayOffset*10*(ci%3===0?1:-1)})).filter(p=>p.start>=0));
 }
 
-// Get programs for a channel/day, return as array
-function getChannelPrograms(channelIndex, dayOffset) {
-    const allDays = generateDayPrograms(dayOffset);
-    return allDays[channelIndex] || [];
-}
+function getChannelPrograms(idx, day){ return (generateDayPrograms(day))[idx]||[]; }
 
-// Get the currently-airing program (relative to simulated "now" = 18:45)
-const SIMULATED_NOW_MINUTES = toMin(18, 45);
-
-function getCurrentAndUpcoming(programs) {
-    let current = null;
-    let upcoming = [];
-
-    for (let i = 0; i < programs.length; i++) {
-        const p = programs[i];
-        const end = p.start + p.dur;
-        if (p.start <= SIMULATED_NOW_MINUTES && end > SIMULATED_NOW_MINUTES) {
-            current = { ...p, progress: Math.round(((SIMULATED_NOW_MINUTES - p.start) / p.dur) * 100) };
-        } else if (p.start > SIMULATED_NOW_MINUTES && upcoming.length < 3) {
+function getCurrentAndUpcoming(programs){
+    let current=null, upcoming=[];
+    for(const p of programs){
+        const end=p.start+p.dur;
+        if(p.start<=SIMULATED_NOW && end>SIMULATED_NOW){
+            current={...p, progress:Math.round(((SIMULATED_NOW-p.start)/p.dur)*100)};
+        } else if(p.start>SIMULATED_NOW && upcoming.length<3){
             upcoming.push(p);
         }
     }
-
-    // If no current (before first program or gap), find next
-    if (!current && programs.length) {
-        const next = programs.find(p => p.start > SIMULATED_NOW_MINUTES);
-        if (next) current = { ...next, progress: 0 };
+    if(!current && programs.length){
+        const next=programs.find(p=>p.start>SIMULATED_NOW);
+        if(next) current={...next,progress:0};
     }
-
-    return { current, upcoming };
+    return {current,upcoming};
 }
 
-function minToTimeStr(min) {
-    const h = Math.floor(min / 60) % 24;
-    const m = min % 60;
-    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-}
+function t(min){ const h=Math.floor(min/60)%24,m=min%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
 
 // ==================== STATE ====================
 
 const DEFAULT_THEME = {
-    primary: "#007bff", bg: "#f4f7f9", headerBg: "#1a1a1a",
-    headerText: "#ffffff", heroBg: "#1e3c72", heroText: "#ffffff"
+    primary:"#e8a020", bg:"#080c14", headerBg:"#080c14",
+    headerText:"#f0f2f8", heroBg:"#080c14", heroText:"#f0f2f8"
 };
 
-let activeGenres = new Set();
-let activeServices = new Set();
-let favorites = JSON.parse(localStorage.getItem('favs') || '[]');
-let recordings = new Set(JSON.parse(localStorage.getItem('recs') || '[]'));
-let reminders = new Set(JSON.parse(localStorage.getItem('rems') || '[]'));
-let channelFavorites = JSON.parse(localStorage.getItem('channelFavs') || '[]');
-let customSections = JSON.parse(localStorage.getItem('customSections') || '[]');
-let sectionOrder = JSON.parse(localStorage.getItem('sectionOrder') || '["recommended","favorites","all","channels"]');
-let hiddenSections = new Set(JSON.parse(localStorage.getItem('hiddenSections') || '[]'));
-let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.stringify(DEFAULT_THEME));
-let showOnlyFavorites = false;
-let highlightStreaming = false;
-let aiResults = [];
-// Ensure 'channels' is in sectionOrder — always at the END if not present
-if (!sectionOrder.includes('channels')) sectionOrder.push('channels');
+let activeGenres    = new Set();
+let activeServices  = new Set();
+let favorites       = JSON.parse(localStorage.getItem('favs')||'[]');
+let recordings      = new Set(JSON.parse(localStorage.getItem('recs')||'[]'));
+let reminders       = new Set(JSON.parse(localStorage.getItem('rems')||'[]'));
+let channelFavorites= JSON.parse(localStorage.getItem('channelFavs')||'[]');
+let customSections  = JSON.parse(localStorage.getItem('customSections')||'[]');
+let sectionOrder    = JSON.parse(localStorage.getItem('sectionOrder')||'["recommended","favorites","all","channels"]');
+let hiddenSections  = new Set(JSON.parse(localStorage.getItem('hiddenSections')||'[]'));
+let themeSettings   = JSON.parse(localStorage.getItem('themeSettings')||JSON.stringify(DEFAULT_THEME));
+let showOnlyFavorites=false, highlightStreaming=false, aiResults=[];
+
+if(!sectionOrder.includes('channels')) sectionOrder.push('channels');
 
 // ==================== DOM ====================
 
-const dynamicSectionsContainer = document.getElementById('dynamic-sections');
-const genreFiltersContainer = document.getElementById('genre-filters');
-const serviceChips = document.querySelectorAll('#service-filters .chip');
-const sidebarSectionsContainer = document.getElementById('sidebar-sections');
-const toggleBtn = document.getElementById('toggle-btn');
-const overlay = document.getElementById('overlay');
+const dynSections   = document.getElementById('dynamic-sections');
+const genreFilters  = document.getElementById('genre-filters');
+const serviceChips  = document.querySelectorAll('#service-filters .chip');
+const sbSections    = document.getElementById('sidebar-sections');
+const toggleBtn     = document.getElementById('toggle-btn');
+const overlay       = document.getElementById('overlay');
+
 // ==================== INIT ====================
 
-function init() {
+function init(){
     renderGenreFilters();
     renderSidebarSections();
     renderContent();
@@ -737,549 +1374,406 @@ function init() {
     setupEventListeners();
     updateThemeInputs();
     document.body.classList.add('sidebar-collapsed');
-    document.body.classList.remove('sidebar-open');
 }
 
-function saveState() {
-    localStorage.setItem('favs', JSON.stringify(favorites));
-    localStorage.setItem('recs', JSON.stringify([...recordings]));
-    localStorage.setItem('rems', JSON.stringify([...reminders]));
-    localStorage.setItem('channelFavs', JSON.stringify(channelFavorites));
-    localStorage.setItem('customSections', JSON.stringify(customSections));
-    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
-    localStorage.setItem('hiddenSections', JSON.stringify([...hiddenSections]));
-    localStorage.setItem('themeSettings', JSON.stringify(themeSettings));
+function saveState(){
+    localStorage.setItem('favs',JSON.stringify(favorites));
+    localStorage.setItem('recs',JSON.stringify([...recordings]));
+    localStorage.setItem('rems',JSON.stringify([...reminders]));
+    localStorage.setItem('channelFavs',JSON.stringify(channelFavorites));
+    localStorage.setItem('customSections',JSON.stringify(customSections));
+    localStorage.setItem('sectionOrder',JSON.stringify(sectionOrder));
+    localStorage.setItem('hiddenSections',JSON.stringify([...hiddenSections]));
+    localStorage.setItem('themeSettings',JSON.stringify(themeSettings));
 }
 
-function applyTheme() {
-    document.documentElement.style.setProperty('--primary-color', themeSettings.primary);
-    document.documentElement.style.setProperty('--bg-color', themeSettings.bg);
-    document.documentElement.style.setProperty('--header-bg', themeSettings.headerBg);
-    document.documentElement.style.setProperty('--header-text', themeSettings.headerText);
-    document.documentElement.style.setProperty('--hero-bg', themeSettings.heroBg);
-    document.documentElement.style.setProperty('--hero-text', themeSettings.heroText);
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.style.backgroundColor = themeSettings.bg;
+function applyTheme(){
+    const r=document.documentElement.style;
+    r.setProperty('--primary', themeSettings.primary);
+    r.setProperty('--primary-dim', hexToRgba(themeSettings.primary, 0.15));
+    r.setProperty('--primary-glow', hexToRgba(themeSettings.primary, 0.35));
+    r.setProperty('--bg', themeSettings.bg);
+    r.setProperty('--bg2', lighten(themeSettings.bg, 6));
+    r.setProperty('--bg3', lighten(themeSettings.bg, 12));
+    document.querySelector('header').style.background = hexToRgba(themeSettings.headerBg, 0.85);
+    document.querySelector('header').style.borderBottomColor = 'rgba(255,255,255,0.08)';
 }
 
-function updateThemeInputs() {
-    document.getElementById('primary-color-hex').value = themeSettings.primary;
-    document.getElementById('primary-color-picker').value = themeSettings.primary;
-    document.getElementById('bg-color-hex').value = themeSettings.bg;
-    document.getElementById('bg-color-picker').value = themeSettings.bg;
-    document.getElementById('header-bg-hex').value = themeSettings.headerBg;
-    document.getElementById('header-bg-picker').value = themeSettings.headerBg;
-    document.getElementById('header-text-hex').value = themeSettings.headerText;
-    document.getElementById('header-text-picker').value = themeSettings.headerText;
-    document.getElementById('hero-bg-hex').value = themeSettings.heroBg;
-    document.getElementById('hero-bg-picker').value = themeSettings.heroBg;
-    document.getElementById('hero-text-hex').value = themeSettings.heroText;
-    document.getElementById('hero-text-picker').value = themeSettings.heroText;
+function hexToRgba(hex,a){
+    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+function lighten(hex,amt){
+    let r=parseInt(hex.slice(1,3),16)+amt;
+    let g=parseInt(hex.slice(3,5),16)+amt;
+    let b=parseInt(hex.slice(5,7),16)+amt;
+    return '#'+[r,g,b].map(v=>Math.min(255,v).toString(16).padStart(2,'0')).join('');
+}
+
+function updateThemeInputs(){
+    const map=[
+        ['primary-color-hex','primary-color-picker','primary'],
+        ['bg-color-hex','bg-color-picker','bg'],
+        ['header-bg-hex','header-bg-picker','headerBg'],
+        ['header-text-hex','header-text-picker','headerText'],
+        ['hero-bg-hex','hero-bg-picker','heroBg'],
+        ['hero-text-hex','hero-text-picker','heroText'],
+    ];
+    map.forEach(([hId,pId,key])=>{
+        document.getElementById(hId).value=themeSettings[key];
+        document.getElementById(pId).value=themeSettings[key];
+    });
 }
 
 // ==================== RENDERING ====================
 
-function renderGenreFilters() {
-    genreFiltersContainer.innerHTML = genres.map(g => `
+function renderGenreFilters(){
+    genreFilters.innerHTML=genres.map(g=>`
         <div class="genre-item">
-            <div class="chip ${activeGenres.has(g) ? 'active' : ''}" data-value="${g}">${g}</div>
+            <div class="chip ${activeGenres.has(g)?'active':''}" data-value="${g}">${g}</div>
             <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi"><span>+</span></button>
         </div>
     `).join('');
 }
 
-function getSectionTitle(id) {
-    if (id === 'recommended') return "Suositellut sinulle";
-    if (id === 'favorites') return "Omat suosikit";
-    if (id === 'all') return "Kaikki sisällöt";
-    if (id === 'channels') return "Kanavat";
-    if (id === 'channel-favorites') return "Suosikkikanavat";
-    if (id.startsWith('genre-')) return id.replace('genre-', '');
+function getSectionTitle(id){
+    if(id==='recommended') return 'Suositellut sinulle';
+    if(id==='favorites')   return 'Omat suosikit';
+    if(id==='all')         return 'Kaikki sisällöt';
+    if(id==='channels')    return 'Kanavat';
+    if(id==='channel-favorites') return 'Suosikkikanavat';
+    if(id.startsWith('genre-')) return id.replace('genre-','');
     return id;
 }
 
-function renderSidebarSections() {
-    // Ensure channel-favorites is listed if any channel is favourited
-    if (channelFavorites.length > 0 && !sectionOrder.includes('channel-favorites')) {
-        const idx = sectionOrder.indexOf('channels');
-        sectionOrder.splice(idx + 1, 0, 'channel-favorites');
+function renderSidebarSections(){
+    if(channelFavorites.length>0 && !sectionOrder.includes('channel-favorites')){
+        const idx=sectionOrder.indexOf('channels');
+        sectionOrder.splice(idx+1,0,'channel-favorites');
     }
-    if (channelFavorites.length === 0) {
-        sectionOrder = sectionOrder.filter(id => id !== 'channel-favorites');
-    }
+    if(channelFavorites.length===0) sectionOrder=sectionOrder.filter(id=>id!=='channel-favorites');
 
-    customSections.forEach(g => {
-        if (!sectionOrder.includes('genre-' + g)) sectionOrder.push('genre-' + g);
-    });
-    sectionOrder = sectionOrder.filter(id => {
-        if (id.startsWith('genre-')) return customSections.includes(id.replace('genre-', ''));
-        return true;
-    });
+    customSections.forEach(g=>{ if(!sectionOrder.includes('genre-'+g)) sectionOrder.push('genre-'+g); });
+    sectionOrder=sectionOrder.filter(id=>{ if(id.startsWith('genre-')) return customSections.includes(id.replace('genre-','')); return true; });
 
-    sidebarSectionsContainer.innerHTML = sectionOrder.map(id => {
-        const isCustom = id.startsWith('genre-');
-        const isHidden = hiddenSections.has(id);
+    sbSections.innerHTML=sectionOrder.map(id=>{
+        const isCustom=id.startsWith('genre-'), isHidden=hiddenSections.has(id);
         return `
             <div class="sidebar-section-item" draggable="true" data-id="${id}">
                 <span class="drag-handle">⠿</span>
-                <input type="checkbox" class="section-checkbox" ${!isHidden ? 'checked' : ''} data-id="${id}">
+                <input type="checkbox" class="section-checkbox" ${!isHidden?'checked':''} data-id="${id}">
                 <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
-                ${isCustom ? `<button class="sidebar-remove-btn" data-genre="${id.replace('genre-', '')}" title="Poista osio">🗑</button>` : ''}
-            </div>
-        `;
+                ${isCustom?`<button class="sidebar-remove-btn" data-genre="${id.replace('genre-','')}" title="Poista">✕</button>`:''}
+            </div>`;
     }).join('');
-
-    setupSidebarDragAndDrop();
+    setupSidebarDnD();
 }
 
-function renderContent() {
-    dynamicSectionsContainer.innerHTML = '';
+function renderContent(){
+    dynSections.innerHTML='';
+    sectionOrder.forEach(sId=>{
+        if(hiddenSections.has(sId)) return;
+        if(sId==='channels'){ renderChannelsSection(dynSections); return; }
+        if(sId==='channel-favorites'){ renderChannelFavsSection(dynSections); return; }
 
-    sectionOrder.forEach(sectionId => {
-        if (hiddenSections.has(sectionId)) return;
+        let items=[];
+        if(sId==='recommended') items=contentItems.filter(i=>i.recommended);
+        else if(sId==='favorites') items=favorites.map(id=>contentItems.find(i=>i.id===id)).filter(Boolean);
+        else if(sId==='all') items=contentItems;
+        else if(sId.startsWith('genre-')) items=contentItems.filter(i=>i.genre===sId.replace('genre-',''));
 
-        if (sectionId === 'channels') {
-            renderChannelsSection(dynamicSectionsContainer);
-            return;
-        }
-        if (sectionId === 'channel-favorites') {
-            renderChannelFavoritesSection(dynamicSectionsContainer);
-            return;
-        }
-
-        let title = getSectionTitle(sectionId);
-        let items = [];
-        const isCustom = sectionId.startsWith('genre-');
-
-        if (sectionId === 'recommended') items = contentItems.filter(i => i.recommended);
-        else if (sectionId === 'favorites') items = favorites.map(id => contentItems.find(i => i.id === id)).filter(Boolean);
-        else if (sectionId === 'all') items = contentItems;
-        else if (isCustom) items = contentItems.filter(i => i.genre === sectionId.replace('genre-', ''));
-
-        const filteredItems = items.filter(item => {
-            const genreMatch = activeGenres.size === 0 || activeGenres.has(item.genre);
-            const serviceMatch = activeServices.size === 0 || activeServices.has(item.type);
-            const favoriteMatch = !showOnlyFavorites || favorites.includes(item.id);
-            return genreMatch && serviceMatch && favoriteMatch;
+        const filtered=items.filter(item=>{
+            const gM=activeGenres.size===0||activeGenres.has(item.genre);
+            const sM=activeServices.size===0||activeServices.has(item.type);
+            const fM=!showOnlyFavorites||favorites.includes(item.id);
+            return gM&&sM&&fM;
         });
 
-        const sectionEl = document.createElement('section');
-        sectionEl.className = 'content-section';
-        sectionEl.id = 'anchor-' + sectionId;
-        sectionEl.innerHTML = `
-            <div class="section-header"><h3>${title}</h3></div>
-            <div class="grid ${sectionId === 'favorites' ? 'reorderable-grid' : ''}" id="grid-${sectionId}">
-                ${filteredItems.length > 0
-                    ? filteredItems.map(item => createCardHtml(item, sectionId === 'favorites')).join('')
-                    : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+        const el=document.createElement('section');
+        el.className='content-section';
+        el.id='anchor-'+sId;
+        el.innerHTML=`
+            <div class="section-header">
+                <h3>${getSectionTitle(sId)}</h3>
+                <span class="section-count">${filtered.length} ohjelmaa</span>
             </div>
-        `;
-        dynamicSectionsContainer.appendChild(sectionEl);
+            <div class="rail ${sId==='favorites'?'reorderable-rail':''}" id="grid-${sId}">
+                ${filtered.length>0
+                    ? filtered.map((item,i)=>cardHtml(item,sId==='favorites',i)).join('')
+                    : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+            </div>`;
+        dynSections.appendChild(el);
 
-        if (sectionId === 'favorites' && filteredItems.length > 1) {
-            const grid = sectionEl.querySelector('.grid');
-            new Sortable(grid, {
-                animation: 150, handle: '.card-drag-handle', ghostClass: 'sortable-ghost',
-                onEnd: function() {
-                    const newOrder = [...grid.querySelectorAll('.card')].map(card => parseInt(card.getAttribute('data-id')));
-                    favorites = newOrder;
-                    saveState();
-                }
+        if(sId==='favorites' && filtered.length>1){
+            const rail=el.querySelector('.rail');
+            new Sortable(rail,{
+                animation:150, handle:'.card-drag-handle', ghostClass:'sortable-ghost',
+                onEnd(){ favorites=[...rail.querySelectorAll('.card')].map(c=>parseInt(c.dataset.id)); saveState(); }
             });
         }
     });
 
-    const aiResultsGrid = document.getElementById('ai-results-grid');
-    if (aiResultsGrid && aiResults.length > 0) {
-        aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
-    }
+    const grid=document.getElementById('ai-results-grid');
+    if(grid && aiResults.length>0) grid.innerHTML=aiResults.map(item=>cardHtml(item)).join('');
 }
 
-function renderChannelsSection(container) {
-    const sectionEl = document.createElement('section');
-    sectionEl.className = 'content-section';
-    sectionEl.id = 'anchor-channels';
-
-    const cards = channels.map((ch, idx) => createChannelCardHtml(ch, idx)).join('');
-
-    sectionEl.innerHTML = `
+function renderChannelsSection(container){
+    const el=document.createElement('section');
+    el.className='content-section'; el.id='anchor-channels';
+    el.innerHTML=`
         <div class="section-header">
             <h3>Kanavat</h3>
-            <span style="font-size: 0.78rem; color: #888;">Simuloitu aika: 18:45</span>
+            <span class="section-count">Simuloitu aika: 18:45</span>
         </div>
-        <div class="channel-grid" id="channel-grid">${cards}</div>
-    `;
-    container.appendChild(sectionEl);
+        <div class="rail" id="channel-rail">
+            ${channels.map((ch,i)=>channelCardHtml(ch,i,false)).join('')}
+        </div>`;
+    container.appendChild(el);
 }
 
-function renderChannelFavoritesSection(container) {
-    if (channelFavorites.length === 0) return;
-    const sectionEl = document.createElement('section');
-    sectionEl.className = 'content-section';
-    sectionEl.id = 'anchor-channel-favorites';
-
-    const favChannels = channelFavorites.map(id => channels.find(c => c.id === id)).filter(Boolean);
-    const cards = favChannels.map(ch => {
-        const idx = channels.indexOf(ch);
-        return createChannelCardHtml(ch, idx, true);
-    }).join('');
-
-    sectionEl.innerHTML = `
+function renderChannelFavsSection(container){
+    if(!channelFavorites.length) return;
+    const favChs=channelFavorites.map(id=>channels.find(c=>c.id===id)).filter(Boolean);
+    const el=document.createElement('section');
+    el.className='content-section'; el.id='anchor-channel-favorites';
+    el.innerHTML=`
         <div class="section-header"><h3>Suosikkikanavat</h3></div>
-        <div class="channel-grid reorderable-grid" id="grid-channel-favorites">${cards}</div>
-    `;
-    container.appendChild(sectionEl);
-
-    if (favChannels.length > 1) {
-        const grid = sectionEl.querySelector('.channel-grid');
-        new Sortable(grid, {
-            animation: 150,
-            handle: '.card-drag-handle',
-            ghostClass: 'sortable-ghost',
-            onEnd: function() {
-                const newOrder = [...grid.querySelectorAll('.channel-card')].map(card => card.getAttribute('data-channel-id'));
-                channelFavorites = newOrder;
-                saveState();
-            }
+        <div class="rail reorderable-rail" id="grid-channel-favorites">
+            ${favChs.map(ch=>channelCardHtml(ch,channels.indexOf(ch),true)).join('')}
+        </div>`;
+    container.appendChild(el);
+    if(favChs.length>1){
+        const rail=el.querySelector('.rail');
+        new Sortable(rail,{
+            animation:150, handle:'.card-drag-handle', ghostClass:'sortable-ghost',
+            onEnd(){ channelFavorites=[...rail.querySelectorAll('.channel-card')].map(c=>c.dataset.channelId); saveState(); }
         });
     }
 }
 
-function createChannelCardHtml(ch, channelIndex, isReorderable = false) {
-    const programs = getChannelPrograms(channelIndex, 0);
-    const { current, upcoming } = getCurrentAndUpcoming(programs);
-    const isFav = channelFavorites.includes(ch.id);
-
-    const progressBar = current
-        ? `<div class="progress-bar-track"><div class="progress-bar-fill" style="width: ${current.progress}%"></div></div>`
-        : '';
-
-    const nowSection = current ? `
-        <div class="channel-now">
-            <div class="now-label">● NYT</div>
-            <div class="now-program-name">${current.title}</div>
-            <div class="now-program-time">${minToTimeStr(current.start)} – ${minToTimeStr(current.start + current.dur)}</div>
-            ${progressBar}
-        </div>
-    ` : `<div class="channel-now"><div class="now-label" style="color:#aaa;">Ei lähetystä</div></div>`;
-
-    const upcomingHtml = upcoming.length > 0 ? `
-        <div class="channel-upcoming">
-            ${upcoming.map(p => `
-                <div class="upcoming-item">
-                    <span class="upcoming-time">${minToTimeStr(p.start)}</span>
-                    <span class="upcoming-name">${p.title}</span>
-                </div>
-            `).join('')}
-        </div>
-    ` : '';
-
+function cardHtml(item, isReorderable=false, idx=0){
+    const isFav=favorites.includes(item.id);
+    const isRec=recordings.has(item.id);
+    const isRem=reminders.has(item.id);
+    const isHl=highlightStreaming && item.type==='Suoratoisto';
     return `
-        <div class="channel-card ${isReorderable ? 'is-reorderable' : ''}" data-channel-id="${ch.id}" data-channel-index="${channelIndex}">
-            ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
-            <div class="channel-card-header">
-                <div class="channel-logo" style="background: ${ch.color};">${ch.abbr}</div>
-                <div class="channel-meta">
-                    <div class="channel-name">${ch.name}</div>
-                    <div class="channel-category">${ch.category}</div>
-                </div>
-                <button class="channel-fav-btn ${isFav ? 'active' : ''}" data-channel-id="${ch.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                </button>
-            </div>
-            ${nowSection}
-            ${upcomingHtml}
+    <div class="card ${isReorderable?'is-reorderable':''} ${isHl?'highlighted':''}" data-id="${item.id}"
+         style="animation-delay:${idx*0.04}s">
+        ${isReorderable?'<div class="card-drag-handle"><i class="fas fa-grip-vertical"></i></div>':''}
+        <button class="fav-btn ${isFav?'active':''}" data-id="${item.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <div class="card-img" style="background-image:url('https://picsum.photos/seed/${item.id}/400/220')"></div>
+        <div class="card-body">
+            <div class="card-type">${item.type}</div>
+            <div class="card-title">${item.title}</div>
+            <div class="card-genre">${item.genre}</div>
+            <div class="card-desc">${item.desc}</div>
         </div>
-    `;
-}
-
-function createCardHtml(item, isReorderable = false) {
-    const isFav = favorites.includes(item.id);
-    const isRec = recordings.has(item.id);
-    const isRem = reminders.has(item.id);
-    const isHighlighted = highlightStreaming && item.type === "Suoratoisto";
-    return `
-        <div class="card ${isReorderable ? 'is-reorderable' : ''}" data-id="${item.id}" style="${isHighlighted ? 'border: 2px solid var(--primary-color); background: #f0f7ff;' : ''}">
-            ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
-            <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="${isFav ? 'Poista suosikeista' : 'Lisää suosikkeihin'}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <div class="card-actions">
+            <button class="action-btn record-btn ${isRec?'active':''}" data-id="${item.id}">REC</button>
+            <button class="action-btn remind-btn ${isRem?'active':''}" data-id="${item.id}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events:none"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
             </button>
-            <div class="card-img" style="background-image: url('https://picsum.photos/seed/${item.id}/400/200')"></div>
-            <div class="card-content">
-                <div class="card-type">${item.type}</div>
-                <div class="card-title">${item.title}</div>
-                <div class="card-genre">${item.genre}</div>
-                <div class="card-desc">${item.desc}</div>
-            </div>
-            <div class="card-actions-bottom">
-                <button class="action-btn record-btn ${isRec ? 'active' : ''}" data-id="${item.id}" title="Aseta tallennus">REC</button>
-                <button class="action-btn remind-btn ${isRem ? 'active' : ''}" data-id="${item.id}" title="Aseta muistutus">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-                </button>
-            </div>
         </div>
-    `;
+    </div>`;
 }
 
-// ==================== EVENT LISTENERS ====================
+function channelCardHtml(ch, chIdx, isReorderable=false){
+    const progs=getChannelPrograms(chIdx,0);
+    const {current,upcoming}=getCurrentAndUpcoming(progs);
+    const isFav=channelFavorites.includes(ch.id);
+    const nowHtml=current?`
+        <div class="channel-now">
+            <div class="now-badge"><div class="live-dot"></div> NYT</div>
+            <div class="now-title">${current.title}</div>
+            <div class="now-time">${t(current.start)} – ${t(current.start+current.dur)}</div>
+            <div class="progress-track"><div class="progress-fill" style="width:${current.progress}%"></div></div>
+        </div>`:`<div class="channel-now"><div style="font-size:0.75rem;color:var(--text-muted);padding:0.3rem 0;">Ei lähetystä</div></div>`;
+    const upHtml=upcoming.length?`
+        <div class="channel-upcoming">
+            ${upcoming.map(p=>`<div class="upcoming-row"><span class="upcoming-time">${t(p.start)}</span><span class="upcoming-name">${p.title}</span></div>`).join('')}
+        </div>`:'';
+    return `
+    <div class="channel-card ${isReorderable?'is-reorderable':''}" data-channel-id="${ch.id}" data-channel-index="${chIdx}">
+        ${isReorderable?'<div class="card-drag-handle"><i class="fas fa-grip-vertical"></i></div>':''}
+        <div class="channel-card-top">
+            <div class="channel-logo" style="background:${ch.color}">${ch.abbr}</div>
+            <div class="channel-info">
+                <div class="channel-name">${ch.name}</div>
+                <div class="channel-category">${ch.category}</div>
+            </div>
+            <button class="channel-fav-btn ${isFav?'active':''}" data-channel-id="${ch.id}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'currentColor':'none'}" stroke="currentColor" stroke-width="2" style="pointer-events:none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+        </div>
+        ${nowHtml}${upHtml}
+    </div>`;
+}
 
-function setupEventListeners() {
-    // Sidebar toggle
-    toggleBtn.addEventListener('click', () => {
-        const isMobile = window.innerWidth <= 1024;
-        if (isMobile) document.body.classList.toggle('sidebar-open');
-        else {
-            document.body.classList.toggle('sidebar-collapsed');
-            localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed'));
-        }
+// ==================== EVENTS ====================
+
+function setupEventListeners(){
+    toggleBtn.addEventListener('click',()=>{
+        if(window.innerWidth<=1024) document.body.classList.toggle('sidebar-open');
+        else document.body.classList.toggle('sidebar-collapsed');
     });
-    overlay.addEventListener('click', () => document.body.classList.remove('sidebar-open'));
+    overlay.addEventListener('click',()=>document.body.classList.remove('sidebar-open'));
 
-    // Genre filter chips + add section
-    genreFiltersContainer.addEventListener('click', (e) => {
-        const addBtn = e.target.closest('.add-section-btn');
-        if (addBtn) {
-            const genre = addBtn.getAttribute('data-genre');
-            if (!customSections.includes(genre)) {
-                customSections.push(genre);
-                saveState();
-                renderSidebarSections();
-                renderContent();
-            }
-            return;
-        }
-        const chip = e.target.closest('.chip');
-        if (chip) {
-            const val = chip.getAttribute('data-value');
-            if (activeGenres.has(val)) activeGenres.delete(val);
-            else activeGenres.add(val);
-            renderGenreFilters();
-            renderContent();
-        }
+    genreFilters.addEventListener('click',e=>{
+        const btn=e.target.closest('.add-section-btn');
+        if(btn){ const g=btn.dataset.genre; if(!customSections.includes(g)){ customSections.push(g); saveState(); renderSidebarSections(); renderContent(); } return; }
+        const chip=e.target.closest('.chip');
+        if(chip){ const v=chip.dataset.value; activeGenres.has(v)?activeGenres.delete(v):activeGenres.add(v); renderGenreFilters(); renderContent(); }
     });
 
-    // Sidebar section management
-    sidebarSectionsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('section-name')) {
-            const id = e.target.getAttribute('data-id');
-            const target = document.getElementById('anchor-' + id);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                if (window.innerWidth <= 1024) document.body.classList.remove('sidebar-open');
-            }
+    serviceChips.forEach(chip=>chip.addEventListener('click',()=>{
+        const v=chip.dataset.value;
+        activeServices.has(v)?activeServices.delete(v):activeServices.add(v);
+        chip.classList.toggle('active');
+        renderContent();
+    }));
+
+    sbSections.addEventListener('click',e=>{
+        if(e.target.classList.contains('section-name')){
+            const el=document.getElementById('anchor-'+e.target.dataset.id);
+            if(el){ el.scrollIntoView({behavior:'smooth',block:'start'}); if(window.innerWidth<=1024) document.body.classList.remove('sidebar-open'); }
         }
-        if (e.target.classList.contains('section-checkbox')) {
-            const id = e.target.getAttribute('data-id');
-            if (e.target.checked) hiddenSections.delete(id);
-            else hiddenSections.add(id);
+        if(e.target.classList.contains('section-checkbox')){
+            const id=e.target.dataset.id;
+            e.target.checked?hiddenSections.delete(id):hiddenSections.add(id);
             saveState(); renderContent();
         }
-        if (e.target.classList.contains('sidebar-remove-btn')) {
-            const genre = e.target.getAttribute('data-genre');
-            customSections = customSections.filter(g => g !== genre);
-            sectionOrder = sectionOrder.filter(id => id !== 'genre-' + genre);
+        if(e.target.classList.contains('sidebar-remove-btn')){
+            const g=e.target.dataset.genre;
+            customSections=customSections.filter(x=>x!==g);
+            sectionOrder=sectionOrder.filter(id=>id!=='genre-'+g);
             saveState(); renderSidebarSections(); renderContent();
         }
     });
 
-    // Service chips
-    serviceChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            const val = chip.getAttribute('data-value');
-            if (activeServices.has(val)) activeServices.delete(val);
-            else activeServices.add(val);
-            chip.classList.toggle('active');
-            renderContent();
-        });
+    document.getElementById('toggle-favorites').addEventListener('change',e=>{ showOnlyFavorites=e.target.checked; renderContent(); });
+    document.getElementById('toggle-highlight').addEventListener('change',e=>{ highlightStreaming=e.target.checked; renderContent(); });
+
+    // AI
+    const aiToggleBtn=document.getElementById('ai-toggle-btn');
+    const aiToggleText=document.getElementById('ai-toggle-text');
+    const aiContainer=document.getElementById('ai-search-container');
+    aiToggleBtn.addEventListener('click',()=>{
+        const c=aiContainer.classList.toggle('collapsed');
+        aiToggleText.textContent=c?'Näytä':'Piilota';
+    });
+    const aiSearchBtn=document.getElementById('ai-search-btn');
+    const aiPrompt=document.getElementById('ai-prompt');
+    const aiLoader=document.getElementById('ai-loader');
+    const aiResultsEl=document.getElementById('ai-results');
+    const aiGrid=document.getElementById('ai-results-grid');
+    aiSearchBtn.addEventListener('click',()=>{
+        if(!aiPrompt.value.trim()) return;
+        aiSearchBtn.disabled=true; aiResultsEl.style.display='none'; aiLoader.style.display='block';
+        setTimeout(()=>{
+            aiResults=[...contentItems].sort(()=>0.5-Math.random()).slice(0,Math.floor(Math.random()*4)+1);
+            aiLoader.style.display='none'; aiResultsEl.style.display='block';
+            aiGrid.innerHTML=aiResults.map(item=>cardHtml(item)).join('');
+            aiSearchBtn.disabled=false;
+        },1500);
+    });
+    document.getElementById('clear-ai-btn').addEventListener('click',()=>{
+        aiResults=[]; aiResultsEl.style.display='none'; aiPrompt.value='';
     });
 
-    // Settings toggles
-    document.getElementById('toggle-favorites').addEventListener('change', (e) => { showOnlyFavorites = e.target.checked; renderContent(); });
-    document.getElementById('toggle-highlight').addEventListener('change', (e) => { highlightStreaming = e.target.checked; renderContent(); });
-
-    // AI toggle
-    const aiToggleBtn = document.getElementById('ai-toggle-btn');
-    const aiToggleText = document.getElementById('ai-toggle-text');
-    const aiSearchContainer = document.getElementById('ai-search-container');
-    if (aiToggleBtn && aiSearchContainer) {
-        aiToggleBtn.addEventListener('click', () => {
-            const isCollapsed = aiSearchContainer.classList.toggle('collapsed');
-            if (aiToggleText) aiToggleText.textContent = isCollapsed ? 'Näytä' : 'Piilota';
-        });
-    }
-
-    // AI Search
-    const aiSearchBtn = document.getElementById('ai-search-btn');
-    const aiPrompt = document.getElementById('ai-prompt');
-    const aiLoader = document.getElementById('ai-loader');
-    const aiResultsContainer = document.getElementById('ai-results');
-    const aiResultsGrid = document.getElementById('ai-results-grid');
-    const clearAiBtn = document.getElementById('clear-ai-btn');
-
-    aiSearchBtn.addEventListener('click', () => {
-        if (!aiPrompt.value.trim()) return;
-        aiSearchBtn.disabled = true;
-        aiResultsContainer.style.display = 'none';
-        aiLoader.style.display = 'block';
-        setTimeout(() => {
-            const count = Math.floor(Math.random() * 4) + 1;
-            aiResults = [...contentItems].sort(() => 0.5 - Math.random()).slice(0, count);
-            aiLoader.style.display = 'none';
-            aiResultsContainer.style.display = 'block';
-            aiResultsGrid.innerHTML = aiResults.map(item => createCardHtml(item)).join('');
-            aiSearchBtn.disabled = false;
-        }, 1500);
-    });
-    clearAiBtn.addEventListener('click', () => {
-        aiResults = [];
-        aiResultsContainer.style.display = 'none';
-        aiPrompt.value = '';
-    });
-
-    // Card interactions (content cards)
-    const handleCardClick = (e) => {
-        const favBtn = e.target.closest('.fav-btn');
-        const recordBtn = e.target.closest('.record-btn');
-        const remindBtn = e.target.closest('.remind-btn');
-        if (favBtn) {
-            const id = parseInt(favBtn.getAttribute('data-id'));
-            const index = favorites.indexOf(id);
-            if (index > -1) favorites.splice(index, 1);
-            else favorites.push(id);
-            saveState(); renderContent(); renderSidebarSections(); return;
-        }
-        if (recordBtn) {
-            const id = parseInt(recordBtn.getAttribute('data-id'));
-            if (recordings.has(id)) recordings.delete(id); else recordings.add(id);
-            saveState(); renderContent(); return;
-        }
-        if (remindBtn) {
-            const id = parseInt(remindBtn.getAttribute('data-id'));
-            if (reminders.has(id)) reminders.delete(id); else reminders.add(id);
-            saveState(); renderContent(); return;
-        }
+    // Card clicks
+    const cardClick=e=>{
+        const fav=e.target.closest('.fav-btn');
+        if(fav){ const id=parseInt(fav.dataset.id); const i=favorites.indexOf(id); i>-1?favorites.splice(i,1):favorites.push(id); saveState(); renderContent(); renderSidebarSections(); return; }
+        const rec=e.target.closest('.record-btn');
+        if(rec){ const id=parseInt(rec.dataset.id); recordings.has(id)?recordings.delete(id):recordings.add(id); saveState(); renderContent(); return; }
+        const rem=e.target.closest('.remind-btn');
+        if(rem){ const id=parseInt(rem.dataset.id); reminders.has(id)?reminders.delete(id):reminders.add(id); saveState(); renderContent(); return; }
     };
-    dynamicSectionsContainer.addEventListener('click', handleCardClick);
-    document.getElementById('ai-results-grid').addEventListener('click', handleCardClick);
+    dynSections.addEventListener('click',cardClick);
+    document.getElementById('ai-results-grid').addEventListener('click',cardClick);
 
-    // Channel card interactions — favourite button only
-    dynamicSectionsContainer.addEventListener('click', (e) => {
-        const channelFavBtn = e.target.closest('.channel-fav-btn');
-        if (channelFavBtn) {
-            const chId = channelFavBtn.getAttribute('data-channel-id');
-            const idx = channelFavorites.indexOf(chId);
-            if (idx > -1) channelFavorites.splice(idx, 1);
-            else channelFavorites.push(chId);
-            saveState();
-            renderSidebarSections();
-            renderContent();
-        }
+    // Channel fav
+    dynSections.addEventListener('click',e=>{
+        const btn=e.target.closest('.channel-fav-btn');
+        if(btn){ const id=btn.dataset.channelId; const i=channelFavorites.indexOf(id); i>-1?channelFavorites.splice(i,1):channelFavorites.push(id); saveState(); renderSidebarSections(); renderContent(); }
     });
 
-    // Theme controls
-    const pairs = [
-        ['primary-color-hex', 'primary-color-picker', 'primary'],
-        ['bg-color-hex', 'bg-color-picker', 'bg'],
-        ['header-bg-hex', 'header-bg-picker', 'headerBg'],
-        ['header-text-hex', 'header-text-picker', 'headerText'],
-        ['hero-bg-hex', 'hero-bg-picker', 'heroBg'],
-        ['hero-text-hex', 'hero-text-picker', 'heroText'],
+    // Theme
+    const pairs=[
+        ['primary-color-hex','primary-color-picker','primary'],
+        ['bg-color-hex','bg-color-picker','bg'],
+        ['header-bg-hex','header-bg-picker','headerBg'],
+        ['header-text-hex','header-text-picker','headerText'],
+        ['hero-bg-hex','hero-bg-picker','heroBg'],
+        ['hero-text-hex','hero-text-picker','heroText'],
     ];
-    pairs.forEach(([hexId, pickerId, key]) => {
-        const hex = document.getElementById(hexId);
-        const picker = document.getElementById(pickerId);
-        const update = (val) => {
-            if (/^#[0-9A-F]{6}$/i.test(val)) {
-                themeSettings[key] = val;
-                hex.value = val; picker.value = val;
-                applyTheme(); saveState();
-                if (key === 'primary') { renderGenreFilters(); renderContent(); }
-            }
-        };
-        hex.addEventListener('input', (e) => update(e.target.value));
-        picker.addEventListener('input', (e) => update(e.target.value));
+    pairs.forEach(([hId,pId,key])=>{
+        const h=document.getElementById(hId), p=document.getElementById(pId);
+        const upd=val=>{ if(/^#[0-9A-F]{6}$/i.test(val)){ themeSettings[key]=val; h.value=val; p.value=val; applyTheme(); saveState(); if(key==='primary'){renderGenreFilters();renderContent();} } };
+        h.addEventListener('input',e=>upd(e.target.value));
+        p.addEventListener('input',e=>upd(e.target.value));
     });
-    document.getElementById('reset-theme-btn').addEventListener('click', () => {
-        themeSettings = { ...DEFAULT_THEME };
-        applyTheme(); updateThemeInputs(); saveState();
-        renderGenreFilters(); renderContent();
+    document.getElementById('reset-theme-btn').addEventListener('click',()=>{
+        themeSettings={...DEFAULT_THEME}; applyTheme(); updateThemeInputs(); saveState(); renderGenreFilters(); renderContent();
     });
 }
 
-// ==================== SIDEBAR DRAG & DROP ====================
+// ==================== SIDEBAR DnD ====================
 
-function setupSidebarDragAndDrop() {
-    const items = sidebarSectionsContainer.querySelectorAll('.sidebar-section-item');
-    items.forEach(item => {
-        item.addEventListener('dragstart', () => item.classList.add('dragging'));
-        item.addEventListener('dragend', () => {
+function setupSidebarDnD(){
+    const items=sbSections.querySelectorAll('.sidebar-section-item');
+    items.forEach(item=>{
+        item.addEventListener('dragstart',()=>item.classList.add('dragging'));
+        item.addEventListener('dragend',()=>{
             item.classList.remove('dragging');
-            items.forEach(i => i.classList.remove('drag-over'));
-            const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
-            sectionOrder = newOrder;
+            items.forEach(i=>i.classList.remove('drag-over'));
+            sectionOrder=[...sbSections.querySelectorAll('.sidebar-section-item')].map(i=>i.dataset.id);
             saveState(); renderContent();
         });
-        item.addEventListener('dragover', (e) => { e.preventDefault(); item.classList.add('drag-over'); });
-        item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-        item.addEventListener('drop', (e) => {
+        item.addEventListener('dragover',e=>{ e.preventDefault(); item.classList.add('drag-over'); });
+        item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+        item.addEventListener('drop',e=>{
             e.preventDefault();
-            const dragging = sidebarSectionsContainer.querySelector('.dragging');
-            if (dragging && dragging !== item) {
-                const all = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')];
-                if (all.indexOf(dragging) < all.indexOf(item)) item.after(dragging);
-                else item.before(dragging);
+            const dragging=sbSections.querySelector('.dragging');
+            if(dragging && dragging!==item){
+                const all=[...sbSections.querySelectorAll('.sidebar-section-item')];
+                all.indexOf(dragging)<all.indexOf(item)?item.after(dragging):item.before(dragging);
             }
         });
     });
 
-    let touchDragItem = null, touchPlaceholder = null;
-    items.forEach(item => {
-        const handle = item.querySelector('.drag-handle');
-        if (!handle) return;
-        handle.addEventListener('touchstart', (e) => {
-            touchDragItem = item;
-            item.classList.add('dragging');
-            touchPlaceholder = document.createElement('div');
-            touchPlaceholder.className = 'sidebar-section-item';
-            touchPlaceholder.style.opacity = '0';
-            touchPlaceholder.style.height = item.offsetHeight + 'px';
-            touchPlaceholder.style.pointerEvents = 'none';
-            item.parentNode.insertBefore(touchPlaceholder, item.nextSibling);
-            const rect = item.getBoundingClientRect();
-            item.style.cssText = `position:fixed;z-index:9999;width:${rect.width}px;left:${rect.left}px;top:${rect.top}px;margin:0;pointer-events:none;`;
-        }, { passive: true });
-        handle.addEventListener('touchmove', (e) => {
-            if (!touchDragItem) return;
-            e.preventDefault();
-            const touch = e.touches[0];
-            touchDragItem.style.top = (touch.clientY - touchDragItem.offsetHeight / 2) + 'px';
-            const allItems = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item:not(.dragging)')].filter(i => i.style.opacity !== '0');
-            allItems.forEach(i => i.classList.remove('drag-over'));
-            let target = null, insertBefore = false;
-            for (const other of allItems) {
-                const rect = other.getBoundingClientRect();
-                if (touch.clientY < rect.top + rect.height / 2) { target = other; insertBefore = true; break; }
-                else if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) { target = other; insertBefore = false; }
-            }
-            if (target) {
-                target.classList.add('drag-over');
-                if (insertBefore) sidebarSectionsContainer.insertBefore(touchPlaceholder, target);
-                else target.after(touchPlaceholder);
-            }
-        }, { passive: false });
-        handle.addEventListener('touchend', () => {
-            if (!touchDragItem) return;
-            touchDragItem.style.cssText = '';
-            touchDragItem.classList.remove('dragging');
-            if (touchPlaceholder && touchPlaceholder.parentNode) {
-                touchPlaceholder.parentNode.insertBefore(touchDragItem, touchPlaceholder);
-                touchPlaceholder.remove();
-            }
-            sidebarSectionsContainer.querySelectorAll('.sidebar-section-item').forEach(i => i.classList.remove('drag-over'));
-            const newOrder = [...sidebarSectionsContainer.querySelectorAll('.sidebar-section-item')].map(i => i.getAttribute('data-id'));
-            sectionOrder = newOrder;
-            saveState(); renderContent();
-            touchDragItem = null; touchPlaceholder = null;
+    let tItem=null, tPh=null;
+    items.forEach(item=>{
+        const handle=item.querySelector('.drag-handle');
+        if(!handle) return;
+        handle.addEventListener('touchstart',e=>{
+            tItem=item; item.classList.add('dragging');
+            tPh=document.createElement('div'); tPh.className='sidebar-section-item';
+            tPh.style.cssText=`opacity:0;height:${item.offsetHeight}px;pointer-events:none;`;
+            item.parentNode.insertBefore(tPh,item.nextSibling);
+            const r=item.getBoundingClientRect();
+            item.style.cssText=`position:fixed;z-index:9999;width:${r.width}px;left:${r.left}px;top:${r.top}px;margin:0;pointer-events:none;`;
+        },{passive:true});
+        handle.addEventListener('touchmove',e=>{
+            if(!tItem) return; e.preventDefault();
+            const touch=e.touches[0];
+            tItem.style.top=(touch.clientY-tItem.offsetHeight/2)+'px';
+            const all=[...sbSections.querySelectorAll('.sidebar-section-item:not(.dragging)')].filter(i=>i.style.opacity!=='0');
+            all.forEach(i=>i.classList.remove('drag-over'));
+            let target=null,before=false;
+            for(const o of all){ const r=o.getBoundingClientRect(); if(touch.clientY<r.top+r.height/2){target=o;before=true;break;} else if(touch.clientY>=r.top&&touch.clientY<=r.bottom){target=o;before=false;} }
+            if(target){ target.classList.add('drag-over'); before?sbSections.insertBefore(tPh,target):target.after(tPh); }
+        },{passive:false});
+        handle.addEventListener('touchend',()=>{
+            if(!tItem) return;
+            tItem.style.cssText=''; tItem.classList.remove('dragging');
+            if(tPh&&tPh.parentNode){ tPh.parentNode.insertBefore(tItem,tPh); tPh.remove(); }
+            sbSections.querySelectorAll('.sidebar-section-item').forEach(i=>i.classList.remove('drag-over'));
+            sectionOrder=[...sbSections.querySelectorAll('.sidebar-section-item')].map(i=>i.dataset.id);
+            saveState(); renderContent(); tItem=null; tPh=null;
         });
     });
 }
