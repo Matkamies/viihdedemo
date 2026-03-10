@@ -792,8 +792,8 @@ function getSectionTitle(id) {
     if (id === 'recommended') return "Suositellut sinulle";
     if (id === 'favorites') return "Omat suosikit";
     if (id === 'all') return "Kaikki sisällöt";
-    if (id === 'channels') return "📺 Kanavat";
-    if (id === 'channel-favorites') return "❤️ Suosikkikanavat";
+    if (id === 'channels') return "Kanavat";
+    if (id === 'channel-favorites') return "Suosikkikanavat";
     if (id.startsWith('genre-')) return id.replace('genre-', '');
     return id;
 }
@@ -904,7 +904,7 @@ function renderChannelsSection(container) {
 
     sectionEl.innerHTML = `
         <div class="section-header">
-            <h3>📺 Kanavat</h3>
+            <h3>Kanavat</h3>
             <span style="font-size: 0.78rem; color: #888;">Simuloitu aika: 18:45</span>
         </div>
         <div class="channel-grid" id="channel-grid">${cards}</div>
@@ -925,7 +925,7 @@ function renderChannelFavoritesSection(container) {
     }).join('');
 
     sectionEl.innerHTML = `
-        <div class="section-header"><h3>❤️ Suosikkikanavat</h3></div>
+        <div class="section-header"><h3>Suosikkikanavat</h3></div>
         <div class="channel-grid reorderable-grid" id="grid-channel-favorites">${cards}</div>
     `;
     container.appendChild(sectionEl);
