@@ -105,7 +105,8 @@
         .card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
         .card-img { height: 160px; background: #ddd; background-size: cover; background-position: center; }
         .card-drag-handle { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 4px; width: 32px; height: 32px; cursor: grab; display: flex; align-items: center; justify-content: center; color: #999; z-index: 11; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.2s; }
-        .card:hover .card-drag-handle, .card.is-reorderable .card-drag-handle { opacity: 1; }
+        .card:hover .card-drag-handle, .card.is-reorderable .card-drag-handle,
+        .channel-card:hover .card-drag-handle, .channel-card.is-reorderable .card-drag-handle { opacity: 1; }
         @media (max-width: 1024px) { .card-drag-handle { opacity: 1; } }
         .card-drag-handle:active { cursor: grabbing; }
         .sortable-ghost { opacity: 0.2; transform: scale(0.95); }
@@ -715,8 +716,8 @@ let themeSettings = JSON.parse(localStorage.getItem('themeSettings') || JSON.str
 let showOnlyFavorites = false;
 let highlightStreaming = false;
 let aiResults = [];
-// Ensure 'channels' is in sectionOrder if not present
-if (!sectionOrder.includes('channels')) sectionOrder.unshift('channels');
+// Ensure 'channels' is in sectionOrder — always at the END if not present
+if (!sectionOrder.includes('channels')) sectionOrder.push('channels');
 
 // ==================== DOM ====================
 
@@ -918,19 +919,33 @@ function renderChannelFavoritesSection(container) {
     sectionEl.id = 'anchor-channel-favorites';
 
     const favChannels = channelFavorites.map(id => channels.find(c => c.id === id)).filter(Boolean);
-    const cards = favChannels.map((ch, i) => {
+    const cards = favChannels.map(ch => {
         const idx = channels.indexOf(ch);
-        return createChannelCardHtml(ch, idx);
+        return createChannelCardHtml(ch, idx, true);
     }).join('');
 
     sectionEl.innerHTML = `
         <div class="section-header"><h3>❤️ Suosikkikanavat</h3></div>
-        <div class="channel-grid">${cards}</div>
+        <div class="channel-grid reorderable-grid" id="grid-channel-favorites">${cards}</div>
     `;
     container.appendChild(sectionEl);
+
+    if (favChannels.length > 1) {
+        const grid = sectionEl.querySelector('.channel-grid');
+        new Sortable(grid, {
+            animation: 150,
+            handle: '.card-drag-handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: function() {
+                const newOrder = [...grid.querySelectorAll('.channel-card')].map(card => card.getAttribute('data-channel-id'));
+                channelFavorites = newOrder;
+                saveState();
+            }
+        });
+    }
 }
 
-function createChannelCardHtml(ch, channelIndex) {
+function createChannelCardHtml(ch, channelIndex, isReorderable = false) {
     const programs = getChannelPrograms(channelIndex, 0);
     const { current, upcoming } = getCurrentAndUpcoming(programs);
     const isFav = channelFavorites.includes(ch.id);
@@ -960,7 +975,8 @@ function createChannelCardHtml(ch, channelIndex) {
     ` : '';
 
     return `
-        <div class="channel-card" data-channel-id="${ch.id}" data-channel-index="${channelIndex}">
+        <div class="channel-card ${isReorderable ? 'is-reorderable' : ''}" data-channel-id="${ch.id}" data-channel-index="${channelIndex}">
+            ${isReorderable ? '<div class="card-drag-handle" title="Raahaa muuttaaksesi järjestystä"><i class="fas fa-grip-vertical"></i></div>' : ''}
             <div class="channel-card-header">
                 <div class="channel-logo" style="background: ${ch.color};">${ch.abbr}</div>
                 <div class="channel-meta">
