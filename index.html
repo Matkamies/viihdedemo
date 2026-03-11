@@ -503,6 +503,31 @@
         }
         .btn-ghost:hover { background: rgba(255,255,255,0.15); }
 
+
+        .ai-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .ai-suggestion-chip {
+            padding: 0.35rem 0.85rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dim);
+            transition: var(--transition);
+            text-align: left;
+        }
+        .ai-suggestion-chip:hover {
+            background: var(--primary-dim);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
         /* ── AI SEARCH ── */
         .ai-search-section {
             margin: 2rem 2rem 0;
@@ -1035,6 +1060,27 @@
             .ai-input-group { flex-direction: column; }
             .ai-btn { width: 100%; justify-content: center; padding: 0.75rem; }
         }
+
+        /* ── LANG SWITCHER ── */
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 2px 4px;
+            cursor: pointer;
+            font-size: 1.35rem;
+            line-height: 1;
+            transition: var(--transition);
+            opacity: 0.45;
+            filter: grayscale(0.3);
+        }
+        .lang-btn:hover { opacity: 0.8; transform: scale(1.1); }
+        .lang-btn.active { opacity: 1; border-color: var(--primary); filter: none; }
     </style>
 </head>
 <body class="sidebar-collapsed">
@@ -1043,9 +1089,13 @@
     <div class="header-left">
         <button class="sidebar-toggle" id="toggle-btn">
             <i class="fas fa-bars"></i>
-            <span>Valikko</span>
+            <span data-i18n="menu">Valikko</span>
         </button>
         <div class="logo">Oma<span>viihde</span></div>
+    </div>
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="lang-fi" title="Suomi" onclick="setLang('fi')"><svg width="22" height="15" viewBox="0 0 22 15" style="pointer-events:none;border-radius:2px"><rect width="22" height="15" fill="#ffffff"/><rect y="5" width="22" height="5" fill="#003580"/><rect x="5" width="5" height="15" fill="#003580"/></svg></button>
+        <button class="lang-btn" id="lang-en" title="English" onclick="setLang('en')"><svg width="22" height="15" viewBox="0 0 60 40" style="pointer-events:none;border-radius:2px"><rect width="60" height="40" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="5"/><path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="12"/><path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="8"/></svg></button>
     </div>
 </header>
 
@@ -1057,29 +1107,29 @@
     <aside id="sidebar">
 
         <div class="sb-block">
-            <h3>Lajityypit</h3>
+            <h3 data-i18n="genres">Lajityypit</h3>
             <div class="chip-group" id="genre-filters"></div>
 
-            <h3>Palvelut</h3>
+            <h3 data-i18n="services">Palvelut</h3>
             <div class="service-chips" id="service-filters">
                 <div class="chip" data-value="TV">TV</div>
-                <div class="chip" data-value="Suoratoisto">Suoratoisto</div>
-                <div class="chip" data-value="Vuokraelokuva">Vuokrattavat</div>
+                <div class="chip" data-value="Suoratoisto" data-i18n-chip="streaming">Suoratoisto</div>
+                <div class="chip" data-value="Vuokraelokuva" data-i18n-chip="rental">Vuokrattavat</div>
             </div>
         </div>
 
         <div class="sb-block">
-            <h3>Asetukset</h3>
+            <h3 data-i18n="settings">Asetukset</h3>
             <div class="toggle-group">
                 <label class="toggle-label">
-                    <span>Näytä vain suosikit</span>
+                    <span data-i18n="onlyFavs">Näytä vain suosikit</span>
                     <div class="toggle-switch">
                         <input type="checkbox" id="toggle-favorites">
                         <div class="toggle-track"></div>
                     </div>
                 </label>
                 <label class="toggle-label">
-                    <span>Korosta suoratoistoa</span>
+                    <span data-i18n="highlightStream">Korosta suoratoistoa</span>
                     <div class="toggle-switch">
                         <input type="checkbox" id="toggle-highlight">
                         <div class="toggle-track"></div>
@@ -1089,39 +1139,39 @@
         </div>
 
         <div class="sb-block">
-            <h3>Näkymän hallinta</h3>
-            <p style="font-size:0.68rem;color:var(--text-muted);margin-bottom:0.75rem;">Raahaa ⠿ järjestelläksesi, klikkaa nimeä navigoidaksesi.</p>
+            <h3 data-i18n="viewMgmt">Näkymän hallinta</h3>
+            <p style="font-size:0.68rem;color:var(--text-muted);margin-bottom:0.75rem;" data-i18n="dragHint">Raahaa ⠿ järjestelläksesi, klikkaa nimeä navigoidaksesi.</p>
             <div class="sidebar-section-list" id="sidebar-sections"></div>
         </div>
 
         <div class="sb-block">
-            <h3>Teema</h3>
+            <h3 data-i18n="theme">Teema</h3>
             <div id="theme-controls">
                 <div class="theme-row">
                     <input type="color" id="primary-color-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Pääväri</label><input type="text" id="primary-color-hex" placeholder="#e8a020"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorPrimary">Pääväri</label><input type="text" id="primary-color-hex" placeholder="#e8a020"></div>
                 </div>
                 <div class="theme-row">
                     <input type="color" id="bg-color-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Taustaväri</label><input type="text" id="bg-color-hex" placeholder="#080c14"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorBg">Taustaväri</label><input type="text" id="bg-color-hex" placeholder="#080c14"></div>
                 </div>
                 <div class="theme-row">
                     <input type="color" id="header-bg-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Yläpalkki</label><input type="text" id="header-bg-hex" placeholder="#080c14"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorHeader">Yläpalkki</label><input type="text" id="header-bg-hex" placeholder="#080c14"></div>
                 </div>
                 <div class="theme-row">
                     <input type="color" id="header-text-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Yläpalkki teksti</label><input type="text" id="header-text-hex" placeholder="#f0f2f8"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorHeaderText">Yläpalkki teksti</label><input type="text" id="header-text-hex" placeholder="#f0f2f8"></div>
                 </div>
                 <div class="theme-row">
                     <input type="color" id="hero-bg-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Hero tausta</label><input type="text" id="hero-bg-hex" placeholder="#080c14"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorHeroBg">Hero tausta</label><input type="text" id="hero-bg-hex" placeholder="#080c14"></div>
                 </div>
                 <div class="theme-row">
                     <input type="color" id="hero-text-picker" class="theme-swatch">
-                    <div class="theme-row-inner"><label>Hero teksti</label><input type="text" id="hero-text-hex" placeholder="#f0f2f8"></div>
+                    <div class="theme-row-inner"><label data-i18n="colorHeroText">Hero teksti</label><input type="text" id="hero-text-hex" placeholder="#f0f2f8"></div>
                 </div>
-                <button class="reset-theme-btn" id="reset-theme-btn">Palauta oletusvärit</button>
+                <button class="reset-theme-btn" id="reset-theme-btn"><span data-i18n="resetTheme">Palauta oletusvärit</span></button>
             </div>
         </div>
 
@@ -1136,17 +1186,17 @@
                 <div class="hero-bg" id="hero-bg" style="background-image: url('https://picsum.photos/seed/hero17/1400/500')"></div>
                 <div class="hero-overlay"></div>
                 <div class="hero-content">
-                    <div class="hero-badge">✦ Suositellaan sinulle</div>
+                    <div class="hero-badge"><span data-i18n="heroLabel">✦ Suositellaan sinulle</span></div>
                     <h2>Sisu</h2>
                     <div class="hero-meta">
-                        <span><i class="fas fa-play-circle"></i> Suoratoisto</span>
-                        <span>· Toiminta</span>
+                        <span><i class="fas fa-play-circle"></i> <span data-i18n="streaming">Suoratoisto</span></span>
+                        <span>· <span data-i18n="heroGenre">Toiminta</span></span>
                         <span>· 2023</span>
                     </div>
                     <p class="hero-desc">Toiminnantäyteinen selviytymistarina Lapin erämaassa — yksi mies, yksi koira, ja armottoman vihollinen.</p>
                     <div class="hero-actions">
-                        <button class="btn-primary"><i class="fas fa-play"></i> Katso nyt</button>
-                        <button class="btn-ghost"><i class="fas fa-plus"></i> Lisää listaan</button>
+                        <button class="btn-primary"><i class="fas fa-play"></i> <span data-i18n="watchNow">Katso nyt</span></button>
+                        <button class="btn-ghost"><i class="fas fa-plus"></i> <span data-i18n="addList">Lisää listaan</span></button>
                     </div>
                 </div>
             </div>
@@ -1154,9 +1204,9 @@
             <!-- AI SEARCH -->
             <div class="ai-search-section" id="ai-search-container">
                 <div class="ai-search-header">
-                    <h3><span class="ai-icon">✦</span> Tekoälyhaku</h3>
+                    <h3><span class="ai-icon">✦</span> <span data-i18n="aiSearch">Tekoälyhaku</span></h3>
                     <button class="ai-toggle-btn" id="ai-toggle-btn">
-                        <span id="ai-toggle-text">Piilota</span>
+                        <span id="ai-toggle-text" data-i18n="hide">Piilota</span>
                         <i class="fas fa-chevron-up"></i>
                     </button>
                 </div>
@@ -1164,13 +1214,17 @@
                     <div class="ai-collapsible-content">
                         <div class="ai-input-group">
                             <textarea class="ai-textarea" id="ai-prompt" placeholder="Esim: 'Etsin jännittävää urheilua tälle illalle'…"></textarea>
-                            <button class="ai-btn" id="ai-search-btn"><i class="fas fa-sparkles"></i> Kysy</button>
+                            <button class="ai-btn" id="ai-search-btn"><i class="fas fa-sparkles"></i> <span data-i18n="ask">Kysy</span></button>
+                        </div>
+                        <div class="ai-suggestions">
+                            <button class="ai-suggestion-chip" data-q="Mitä elokuvia tulee tänään illalla?">Mitä elokuvia tulee tänään illalla?</button>
+                            <button class="ai-suggestion-chip" data-q="Mitä urheilua esitetään viikonloppuna?">Mitä urheilua esitetään viikonloppuna?</button>
                         </div>
                         <div class="ai-loader" id="ai-loader">Analysoidaan pyyntöäsi<span class="dots"></span></div>
                         <div class="ai-results" id="ai-results">
                             <div class="ai-results-header">
-                                <p>Tekoälyn suositukset</p>
-                                <button class="clear-ai-btn" id="clear-ai-btn">Tyhjennä</button>
+                                <p data-i18n="aiResults">Tekoälyn suositukset</p>
+                                <button class="clear-ai-btn" id="clear-ai-btn" data-i18n="clear">Tyhjennä</button>
                             </div>
                             <div class="rail" id="ai-results-grid"></div>
                         </div>
@@ -1187,6 +1241,191 @@
 </div>
 
 <script>
+
+// ==================== I18N ====================
+
+const TRANSLATIONS = {
+    fi: {
+        menu: 'Valikko',
+        genres: 'Lajityypit',
+        services: 'Palvelut',
+        streaming: 'Suoratoisto',
+        rental: 'Vuokrattavat',
+        settings: 'Asetukset',
+        onlyFavs: 'Näytä vain suosikit',
+        highlightStream: 'Korosta suoratoistoa',
+        viewMgmt: 'Näkymän hallinta',
+        dragHint: 'Raahaa ⠣ järjestelläksesi, klikkaa nimeä navigoidaksesi.',
+        theme: 'Teema',
+        colorPrimary: 'Pääväri',
+        colorBg: 'Taustaväri',
+        colorHeader: 'Yläpalkki',
+        colorHeaderText: 'Yläpalkki teksti',
+        colorHeroBg: 'Hero tausta',
+        colorHeroText: 'Hero teksti',
+        resetTheme: 'Palauta oletusväärit',
+        heroLabel: '✦ Suositellaan sinulle',
+        watchNow: 'Katso nyt',
+        addList: 'Lisää listaan',
+        aiSearch: 'Tekoälyhaku',
+        hide: 'Piilota',
+        show: 'Näytä',
+        ask: 'Kysy',
+        aiResults: 'Tekoälyn suositukset',
+        clear: 'Tyhjennnä',
+        aiPlaceholder: "Esim: 'Etsin jännittävää urheilua tälle illalle'…",
+        aiLoading: 'Analysoidaan pyyntöäsi',
+        noContent: 'Ei sisältöä valituilla suodattimilla.',
+        noFavs: 'Ei suosikkeja vielä.',
+        simTime: 'Simuloitu aika: 18:45',
+        noBroadcast: 'Ei lähetystä',
+        recTooltipOn: 'Poista tallennus',
+        recTooltipOff: 'Aseta tallennus',
+        remTooltipOn: 'Poista muistutus',
+        remTooltipOff: 'Aseta muistutus',
+        favTooltipOn: 'Poista suosikeista',
+        favTooltipOff: 'Lisää suosikkeihin',
+        chFavTooltipOn: 'Poista suosikeista',
+        chFavTooltipOff: 'Lisää suosikkeihin',
+        sectionRecommended: 'Suositellut sinulle',
+        sectionFavorites: 'Omat suosikit',
+        sectionAll: 'Kaikki sisällöt',
+        sectionChannels: 'Kanavat',
+        sectionChannelFavs: 'Suosikkikanavat',
+        programs: 'ohjelmaa',
+        nowLive: 'NYT',
+        suggestion1: 'Mitä elokuvia tulee tänään illalla?',
+        suggestion2: 'Mitä urheilua esitetään viikonloppuna?',
+        heroGenre: 'Toiminta',
+        heroType: 'Suoratoisto',
+    },
+    en: {
+        menu: 'Menu',
+        genres: 'Genres',
+        services: 'Services',
+        streaming: 'Streaming',
+        rental: 'Rentals',
+        settings: 'Settings',
+        onlyFavs: 'Show favourites only',
+        highlightStream: 'Highlight streaming',
+        viewMgmt: 'View management',
+        dragHint: 'Drag ⠣ to reorder, click name to navigate.',
+        theme: 'Theme',
+        colorPrimary: 'Primary colour',
+        colorBg: 'Background colour',
+        colorHeader: 'Header',
+        colorHeaderText: 'Header text',
+        colorHeroBg: 'Hero background',
+        colorHeroText: 'Hero text',
+        resetTheme: 'Reset to defaults',
+        heroLabel: '✦ Recommended for you',
+        watchNow: 'Watch now',
+        addList: 'Add to list',
+        aiSearch: 'AI Search',
+        hide: 'Hide',
+        show: 'Show',
+        ask: 'Ask',
+        aiResults: 'AI recommendations',
+        clear: 'Clear',
+        aiPlaceholder: "E.g. 'I\'m looking for exciting sports tonight'…",
+        aiLoading: 'Analysing your request',
+        noContent: 'No content matching the selected filters.',
+        noFavs: 'No favourites yet.',
+        simTime: 'Simulated time: 18:45',
+        noBroadcast: 'No broadcast',
+        recTooltipOn: 'Remove recording',
+        recTooltipOff: 'Set recording',
+        remTooltipOn: 'Remove reminder',
+        remTooltipOff: 'Set reminder',
+        favTooltipOn: 'Remove from favourites',
+        favTooltipOff: 'Add to favourites',
+        chFavTooltipOn: 'Remove from favourites',
+        chFavTooltipOff: 'Add to favourites',
+        sectionRecommended: 'Recommended for you',
+        sectionFavorites: 'My favourites',
+        sectionAll: 'All content',
+        sectionChannels: 'Channels',
+        sectionChannelFavs: 'Favourite channels',
+        programs: 'programmes',
+        nowLive: 'LIVE',
+        suggestion1: 'What films are on tonight?',
+        suggestion2: 'What sport is on this weekend?',
+        heroGenre: 'Action',
+        heroType: 'Streaming',
+        addSection: 'Add as section',
+        removeSection: 'Remove section',
+        genreMap: {
+            'Elokuvat':'Movies','Sarjat':'Series','Urheilu':'Sports',
+            'Lapset':'Kids','Dokumentit':'Documentaries','Viihde':'Entertainment','Uutiset':'News'
+        },
+        types: {
+            'Suoratoisto':'Streaming','Vuokraelokuva':'Rental','TV':'TV'
+        },
+        categories: {
+            'Yleinen':'General','Viihde':'Entertainment','Urheilu':'Sports','Kulttuuri':'Culture'
+        },
+    }
+};
+
+let currentLang = localStorage.getItem('lang') || 'fi';
+
+function tr(key) {
+    return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || TRANSLATIONS['fi'][key] || key;
+}
+function trGenre(g) {
+    return (TRANSLATIONS[currentLang].genreMap && TRANSLATIONS[currentLang].genreMap[g]) || g;
+}
+function trType(t) {
+    return (TRANSLATIONS[currentLang].types && TRANSLATIONS[currentLang].types[t]) || t;
+}
+function trCat(c) {
+    return (TRANSLATIONS[currentLang].categories && TRANSLATIONS[currentLang].categories[c]) || c;
+}
+
+function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    // Update flag buttons
+    document.getElementById('lang-fi').classList.toggle('active', lang === 'fi');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    // Update all static data-i18n elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = tr(key);
+    });
+    // Update data-i18n-chip elements
+    document.querySelectorAll('[data-i18n-chip]').forEach(el => {
+        const key = el.getAttribute('data-i18n-chip');
+        el.textContent = tr(key);
+    });
+    // Update textarea placeholder
+    const prompt = document.getElementById('ai-prompt');
+    if(prompt) prompt.placeholder = tr('aiPlaceholder');
+    // Update ai loader text (keep dots span)
+    const loader = document.getElementById('ai-loader');
+    if(loader) loader.innerHTML = tr('aiLoading') + '<span class="dots"></span>';
+    // Update service chips
+    document.querySelectorAll('#service-filters .chip').forEach(chip => {
+        const val = chip.dataset.value;
+        if(val) chip.textContent = trType(val);
+    });
+    // Update genre chips
+    renderGenreFilters();
+    // Update suggestion chips
+    const chips = document.querySelectorAll('.ai-suggestion-chip');
+    if(chips[0]) { chips[0].textContent = tr('suggestion1'); chips[0].dataset.q = tr('suggestion1'); }
+    if(chips[1]) { chips[1].textContent = tr('suggestion2'); chips[1].dataset.q = tr('suggestion2'); }
+    // Update ai toggle text
+    const toggleText = document.getElementById('ai-toggle-text');
+    if(toggleText) {
+        const isCollapsed = document.getElementById('ai-search-container').classList.contains('collapsed');
+        toggleText.textContent = isCollapsed ? tr('show') : tr('hide');
+    }
+    // Full re-render to pick up translated section titles, card tooltips etc.
+    renderSidebarSections();
+    renderContent();
+}
+
 // ==================== DATA ====================
 
 const genres = ["Elokuvat","Sarjat","Urheilu","Lapset","Dokumentit","Viihde","Uutiset"];
@@ -1367,6 +1606,9 @@ const overlay       = document.getElementById('overlay');
 // ==================== INIT ====================
 
 function init(){
+    // Apply saved language flag state before first render
+    document.getElementById('lang-fi').classList.toggle('active', currentLang === 'fi');
+    document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
     renderGenreFilters();
     renderSidebarSections();
     renderContent();
@@ -1374,6 +1616,16 @@ function init(){
     setupEventListeners();
     updateThemeInputs();
     document.body.classList.add('sidebar-collapsed');
+    // Apply non-render translations for placeholder, loader, chips
+    const prompt = document.getElementById('ai-prompt');
+    if(prompt) prompt.placeholder = tr('aiPlaceholder');
+    const loader = document.getElementById('ai-loader');
+    if(loader) loader.innerHTML = tr('aiLoading') + '<span class="dots"></span>';
+    const chips = document.querySelectorAll('.ai-suggestion-chip');
+    if(chips[0]) { chips[0].textContent = tr('suggestion1'); chips[0].dataset.q = tr('suggestion1'); }
+    if(chips[1]) { chips[1].textContent = tr('suggestion2'); chips[1].dataset.q = tr('suggestion2'); }
+    // Apply all data-i18n on startup (for saved non-Finnish lang)
+    if(currentLang !== 'fi') setLang(currentLang);
 }
 
 function saveState(){
@@ -1431,19 +1683,19 @@ function updateThemeInputs(){
 function renderGenreFilters(){
     genreFilters.innerHTML=genres.map(g=>`
         <div class="genre-item">
-            <div class="chip ${activeGenres.has(g)?'active':''}" data-value="${g}">${g}</div>
-            <button class="add-section-btn" data-genre="${g}" title="Lisää omaksi osioksi"><span>+</span></button>
+            <div class="chip ${activeGenres.has(g)?'active':''}" data-value="${g}">${trGenre(g)}</div>
+            <button class="add-section-btn" data-genre="${g}" title="${tr ? tr('addSection') : 'Lisää omaksi osioksi'}"><span>+</span></button>
         </div>
     `).join('');
 }
 
 function getSectionTitle(id){
-    if(id==='recommended') return 'Suositellut sinulle';
-    if(id==='favorites')   return 'Omat suosikit';
-    if(id==='all')         return 'Kaikki sisällöt';
-    if(id==='channels')    return 'Kanavat';
-    if(id==='channel-favorites') return 'Suosikkikanavat';
-    if(id.startsWith('genre-')) return id.replace('genre-','');
+    if(id==='recommended') return tr('sectionRecommended');
+    if(id==='favorites')   return tr('sectionFavorites');
+    if(id==='all')         return tr('sectionAll');
+    if(id==='channels')    return tr('sectionChannels');
+    if(id==='channel-favorites') return tr('sectionChannelFavs');
+    if(id.startsWith('genre-')) return trGenre(id.replace('genre-',''));
     return id;
 }
 
@@ -1464,7 +1716,7 @@ function renderSidebarSections(){
                 <span class="drag-handle">⠿</span>
                 <input type="checkbox" class="section-checkbox" ${!isHidden?'checked':''} data-id="${id}">
                 <span class="section-name" data-id="${id}">${getSectionTitle(id)}</span>
-                ${isCustom?`<button class="sidebar-remove-btn" data-genre="${id.replace('genre-','')}" title="Poista">✕</button>`:''}
+                ${isCustom?`<button class="sidebar-remove-btn" data-genre="${id.replace('genre-','')}" title="${tr('removeSection')}">✕</button>`:''}
             </div>`;
     }).join('');
     setupSidebarDnD();
@@ -1501,7 +1753,7 @@ function renderContent(){
             <div class="rail ${sId==='favorites'?'reorderable-rail':''}" id="grid-${sId}">
                 ${filtered.length>0
                     ? filtered.map((item,i)=>cardHtml(item,sId==='favorites',i)).join('')
-                    : '<div class="empty-state">Ei sisältöä valituilla suodattimilla.</div>'}
+                    : '<div class="empty-state">' + tr('noContent') + '</div>'}
             </div>`;
         dynSections.appendChild(el);
 
@@ -1523,7 +1775,7 @@ function renderChannelsSection(container){
     el.className='content-section'; el.id='anchor-channels';
     el.innerHTML=`
         <div class="section-header">
-            <h3>Kanavat</h3>
+            <h3>${tr('sectionChannels')}</h3>
             <span class="section-count">Simuloitu aika: 18:45</span>
         </div>
         <div class="rail" id="channel-rail">
@@ -1538,7 +1790,7 @@ function renderChannelFavsSection(container){
     const el=document.createElement('section');
     el.className='content-section'; el.id='anchor-channel-favorites';
     el.innerHTML=`
-        <div class="section-header"><h3>Suosikkikanavat</h3></div>
+        <div class="section-header"><h3>${tr('sectionChannelFavs')}</h3></div>
         <div class="rail reorderable-rail" id="grid-channel-favorites">
             ${favChs.map(ch=>channelCardHtml(ch,channels.indexOf(ch),true)).join('')}
         </div>`;
@@ -1566,9 +1818,9 @@ function cardHtml(item, isReorderable=false, idx=0){
         </button>
         <div class="card-img" style="background-image:url('https://picsum.photos/seed/${item.id}/400/220')"></div>
         <div class="card-body">
-            <div class="card-type">${item.type}</div>
+            <div class="card-type">${trType(item.type)}</div>
             <div class="card-title">${item.title}</div>
-            <div class="card-genre">${item.genre}</div>
+            <div class="card-genre">${trGenre(item.genre)}</div>
             <div class="card-desc">${item.desc}</div>
         </div>
         <div class="card-actions">
@@ -1602,7 +1854,7 @@ function channelCardHtml(ch, chIdx, isReorderable=false){
             <div class="channel-logo" style="background:${ch.color}">${ch.abbr}</div>
             <div class="channel-info">
                 <div class="channel-name">${ch.name}</div>
-                <div class="channel-category">${ch.category}</div>
+                <div class="channel-category">${trCat(ch.category)}</div>
             </div>
             <button class="channel-fav-btn ${isFav?'active':''}" data-channel-id="${ch.id}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav?'currentColor':'none'}" stroke="currentColor" stroke-width="2" style="pointer-events:none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1682,6 +1934,22 @@ function setupEventListeners(){
     document.getElementById('clear-ai-btn').addEventListener('click',()=>{
         aiResults=[]; aiResultsEl.style.display='none'; aiPrompt.value='';
     });
+    document.querySelectorAll('.ai-suggestion-chip').forEach(chip=>{
+        chip.addEventListener('click',()=>{
+            if(aiSearchBtn.disabled) return;
+            aiPrompt.value=chip.dataset.q;
+            aiSearchBtn.disabled=true;
+            aiResultsEl.style.display='none';
+            aiLoader.style.display='block';
+            setTimeout(()=>{
+                aiResults=[...contentItems].sort(()=>0.5-Math.random()).slice(0,Math.floor(Math.random()*4)+1);
+                aiLoader.style.display='none';
+                aiResultsEl.style.display='block';
+                aiGrid.innerHTML=aiResults.map(item=>cardHtml(item)).join('');
+                aiSearchBtn.disabled=false;
+            },1500);
+        });
+    });
 
     // Card clicks
     const cardClick=e=>{
@@ -1704,7 +1972,7 @@ function setupEventListeners(){
                 const favItems=favorites.map(fid=>contentItems.find(i=>i.id===fid)).filter(Boolean);
                 favSection.innerHTML=favItems.length>0
                     ? favItems.map((item,i)=>cardHtml(item,true,i)).join('')
-                    : '<div class="empty-state">Ei suosikkeja vielä.</div>';
+                    : '<div class="empty-state">' + tr('noFavs') + '</div>';
                 if(favItems.length>1) new Sortable(favSection,{animation:150,handle:'.card-drag-handle',ghostClass:'sortable-ghost',onEnd(){ favorites=[...favSection.querySelectorAll('.card')].map(c=>parseInt(c.dataset.id)); saveState(); }});
             }
             return;
